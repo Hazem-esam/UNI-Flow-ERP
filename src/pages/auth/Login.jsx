@@ -1,15 +1,27 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
   const handleLogin = (e) => {
     e.preventDefault();
-    // TODO: call backend API for login
-    console.log("Logging in with", email, password);
+
+    // TODO: call backend API for real authentication
+    console.log("Logging in with:", email, password);
+
+    // ✅ Set login state before navigating
+    localStorage.setItem("loggedIn", "true");
+
+    // Optionally store companyName (for Navbar display)
+    localStorage.setItem("companyName", "My Company");
+
+    // ✅ Navigate after updating localStorage
     navigate("/dashboard");
   };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
@@ -40,7 +52,7 @@ function Login() {
         </form>
         <p className="text-sm text-center mt-4">
           Don’t have an account?{" "}
-          <Link to="/signup" className="text-blue-600">
+          <Link to="/signup" className="text-blue-600 hover:underline">
             Sign up
           </Link>
         </p>
@@ -48,4 +60,5 @@ function Login() {
     </div>
   );
 }
+
 export default Login;

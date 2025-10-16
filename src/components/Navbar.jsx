@@ -1,17 +1,19 @@
 import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const companyName = localStorage.getItem("companyName") || "Your Company";
+  const companyName = localStorage.getItem("companyName") || "";
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <nav className="flex justify-between items-center bg-blue-600 text-white p-4">
-      <h1 className="text-lg font-bold">UNI Flow ERP</h1>
+      <NavLink to="/">
+        <h1 className="text-lg font-bold">UNI Flow ERP</h1>
+      </NavLink>
 
       <div className="flex space-x-6 items-center">
         <NavLink
