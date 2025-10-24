@@ -7,6 +7,7 @@ import AppLayout from "../components/AppLayout";
 import ModulePage from "../components/ModulePage";
 import PrivateRoute from "./PrivateRoute";
 import Home from "../pages/Home";
+import SignupCompany from "../pages/auth/SignupCompany";
 
 import ModuleSample from "../components/ModuleSample";
 function AppRoutes() {
@@ -19,6 +20,7 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/signupcompany" element={<SignupCompany />} />
 
       {/* Private routes with AppLayout */}
       <Route

@@ -1,28 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Signup() {
+export default function SignupCompany() {
+  const [companyName, setCompanyName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [image, setImage] = useState("");
-
-  const [companyCode, setCompanyCode] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = (e) => {
     e.preventDefault();
     // Save data to localStorage for now
+    localStorage.setItem("companyName", companyName);
     localStorage.setItem("email", email);
     localStorage.setItem("password", password);
     localStorage.setItem("Image", image);
     localStorage.setItem("Phone Number", phoneNumber);
-    localStorage.setItem("Company Code", companyCode);
-    localStorage.setItem("User Name", name);
 
     alert("Signup successful!");
-    navigate("/dashboard"); //i will update it to navigate the user to his modul(role)
+    navigate("/dashboard");
   };
 
   return (
@@ -31,12 +28,12 @@ export default function Signup() {
       <form onSubmit={handleSignup} className="space-y-4">
         <input
           type="text"
-          placeholder="User Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          placeholder="Company Name"
+          value={companyName}
+          onChange={(e) => setCompanyName(e.target.value)}
           className="w-full border p-2 rounded"
           required
-        />{" "}
+        />
         <input
           type="file"
           placeholder=""
@@ -49,14 +46,6 @@ export default function Signup() {
           placeholder="Phone Number"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
-          className="w-full border p-2 rounded"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Company Code Invitation"
-          value={companyCode}
-          onChange={(e) => setCompanyCode(e.target.value)}
           className="w-full border p-2 rounded"
           required
         />
