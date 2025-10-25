@@ -77,7 +77,7 @@ export default function Home() {
         <div className="flex items-center justify-center">
           <button
             onClick={() => {
-              navigate("/signupcompany");
+              navigate("/signup");
             }}
             className="cursor-pointer items-center justify-center text-xl font-extrabold m-5 border-2 rounded-3xl p-5 text-white bg-blue-600 hover:bg-blue-700 transition"
           >

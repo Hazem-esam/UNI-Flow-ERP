@@ -20,7 +20,6 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/signupcompany" element={<SignupCompany />} />
 
       {/* Private routes with AppLayout */}
       <Route
@@ -56,7 +55,7 @@ function AppRoutes() {
         }
       />
 
-      {/* Catch-all → redirect to login */}
+      {/* Catch-all → redirect to home */}
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
