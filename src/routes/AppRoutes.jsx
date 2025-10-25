@@ -7,7 +7,6 @@ import AppLayout from "../components/AppLayout";
 import ModulePage from "../components/ModulePage";
 import PrivateRoute from "./PrivateRoute";
 import Home from "../pages/Home";
-import SignupCompany from "../pages/auth/SignupCompany";
 
 import ModuleSample from "../components/ModuleSample";
 function AppRoutes() {

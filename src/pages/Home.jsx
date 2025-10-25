@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarDefault from "../components/NavbarDefault";
-import SignupCompany from "./auth/SignupCompany";
 export default function Home() {
   const navigate = useNavigate();
 
