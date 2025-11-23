@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import NavbarDefault from "./NavbarDefault";
+import Navbar from "./Navbar";
 export default function ModuleSample() {
   const { moduleName } = useParams();
 
@@ -53,7 +53,7 @@ export default function ModuleSample() {
 
   return (
     <>
-      <NavbarDefault />
+      <Navbar />
       <div className="min-h-screen bg-gray-50 p-8">
         {module ? (
           <>

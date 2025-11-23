@@ -13,7 +13,7 @@ export default function AppLayout({ children }) {
         <Sidebar />
 
         {/* Page Content */}
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <main className="p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 
 export default function ModulePage() {
   const { moduleName } = useParams();
-  
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">

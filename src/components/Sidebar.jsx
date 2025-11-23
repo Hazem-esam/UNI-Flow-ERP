@@ -1,38 +1,65 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function Sidebar() {
-  const subscribedModules = JSON.parse(localStorage.getItem("modules")) || [];
+  let subscribedModules = [];
 
-  if (subscribedModules.length === 0) {
-    return (
-      <aside className="w-64 bg-gray-100 p-4">
-        <p className="text-gray-500">No modules subscribed yet.</p>
-      </aside>
-    );
+  try {
+    subscribedModules = JSON.parse(localStorage.getItem("modules")) || [];
+  } catch {
+    subscribedModules = [];
   }
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const hasModules = subscribedModules.length > 0;
+
   return (
-    <aside className="w-64 bg-gray-100 p-4">
-      <h2 className="font-bold text-gray-700 mb-4">Modules</h2>
-      <ul className="space-y-2">
-        {subscribedModules.map((mod, index) => {
-          // Handle both cases: if mod is object OR string
-          const moduleName = typeof mod === "string" ? mod : mod?.name;
+    <>
+      {/* Mobile Toggle Button */}
+      <button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="md:hidden fixed top-28 left-2 z-50 bg-[#0d0a39] text-white p-3 rounded-md shadow-lg"
+      >
+        {isSidebarOpen ? "✖" : "☰"}
+      </button>
 
-          if (!moduleName) return null; // Skip invalid entries
+      {/* Sidebar */}
+      <aside
+        className={`relative md:static left-0 md:h-[calc(100vh-80px)] h-auto bg-gray-100 text-black p-6 flex flex-col gap-4 shadow-2xl rounded-r-2xl 
+        transform transition-transform duration-300 ease-in-out z-40
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0 md:w-64 w-60`}
+      >
+        <h2 className="text-2xl font-bold text-blue-800 mb-4 text-center">
+          Modules
+        </h2>
 
-          return (
-            <li key={index}>
-              <Link
-                to={`/modules/${moduleName.toLowerCase()}`}
-                className="block px-3 py-2 rounded hover:bg-blue-200"
-              >
-                {moduleName}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </aside>
+        {hasModules ? (
+          <ul className="space-y-2">
+            {subscribedModules.map((mod, index) => {
+              const moduleName = typeof mod === "string" ? mod : mod?.name;
+
+              if (!moduleName) return null;
+
+              return (
+                <li key={index}>
+                  <Link
+                    to={`/modules/${moduleName.toLowerCase().trim()}`}
+                    className="block px-3 py-2 rounded hover:bg-blue-200 transition"
+                    onClick={() => setIsSidebarOpen(false)}
+                  >
+                    {moduleName}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="text-center text-gray-500 font-medium mt-4">
+            No modules subscribed yet.
+          </p>
+        )}
+      </aside>
+    </>
   );
 }
