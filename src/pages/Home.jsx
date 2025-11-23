@@ -176,7 +176,7 @@ export default function Home() {
                 key={mod.name}
                 onMouseEnter={() => setHoveredModule(mod.name)}
                 onMouseLeave={() => setHoveredModule(null)}
-                onClick={() => navigate(`/modules/${mod.name}`)}
+                onClick={() => navigate(`/modules-samples/${mod.name}`)}
                 className="group relative bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-transparent overflow-hidden"
               >
                 {/* Gradient Background on Hover */}
