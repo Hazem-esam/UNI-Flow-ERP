@@ -170,7 +170,9 @@ export default function ModuleSample() {
 
   const module = modulesInfo.find((mod) => mod.name === moduleName);
   const Icon = module ? moduleIcons[module.name] : AlertCircle;
-  const colorGradient = module ? moduleColors[module.name] : "from-gray-500 to-gray-600";
+  const colorGradient = module
+    ? moduleColors[module.name]
+    : "from-gray-500 to-gray-600";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
@@ -183,7 +185,9 @@ export default function ModuleSample() {
             {/* Header */}
             <div className="mb-12">
               <div className="flex items-center gap-4 mb-6">
-                <div className={`w-20 h-20 bg-gradient-to-br ${colorGradient} rounded-2xl flex items-center justify-center shadow-lg`}>
+                <div
+                  className={`w-20 h-20 bg-gradient-to-br ${colorGradient} rounded-2xl flex items-center justify-center shadow-lg`}
+                >
                   <Icon className="w-10 h-10 text-white" />
                 </div>
                 <div>
@@ -223,34 +227,11 @@ export default function ModuleSample() {
                 </ul>
               </div>
 
-              {/* Quick Actions Card */}
               <div className="space-y-6">
-                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">
-                    Quick Actions
-                  </h3>
-                  <div className="space-y-3">
-                    <button className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg">
-                      <span>Open Module</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                    <button className="w-full flex items-center justify-between px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-blue-500 hover:text-blue-600 transition-all">
-                      <span>View Reports</span>
-                      <BarChart3 className="w-4 h-4" />
-                    </button>
-                    <button className="w-full flex items-center justify-between px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-blue-500 hover:text-blue-600 transition-all">
-                      <span>Documentation</span>
-                      <FileText className="w-4 h-4" />
-                    </button>
-                    <button className="w-full flex items-center justify-between px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:border-blue-500 hover:text-blue-600 transition-all">
-                      <span>Settings</span>
-                      <Settings className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
                 {/* Stats Card */}
-                <div className={`bg-gradient-to-br ${colorGradient} rounded-2xl shadow-lg p-6 text-white`}>
+                <div
+                  className={`bg-gradient-to-br ${colorGradient} rounded-2xl shadow-lg p-6 text-white`}
+                >
                   <h3 className="text-lg font-bold mb-4">Module Stats</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -259,11 +240,15 @@ export default function ModuleSample() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-white/80">Features</span>
-                      <span className="font-semibold">{module.features.length}</span>
+                      <span className="font-semibold">
+                        {module.features.length}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-white/80">Coming Soon</span>
-                      <span className="font-semibold">{module.comingSoon.length}</span>
+                      <span className="font-semibold">
+                        {module.comingSoon.length}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -281,7 +266,8 @@ export default function ModuleSample() {
                 </h2>
               </div>
               <p className="text-gray-600 mb-6">
-                These features are currently in development and will be available soon:
+                These features are currently in development and will be
+                available soon:
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {module.comingSoon.map((feature, index) => (

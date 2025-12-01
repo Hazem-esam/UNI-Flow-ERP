@@ -6,7 +6,7 @@ import {
   Receipt,
   MessageSquare,
   Package,
-  UserCircle,
+  LayoutDashboard,
   BookUser,
   Menu,
   X,
@@ -20,7 +20,7 @@ const moduleIcons = {
   Expenses: Receipt,
   CRM: MessageSquare,
   Inventory: Package,
-  Users: UserCircle,
+  Dashboard: LayoutDashboard,
   Contacts: BookUser,
 };
 
@@ -30,7 +30,7 @@ const moduleColors = {
   Expenses: "bg-red-500",
   CRM: "bg-pink-500",
   Inventory: "bg-orange-500",
-  Users: "bg-blue-500",
+  Dashboard: "bg-blue-500",
   Contacts: "bg-indigo-500",
 };
 

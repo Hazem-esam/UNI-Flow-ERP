@@ -1,7 +1,6 @@
 // src/modules/HRModule.jsx
 import { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
+
 import {
   Users,
   Plus,
@@ -115,9 +114,7 @@ export default function HRModule() {
 
   return (
     <>
-      <Navbar />
       <div className="flex">
-        <Sidebar />
         <div className="flex-1 min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-slate-50 p-6">
           <div className="max-w-7xl mx-auto">
             {/* Header */}

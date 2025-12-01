@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
-import Dashboard from "../pages/Dashboard-user/Dashboard";
+import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
 import AppLayout from "../components/AppLayout";
 import PrivateRoute from "./PrivateRoute";
@@ -11,7 +11,7 @@ import ModuleSample from "../components/ModuleSample";
 function AppRoutes() {
   return (
     <Routes>
-      {/* Default route → go to login */}
+      {/* Default route → go to home */}
       <Route path="/" element={<Home to="/home" replace />} />
       <Route path="/modules-samples/:moduleName" element={<ModuleSample />} />
       {/* Public routes */}
@@ -43,7 +43,9 @@ function AppRoutes() {
         path="/modules/:moduleName"
         element={
           <PrivateRoute>
-            <DynamicModulePage />
+            <AppLayout>
+              <DynamicModulePage />
+            </AppLayout>
           </PrivateRoute>
         }
       />

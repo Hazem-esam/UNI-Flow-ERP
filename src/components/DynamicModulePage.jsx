@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 
-import CRM from "../modules/CRM";
-import HRModule from "../modules/HR";
-import InventoryModule from "../modules/Inventory";
-import SalesModule from "../modules/Sales";
-import DashboardModule from "../modules/Dashboard";
-import Expenses from "../modules/Expenses";
-
+import CRM from "../modules/CRM/CRM";
+import HRModule from "../modules/HR/HR";
+import InventoryModule from "../modules/Inventory/Inventory";
+import SalesModule from "../modules/Sales/Sales";
+import DashboardModule from "../modules/Dashboard/Dashboard";
+import Expenses from "../modules/Expenses/Expenses";
+import Contacts from "../modules/Contacts/Contacts";
 const moduleRegistry = {
   hr: HRModule,
   inventory: InventoryModule,
@@ -14,6 +14,7 @@ const moduleRegistry = {
   crm: CRM,
   dashboard: DashboardModule,
   expenses: Expenses,
+  contacts: Contacts,
 };
 
 export default function DynamicModulePage() {

@@ -5,14 +5,14 @@ import {
   Receipt,
   MessageSquare,
   Package,
-  UserCircle,
+  LayoutDashboard,
   BookUser,
   Check,
   X,
   Save,
   DollarSign,
   CheckCircle2,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
 
 const availableModules = [
@@ -52,10 +52,10 @@ const availableModules = [
     color: "from-orange-500 to-orange-600",
   },
   {
-    name: "Users",
-    description: "Manage system users and roles",
+    name: "Dashboard",
+    description: "Analytics and insights overview",
     price: 10,
-    icon: UserCircle,
+    icon: LayoutDashboard,
     color: "from-blue-500 to-blue-600",
   },
   {
@@ -99,7 +99,10 @@ function Dashboard() {
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
-  const totalPrice = selectedModules.reduce((sum, m) => sum + (m?.price || 0), 0);
+  const totalPrice = selectedModules.reduce(
+    (sum, m) => sum + (m?.price || 0),
+    0
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 p-6">
@@ -138,7 +141,9 @@ function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {availableModules.map((mod) => {
             const Icon = mod.icon;
-            const isSelected = selectedModules.some((m) => m?.name === mod.name);
+            const isSelected = selectedModules.some(
+              (m) => m?.name === mod.name
+            );
 
             return (
               <div
@@ -158,7 +163,9 @@ function Dashboard() {
                 )}
 
                 {/* Icon */}
-                <div className={`w-14 h-14 bg-gradient-to-br ${mod.color} rounded-xl flex items-center justify-center mb-4`}>
+                <div
+                  className={`w-14 h-14 bg-gradient-to-br ${mod.color} rounded-xl flex items-center justify-center mb-4`}
+                >
                   <Icon className="w-7 h-7 text-white" />
                 </div>
 
@@ -166,23 +173,25 @@ function Dashboard() {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {mod.name}
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  {mod.description}
-                </p>
+                <p className="text-sm text-gray-600 mb-4">{mod.description}</p>
 
                 {/* Price */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 text-2xl font-bold text-gray-900">
                     <DollarSign className="w-5 h-5" />
                     <span>{mod.price}</span>
-                    <span className="text-sm font-normal text-gray-500">/mo</span>
+                    <span className="text-sm font-normal text-gray-500">
+                      /mo
+                    </span>
                   </div>
-                  
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                    isSelected
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-100 text-gray-600"
-                  }`}>
+
+                  <div
+                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                      isSelected
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
                     {isSelected ? "Selected" : "Available"}
                   </div>
                 </div>
@@ -241,9 +250,7 @@ function Dashboard() {
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>{mod.name}</span>
-                    <span className="text-blue-500">
-                      ${mod.price}/mo
-                    </span>
+                    <span className="text-blue-500">${mod.price}/mo</span>
                   </div>
                 ))}
               </div>
