@@ -42,18 +42,15 @@ function Login() {
       setIsLoading(true);
       setLoginError("");
 
-      // Simulate API call delay
-      setTimeout(() => {
-        const success = login(values.email, values.password);
+      const result = await login(values.email, values.password);
 
-        if (success) {
-          navigate("/dashboard");
-        } else {
-          setLoginError("Invalid email or password. Please try again.");
-        }
+      setIsLoading(false);
 
-        setIsLoading(false);
-      }, 1000);
+      if (result.success) {
+        navigate("/dashboard");
+      } else {
+        setLoginError(result.error || "Invalid email or password. Please try again.");
+      }
     },
   });
 

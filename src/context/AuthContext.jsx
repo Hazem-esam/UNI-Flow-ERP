@@ -1,74 +1,160 @@
 import { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function AuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem("loggedIn") === "true"
-  );
-  // Load user from localStorage (Signup or Login)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Check if user is authenticated on mount
   useEffect(() => {
-    if (isAuthenticated) {
-      const storedUser = {
-        email: localStorage.getItem("email"),
-        name: localStorage.getItem("User Name"),
-        companyName: localStorage.getItem("companyName"),
-        role: localStorage.getItem("Type Of User"), // manager/user
-        phoneNumber: localStorage.getItem("Phone Number"),
-        image: localStorage.getItem("Image"),
-      };
-      setUser(storedUser);
+    const token = localStorage.getItem("accessToken");
+    const storedUser = localStorage.getItem("user");
+
+    if (token && storedUser) {
+      setUser(JSON.parse(storedUser));
+      setIsAuthenticated(true);
     }
-  }, [isAuthenticated]);
+    setLoading(false);
+  }, []);
 
   // --------------------------
   // LOGIN FUNCTION
   // --------------------------
-  const login = (email, password) => {
-    const savedUser = JSON.parse(localStorage.getItem("user"));
+  const login = async (email, password) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/Auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (!savedUser) return false;
-    if (savedUser.email !== email || savedUser.password !== password) {
-      return false;
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Login failed");
+      }
+
+      const data = await response.json();
+
+      // Store token and user data
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("expiresAtUtc", data.expiresAtUtc);
+
+      const userData = {
+        userId: data.userId,
+        companyId: data.companyId,
+        email: data.email,
+        roles: data.roles,
+      };
+
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      return { success: true, data };
+    } catch (error) {
+      console.error("Login error:", error);
+      return { success: false, error: error.message };
     }
-
-    // Success
-    localStorage.setItem("loggedIn", "true");
-    setIsAuthenticated(true);
-    setUser(savedUser);
-    return true;
   };
 
   // --------------------------
-  // SIGNUP FUNCTION
+  // SIGNUP FUNCTION (Register Owner)
   // --------------------------
-  const signup = (userData) => {
-    // Save in localStorage (your current logic)
-    Object.entries(userData).forEach(([key, value]) =>
-      localStorage.setItem(key, value)
-    );
+  const signup = async (fullName, email, password, company) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/Auth/register-owner`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          email,
+          password,
+          company: {
+            name: company.name,
+            taxNumber: company.taxNumber,
+            address: company.address,
+          },
+        }),
+      });
 
-    localStorage.setItem("loggedIn", "true");
-    localStorage.setItem("user", JSON.stringify(userData));
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Registration failed");
+      }
 
-    setIsAuthenticated(true);
-    setUser(userData);
+      const data = await response.json();
+
+      // Store token and user data
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("expiresAtUtc", data.expiresAtUtc);
+
+      const userData = {
+        userId: data.userId,
+        companyId: data.companyId,
+        email: data.email,
+        roles: data.roles,
+        fullName,
+        companyName: company.name,
+      };
+
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      return { success: true, data };
+    } catch (error) {
+      // console.error("Signup error:", error);
+      return { success: false, error: error.message };
+    }
   };
 
   // --------------------------
   // LOGOUT FUNCTION
   // --------------------------
   const logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("expiresAtUtc");
+    localStorage.removeItem("user");
     setIsAuthenticated(false);
     setUser(null);
   };
+
+  // --------------------------
+  // TOKEN EXPIRATION CHECK
+  // --------------------------
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const checkTokenExpiration = () => {
+      const expiresAtUtc = localStorage.getItem("expiresAtUtc");
+      if (expiresAtUtc && new Date(expiresAtUtc) <= new Date()) {
+        logout();
+      }
+    };
+
+    // Check every minute
+    const interval = setInterval(checkTokenExpiration, 60000);
+    checkTokenExpiration(); // Check immediately
+
+    return () => clearInterval(interval);
+  }, [isAuthenticated]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
         isAuthenticated,
+        loading,
         login,
         signup,
         logout,

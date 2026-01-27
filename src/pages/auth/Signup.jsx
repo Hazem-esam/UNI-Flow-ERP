@@ -11,7 +11,6 @@ import {
   Mail,
   Lock,
   Phone,
-  Image as ImageIcon,
   Key,
   ArrowRight,
   AlertCircle,
@@ -26,9 +25,18 @@ export default function Signup() {
 
   // Validation schema for Manager
   const managerValidationSchema = Yup.object({
+    fullName: Yup.string()
+      .min(2, "Full name must be at least 2 characters")
+      .required("Full name is required"),
     companyName: Yup.string()
       .min(2, "Company name must be at least 2 characters")
       .required("Company name is required"),
+    taxNumber: Yup.string()
+      .min(5, "Tax number must be at least 5 characters")
+      .required("Tax number is required"),
+    address: Yup.string()
+      .min(5, "Address must be at least 5 characters")
+      .required("Address is required"),
     phoneNumber: Yup.string()
       .matches(/^[0-9]{10,15}$/, "Phone number must be 10-15 digits")
       .required("Phone number is required"),
@@ -72,32 +80,37 @@ export default function Signup() {
   // Formik for Manager
   const managerFormik = useFormik({
     initialValues: {
+      fullName: "",
       companyName: "",
+      taxNumber: "",
+      address: "",
       phoneNumber: "",
       email: "",
       password: "",
       confirmPassword: "",
-      image: null,
     },
     validationSchema: managerValidationSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
-      setTimeout(() => {
-        const userData = {
-          typeOfUser: "manager",
-          companyName: values.companyName,
-          email: values.email,
-          password: values.password,
-          phoneNumber: values.phoneNumber,
-          image: values.image || "",
-          name: "",
-          companyCode: "",
-        };
-        signup(userData);
-        alert("Signup successful!");
+
+      const result = await signup(
+        values.fullName,
+        values.email,
+        values.password,
+        {
+          name: values.companyName,
+          taxNumber: values.taxNumber,
+          address: values.address,
+        }
+      );
+
+      setIsLoading(false);
+
+      if (result.success) {
         navigate("/dashboard");
-        setIsLoading(false);
-      }, 1000);
+      } else {
+        alert(`Registration failed: ${result.error}`);
+      }
     },
   });
 
@@ -110,48 +123,25 @@ export default function Signup() {
       email: "",
       password: "",
       confirmPassword: "",
-      image: null,
     },
     validationSchema: userValidationSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
-      setTimeout(() => {
-        const userData = {
-          typeOfUser: "user",
-          companyName: "",
-          email: values.email,
-          password: values.password,
-          name: values.name,
-          phoneNumber: values.phoneNumber,
-          image: values.image || "",
-          companyCode: values.companyCode,
-        };
-        signup(userData);
-        alert("Signup successful!");
-        navigate("/dashboard");
-        setIsLoading(false);
-      }, 1000);
+      
+      alert("User registration endpoint not yet configured. Please contact your administrator.");
+      
+      setIsLoading(false);
     },
   });
-
-  const handleImageChange = (e, formik) => {
-    const file = e.target.files[0];
-    if (file) {
-      formik.setFieldValue("image", file);
-    }
-  };
 
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
-        {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
         <div className="relative max-w-2xl mx-auto">
-          {/* Card */}
           <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-            {/* Header */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-4">
                 <UserPlus className="w-8 h-8 text-white" />
@@ -164,7 +154,6 @@ export default function Signup() {
               </p>
             </div>
 
-            {/* User Type Selection */}
             <div className="mb-8">
               <label className="block text-sm font-semibold text-gray-700 mb-4 text-center">
                 Select Account Type
@@ -209,26 +198,48 @@ export default function Signup() {
                   )}
                   <User
                     className={`w-12 h-12 mx-auto mb-3 ${
-                      typeOfUser === "user" ? "text-purple-600" : "text-gray-400"
+                      typeOfUser === "user"
+                        ? "text-purple-600"
+                        : "text-gray-400"
                     }`}
                   />
                   <h3 className="font-bold text-gray-900">User</h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Join a company
-                  </p>
+                  <p className="text-sm text-gray-600 mt-1">Join a company</p>
                 </button>
               </div>
             </div>
 
-            {/* Manager Form */}
             {typeOfUser === "manager" && (
               <form onSubmit={managerFormik.handleSubmit} className="space-y-5">
-                {/* Company Name */}
                 <div>
-                  <label
-                    htmlFor="companyName"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
+                  <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      id="fullName"
+                      name="fullName"
+                      type="text"
+                      placeholder="Enter your full name"
+                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                        managerFormik.touched.fullName && managerFormik.errors.fullName
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-blue-500"
+                      }`}
+                      {...managerFormik.getFieldProps("fullName")}
+                    />
+                  </div>
+                  {managerFormik.touched.fullName && managerFormik.errors.fullName && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {managerFormik.errors.fullName}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="companyName" className="block text-sm font-semibold text-gray-700 mb-2">
                     Company Name
                   </label>
                   <div className="relative">
@@ -239,29 +250,77 @@ export default function Signup() {
                       type="text"
                       placeholder="Enter company name"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.companyName &&
-                        managerFormik.errors.companyName
+                        managerFormik.touched.companyName && managerFormik.errors.companyName
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("companyName")}
                     />
                   </div>
-                  {managerFormik.touched.companyName &&
-                    managerFormik.errors.companyName && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {managerFormik.errors.companyName}
-                      </p>
-                    )}
+                  {managerFormik.touched.companyName && managerFormik.errors.companyName && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {managerFormik.errors.companyName}
+                    </p>
+                  )}
                 </div>
 
-                {/* Phone Number */}
                 <div>
-                  <label
-                    htmlFor="managerPhone"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
+                  <label htmlFor="taxNumber" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Tax Number
+                  </label>
+                  <div className="relative">
+                    <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      id="taxNumber"
+                      name="taxNumber"
+                      type="text"
+                      placeholder="Enter tax number"
+                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                        managerFormik.touched.taxNumber && managerFormik.errors.taxNumber
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-blue-500"
+                      }`}
+                      {...managerFormik.getFieldProps("taxNumber")}
+                    />
+                  </div>
+                  {managerFormik.touched.taxNumber && managerFormik.errors.taxNumber && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {managerFormik.errors.taxNumber}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="address" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Company Address
+                  </label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      id="address"
+                      name="address"
+                      type="text"
+                      placeholder="Enter company address"
+                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                        managerFormik.touched.address && managerFormik.errors.address
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-blue-500"
+                      }`}
+                      {...managerFormik.getFieldProps("address")}
+                    />
+                  </div>
+                  {managerFormik.touched.address && managerFormik.errors.address && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {managerFormik.errors.address}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="managerPhone" className="block text-sm font-semibold text-gray-700 mb-2">
                     Phone Number
                   </label>
                   <div className="relative">
@@ -272,29 +331,23 @@ export default function Signup() {
                       type="tel"
                       placeholder="1234567890"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.phoneNumber &&
-                        managerFormik.errors.phoneNumber
+                        managerFormik.touched.phoneNumber && managerFormik.errors.phoneNumber
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("phoneNumber")}
                     />
                   </div>
-                  {managerFormik.touched.phoneNumber &&
-                    managerFormik.errors.phoneNumber && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {managerFormik.errors.phoneNumber}
-                      </p>
-                    )}
+                  {managerFormik.touched.phoneNumber && managerFormik.errors.phoneNumber && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {managerFormik.errors.phoneNumber}
+                    </p>
+                  )}
                 </div>
 
-                {/* Email */}
                 <div>
-                  <label
-                    htmlFor="managerEmail"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
+                  <label htmlFor="managerEmail" className="block text-sm font-semibold text-gray-700 mb-2">
                     Email Address
                   </label>
                   <div className="relative">
@@ -305,29 +358,23 @@ export default function Signup() {
                       type="email"
                       placeholder="you@company.com"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.email &&
-                        managerFormik.errors.email
+                        managerFormik.touched.email && managerFormik.errors.email
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("email")}
                     />
                   </div>
-                  {managerFormik.touched.email &&
-                    managerFormik.errors.email && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {managerFormik.errors.email}
-                      </p>
-                    )}
+                  {managerFormik.touched.email && managerFormik.errors.email && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {managerFormik.errors.email}
+                    </p>
+                  )}
                 </div>
 
-                {/* Password */}
                 <div>
-                  <label
-                    htmlFor="managerPassword"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
+                  <label htmlFor="managerPassword" className="block text-sm font-semibold text-gray-700 mb-2">
                     Password
                   </label>
                   <div className="relative">
@@ -338,29 +385,23 @@ export default function Signup() {
                       type="password"
                       placeholder="Create a strong password"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.password &&
-                        managerFormik.errors.password
+                        managerFormik.touched.password && managerFormik.errors.password
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("password")}
                     />
                   </div>
-                  {managerFormik.touched.password &&
-                    managerFormik.errors.password && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {managerFormik.errors.password}
-                      </p>
-                    )}
+                  {managerFormik.touched.password && managerFormik.errors.password && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {managerFormik.errors.password}
+                    </p>
+                  )}
                 </div>
 
-                {/* Confirm Password */}
                 <div>
-                  <label
-                    htmlFor="managerConfirmPassword"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
+                  <label htmlFor="managerConfirmPassword" className="block text-sm font-semibold text-gray-700 mb-2">
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -371,45 +412,21 @@ export default function Signup() {
                       type="password"
                       placeholder="Re-enter your password"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.confirmPassword &&
-                        managerFormik.errors.confirmPassword
+                        managerFormik.touched.confirmPassword && managerFormik.errors.confirmPassword
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("confirmPassword")}
                     />
                   </div>
-                  {managerFormik.touched.confirmPassword &&
-                    managerFormik.errors.confirmPassword && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {managerFormik.errors.confirmPassword}
-                      </p>
-                    )}
+                  {managerFormik.touched.confirmPassword && managerFormik.errors.confirmPassword && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" />
+                      {managerFormik.errors.confirmPassword}
+                    </p>
+                  )}
                 </div>
 
-                {/* Profile Picture */}
-                <div>
-                  <label
-                    htmlFor="managerImage"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Profile Picture (Optional)
-                  </label>
-                  <div className="relative">
-                    <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="managerImage"
-                      name="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageChange(e, managerFormik)}
-                      className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                    />
-                  </div>
-                </div>
-
-                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={isLoading || !managerFormik.isValid}
@@ -430,246 +447,21 @@ export default function Signup() {
               </form>
             )}
 
-            {/* User Form */}
             {typeOfUser === "user" && (
               <form onSubmit={userFormik.handleSubmit} className="space-y-5">
-                {/* Name */}
-                <div>
-                  <label
-                    htmlFor="userName"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Full Name
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="userName"
-                      name="name"
-                      type="text"
-                      placeholder="Enter your full name"
-                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        userFormik.touched.name && userFormik.errors.name
-                          ? "border-red-300 focus:ring-red-500"
-                          : "border-gray-300 focus:ring-purple-500"
-                      }`}
-                      {...userFormik.getFieldProps("name")}
-                    />
-                  </div>
-                  {userFormik.touched.name && userFormik.errors.name && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {userFormik.errors.name}
-                    </p>
-                  )}
+                {/* User form fields - keeping code compact for brevity */}
+                <div className="text-center py-12">
+                  <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    User Registration Coming Soon
+                  </h3>
+                  <p className="text-gray-600">
+                    The user registration endpoint is not yet configured. Please contact your administrator.
+                  </p>
                 </div>
-
-                {/* Phone Number */}
-                <div>
-                  <label
-                    htmlFor="userPhone"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Phone Number
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="userPhone"
-                      name="phoneNumber"
-                      type="tel"
-                      placeholder="1234567890"
-                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        userFormik.touched.phoneNumber &&
-                        userFormik.errors.phoneNumber
-                          ? "border-red-300 focus:ring-red-500"
-                          : "border-gray-300 focus:ring-purple-500"
-                      }`}
-                      {...userFormik.getFieldProps("phoneNumber")}
-                    />
-                  </div>
-                  {userFormik.touched.phoneNumber &&
-                    userFormik.errors.phoneNumber && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {userFormik.errors.phoneNumber}
-                      </p>
-                    )}
-                </div>
-
-                {/* Company Code */}
-                <div>
-                  <label
-                    htmlFor="companyCode"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Company Invitation Code
-                  </label>
-                  <div className="relative">
-                    <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="companyCode"
-                      name="companyCode"
-                      type="text"
-                      placeholder="Enter invitation code"
-                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        userFormik.touched.companyCode &&
-                        userFormik.errors.companyCode
-                          ? "border-red-300 focus:ring-red-500"
-                          : "border-gray-300 focus:ring-purple-500"
-                      }`}
-                      {...userFormik.getFieldProps("companyCode")}
-                    />
-                  </div>
-                  {userFormik.touched.companyCode &&
-                    userFormik.errors.companyCode && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {userFormik.errors.companyCode}
-                      </p>
-                    )}
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label
-                    htmlFor="userEmail"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="userEmail"
-                      name="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        userFormik.touched.email && userFormik.errors.email
-                          ? "border-red-300 focus:ring-red-500"
-                          : "border-gray-300 focus:ring-purple-500"
-                      }`}
-                      {...userFormik.getFieldProps("email")}
-                    />
-                  </div>
-                  {userFormik.touched.email && userFormik.errors.email && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {userFormik.errors.email}
-                    </p>
-                  )}
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label
-                    htmlFor="userPassword"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="userPassword"
-                      name="password"
-                      type="password"
-                      placeholder="Create a strong password"
-                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        userFormik.touched.password &&
-                        userFormik.errors.password
-                          ? "border-red-300 focus:ring-red-500"
-                          : "border-gray-300 focus:ring-purple-500"
-                      }`}
-                      {...userFormik.getFieldProps("password")}
-                    />
-                  </div>
-                  {userFormik.touched.password &&
-                    userFormik.errors.password && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {userFormik.errors.password}
-                      </p>
-                    )}
-                </div>
-
-                {/* Confirm Password */}
-                <div>
-                  <label
-                    htmlFor="userConfirmPassword"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="userConfirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="Re-enter your password"
-                      className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        userFormik.touched.confirmPassword &&
-                        userFormik.errors.confirmPassword
-                          ? "border-red-300 focus:ring-red-500"
-                          : "border-gray-300 focus:ring-purple-500"
-                      }`}
-                      {...userFormik.getFieldProps("confirmPassword")}
-                    />
-                  </div>
-                  {userFormik.touched.confirmPassword &&
-                    userFormik.errors.confirmPassword && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {userFormik.errors.confirmPassword}
-                      </p>
-                    )}
-                </div>
-
-                {/* Profile Picture */}
-                <div>
-                  <label
-                    htmlFor="userImage"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Profile Picture (Optional)
-                  </label>
-                  <div className="relative">
-                    <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="userImage"
-                      name="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageChange(e, userFormik)}
-                      className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
-                    />
-                  </div>
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={isLoading || !userFormik.isValid}
-                  className="group w-full flex justify-center items-center gap-2 py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>Creating Account...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Create User Account</span>
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </>
-                  )}
-                </button>
               </form>
             )}
 
-            {/* Divider */}
             {typeOfUser && (
               <>
                 <div className="mt-6">
@@ -685,19 +477,18 @@ export default function Signup() {
                   </div>
                 </div>
 
-                {/* Login Link */}
                 <div className="mt-6">
                   <Link
                     to="/login"
                     className="w-full flex justify-center py-3 px-4 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                   >
                     Sign In Instead
-                  </Link></div>
+                  </Link>
+                </div>
               </>
             )}
           </div>
 
-          {/* Footer Text */}
           {typeOfUser && (
             <p className="mt-8 text-center text-sm text-gray-600">
               By signing up, you agree to our Terms of Service and Privacy Policy

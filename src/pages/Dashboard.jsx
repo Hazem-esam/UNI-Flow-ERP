@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import {
   TrendingUp,
   Users,
@@ -8,7 +9,6 @@ import {
   LayoutDashboard,
   BookUser,
   Check,
-  X,
   Save,
   DollarSign,
   CheckCircle2,
@@ -68,8 +68,11 @@ const availableModules = [
 ];
 
 function Dashboard() {
-  const companyName = localStorage.getItem("companyName") || "Your Company";
+  const { user } = useContext(AuthContext);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Get company name from user context
+  const companyName = user?.companyName || user?.fullName || "Your Company";
 
   // Clean up anything invalid (null, string, etc.)
   const [selectedModules, setSelectedModules] = useState(
