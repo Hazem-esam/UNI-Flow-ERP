@@ -2,52 +2,88 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 export default function ContactModal({ contact, onSave, onClose }) {
-  const [formData, setFormData] = useState(
-    contact || {
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      position: "",
-      type: "client",
-      location: "",
-      website: "",
-      linkedin: "",
-      favorite: false,
-      notes: "",
-    }
-  );
+  // Helper function to convert type string to integer
+  const getTypeValue = (typeString) => {
+    const typeMap = {
+      client: 1,
+      vendor: 2,
+      partner: 3,
+      lead: 4,
+    };
+    return typeMap[typeString] || 1;
+  };
+
+  // Helper function to convert type integer to string
+  const getTypeString = (typeInt) => {
+    const typeMap = {
+      1: "client",
+      2: "vendor",
+      3: "partner",
+      4: "lead",
+    };
+    return typeMap[typeInt] || "client";
+  };
+
+  const [formData, setFormData] = useState({
+    fullName: contact?.fullName || "",
+    email: contact?.email || "",
+    phoneNumber: contact?.phoneNumber || "",
+    company: contact?.company || "",
+    position: contact?.position || "",
+    type: contact?.type ? getTypeString(contact.type) : "client",
+    location: contact?.location || "",
+    website: contact?.website || "",
+    profileLink: contact?.profileLink || "",
+    favorite: contact?.favorite || false,
+    notes: contact?.notes || "",
+  });
 
   useEffect(() => {
-    setFormData(
-      contact || {
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
-        position: "",
-        type: "client",
-        location: "",
-        website: "",
-        linkedin: "",
-        favorite: false,
-        notes: "",
-      }
-    );
+    setFormData({
+      fullName: contact?.fullName || "",
+      email: contact?.email || "",
+      phoneNumber: contact?.phoneNumber || "",
+      company: contact?.company || "",
+      position: contact?.position || "",
+      type: contact?.type ? getTypeString(contact.type) : "client",
+      location: contact?.location || "",
+      website: contact?.website || "",
+      profileLink: contact?.profileLink || "",
+      favorite: contact?.favorite || false,
+      notes: contact?.notes || "",
+    });
   }, [contact]);
 
   const handleSubmit = () => {
-    // minimal validation
+    // Validation
     if (
-      !formData.name ||
+      !formData.fullName ||
       !formData.email ||
-      !formData.phone ||
+      !formData.phoneNumber ||
       !formData.company
     ) {
       alert("Please fill required fields: name, email, phone, company.");
       return;
     }
-    onSave(formData);
+
+    // Prepare data for API
+    const apiData = {
+      ...(contact?.id && { id: contact.id }), 
+      fullName: formData.fullName,
+      email: formData.email,
+      phoneNumber: formData.phoneNumber,
+      company: formData.company,
+      position: formData.position || "",
+      type: getTypeValue(formData.type),
+      location: formData.location || "",
+      website: formData.website || "",
+      profileLink: formData.profileLink || "",
+      notes: formData.notes || "",
+      favorite: formData.favorite,
+    };
+
+    console.log("Submitting contact data:", apiData);
+    onSave(apiData);
   };
 
   return (
@@ -59,7 +95,7 @@ export default function ContactModal({ contact, onSave, onClose }) {
           </h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -73,11 +109,12 @@ export default function ContactModal({ contact, onSave, onClose }) {
             <input
               type="text"
               required
-              value={formData.name}
+              value={formData.fullName}
               onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+                setFormData({ ...formData, fullName: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="John Doe"
             />
           </div>
 
@@ -92,22 +129,24 @@ export default function ContactModal({ contact, onSave, onClose }) {
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="john@example.com"
             />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Phone *
+              Phone Number *
             </label>
             <input
               type="tel"
               required
-              value={formData.phone}
+              value={formData.phoneNumber}
               onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
+                setFormData({ ...formData, phoneNumber: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="+1 (555) 123-4567"
             />
           </div>
 
@@ -122,7 +161,8 @@ export default function ContactModal({ contact, onSave, onClose }) {
               onChange={(e) =>
                 setFormData({ ...formData, company: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="Acme Inc."
             />
           </div>
 
@@ -136,20 +176,21 @@ export default function ContactModal({ contact, onSave, onClose }) {
               onChange={(e) =>
                 setFormData({ ...formData, position: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="Sales Manager"
             />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Type *
+              Contact Type *
             </label>
             <select
               value={formData.type}
               onChange={(e) =>
                 setFormData({ ...formData, type: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="client">Client</option>
               <option value="vendor">Vendor</option>
@@ -169,7 +210,7 @@ export default function ContactModal({ contact, onSave, onClose }) {
               onChange={(e) =>
                 setFormData({ ...formData, location: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
@@ -179,27 +220,27 @@ export default function ContactModal({ contact, onSave, onClose }) {
             </label>
             <input
               type="text"
-              placeholder="example.com"
+              placeholder="https://example.com"
               value={formData.website}
               onChange={(e) =>
                 setFormData({ ...formData, website: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
           <div className="col-span-2">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              LinkedIn Profile
+              LinkedIn / Social Profile
             </label>
             <input
               type="text"
-              placeholder="linkedin.com/in/username"
-              value={formData.linkedin}
+              placeholder="https://linkedin.com/in/username"
+              value={formData.profileLink}
               onChange={(e) =>
-                setFormData({ ...formData, linkedin: e.target.value })
+                setFormData({ ...formData, profileLink: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
@@ -213,8 +254,8 @@ export default function ContactModal({ contact, onSave, onClose }) {
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-              placeholder="Add any additional notes..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="Add any additional notes about this contact..."
             />
           </div>
 
@@ -238,13 +279,13 @@ export default function ContactModal({ contact, onSave, onClose }) {
         <div className="flex gap-3 pt-6">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50"
+            className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg font-semibold hover:from-indigo-600 hover:to-indigo-700"
+            className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg font-semibold hover:from-indigo-600 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
           >
             {contact ? "Update Contact" : "Add Contact"}
           </button>

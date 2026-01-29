@@ -43,20 +43,20 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5225";
 export default function InventoryModule() {
   const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState("overview");
-  
+
   // Data states
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
   const [unitsOfMeasure, setUnitsOfMeasure] = useState([]);
   const [stockBalances, setStockBalances] = useState([]);
-  
+
   // UI states
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
-  
+
   // Modal states
   const [showProductModal, setShowProductModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -65,7 +65,7 @@ export default function InventoryModule() {
   const [showStockInModal, setShowStockInModal] = useState(false);
   const [showStockOutModal, setShowStockOutModal] = useState(false);
   const [showProductDetailModal, setShowProductDetailModal] = useState(false);
-  
+
   // Editing states
   const [editingProduct, setEditingProduct] = useState(null);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -93,11 +93,13 @@ export default function InventoryModule() {
   const getUnitSymbol = (unitId, product = null) => {
     // If product has unitOfMeasureName directly, try to find matching unit
     if (product?.unitOfMeasureName) {
-      const unit = unitsOfMeasure.find(u => u.name === product.unitOfMeasureName);
+      const unit = unitsOfMeasure.find(
+        (u) => u.name === product.unitOfMeasureName,
+      );
       return unit?.symbol || "units";
     }
-    
-    const unit = unitsOfMeasure.find(u => u.id === unitId);
+
+    const unit = unitsOfMeasure.find((u) => u.id === unitId);
     return unit?.symbol || "units";
   };
 
@@ -107,8 +109,8 @@ export default function InventoryModule() {
     if (product?.unitOfMeasureName) {
       return product.unitOfMeasureName;
     }
-    
-    const unit = unitsOfMeasure.find(u => u.id === unitId);
+
+    const unit = unitsOfMeasure.find((u) => u.id === unitId);
     return unit?.name || "Unit";
   };
 
@@ -119,7 +121,9 @@ export default function InventoryModule() {
     }
     // Try to find unit ID from name
     if (product.unitOfMeasureName) {
-      const unit = unitsOfMeasure.find(u => u.name === product.unitOfMeasureName);
+      const unit = unitsOfMeasure.find(
+        (u) => u.name === product.unitOfMeasureName,
+      );
       return unit?.id || null;
     }
     return null;
@@ -216,7 +220,7 @@ export default function InventoryModule() {
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/InventoryReports/stock-balance`,
-        { headers: getAuthHeaders() }
+        { headers: getAuthHeaders() },
       );
       if (!response.ok) throw new Error("Failed to fetch stock balance");
       const data = await response.json();
@@ -232,35 +236,50 @@ export default function InventoryModule() {
   const getProductStock = (productId, warehouseId = null) => {
     if (warehouseId) {
       const balance = stockBalances.find(
-        (b) => b.productId === productId && b.warehouseId === warehouseId
+        (b) => b.productId === productId && b.warehouseId === warehouseId,
       );
-      return balance?.quantityOnHand || balance?.quantity || balance?.currentQuantity || 0;
+      return (
+        balance?.quantityOnHand ||
+        balance?.quantity ||
+        balance?.currentQuantity ||
+        0
+      );
     }
     // Total across all warehouses
     return stockBalances
       .filter((b) => b.productId === productId)
-      .reduce((sum, b) => sum + (b.quantityOnHand || b.quantity || b.currentQuantity || 0), 0);
+      .reduce(
+        (sum, b) =>
+          sum + (b.quantityOnHand || b.quantity || b.currentQuantity || 0),
+        0,
+      );
   };
 
   // Calculate statistics
   const totalProducts = products.length;
   const totalValue = products.reduce(
     (sum, p) => sum + getProductStock(p.id) * (p.defaultPrice || 0),
-    0
+    0,
   );
-  const lowStockThreshold = 10;
-  const lowStockItems = products.filter(
-    (p) => getProductStock(p.id) > 0 && getProductStock(p.id) <= lowStockThreshold
-  ).length;
+  const getLowStockThreshold = (product) => {
+    return product.minQuantity || 5;
+  };
+
+  // Update the lowStockItems calculation
+  const lowStockItems = products.filter((p) => {
+    const stock = getProductStock(p.id);
+    const threshold = getLowStockThreshold(p);
+    return stock > 0 && stock <= threshold;
+  }).length;
   const outOfStock = products.filter((p) => getProductStock(p.id) === 0).length;
 
   // Category distribution
   const categoryData = categories
     .map((cat) => {
-      const categoryProducts = products.filter((p) => p.categoryId === cat.id);
+      const categoryProducts = products.filter((p) => p.categoryId === cat.id|| p.categoryName === cat.name);
       const totalQty = categoryProducts.reduce(
         (sum, p) => sum + getProductStock(p.id),
-        0
+        0,
       );
       return { name: cat.name, value: totalQty };
     })
@@ -270,7 +289,7 @@ export default function InventoryModule() {
   const stockLevelsData = products.slice(0, 5).map((p) => ({
     name: p.name,
     current: getProductStock(p.id),
-    reorder: lowStockThreshold,
+    reorder: getLowStockThreshold,
   }));
 
   const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
@@ -279,11 +298,14 @@ export default function InventoryModule() {
     (product) =>
       product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.code?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (product.barcode && product.barcode.toLowerCase().includes(searchQuery.toLowerCase()))
+      (product.barcode &&
+        product.barcode.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 
   // Count products without units
-  const productsWithoutUnits = products.filter(p => !p.unitOfMeasureId).length;
+  const productsWithoutUnits = products.filter(
+    (p) => !p.unitOfMeasureId,
+  ).length;
 
   // CRUD Handlers
   const handleSaveProduct = async (productData) => {
@@ -296,23 +318,26 @@ export default function InventoryModule() {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify({ id: editingProduct.id, ...productData }),
-          }
+          },
         );
       } else {
         // Backend should automatically set companyId from JWT token
         const payload = {
           ...productData,
         };
-        
-        console.log("Creating product with payload:", JSON.stringify(payload, null, 2));
-        
+
+        console.log(
+          "Creating product with payload:",
+          JSON.stringify(payload, null, 2),
+        );
+
         response = await fetch(`${API_BASE_URL}/api/Products`, {
           method: "POST",
           headers: getAuthHeaders(),
           body: JSON.stringify(payload),
         });
       }
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API Error:", errorText);
@@ -322,7 +347,11 @@ export default function InventoryModule() {
       await fetchCategories();
       setShowProductModal(false);
       setEditingProduct(null);
-      showSuccess(editingProduct ? "Product updated successfully!" : "Product added successfully!");
+      showSuccess(
+        editingProduct
+          ? "Product updated successfully!"
+          : "Product added successfully!",
+      );
     } catch (err) {
       console.error("Error saving product:", err);
       await fetchProducts();
@@ -333,7 +362,8 @@ export default function InventoryModule() {
   };
 
   const handleDeleteProduct = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
     try {
       await fetch(`${API_BASE_URL}/api/Products/${id}`, {
         method: "DELETE",
@@ -358,7 +388,7 @@ export default function InventoryModule() {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify(categoryData),
-          }
+          },
         );
       } else {
         response = await fetch(`${API_BASE_URL}/api/Category`, {
@@ -367,11 +397,15 @@ export default function InventoryModule() {
           body: JSON.stringify(categoryData),
         });
       }
-      
+
       await fetchCategories();
       setShowCategoryModal(false);
       setEditingCategory(null);
-      showSuccess(editingCategory ? "Category updated successfully!" : "Category added successfully!");
+      showSuccess(
+        editingCategory
+          ? "Category updated successfully!"
+          : "Category added successfully!",
+      );
     } catch (err) {
       console.error("Error saving category:", err);
       await fetchCategories();
@@ -382,7 +416,8 @@ export default function InventoryModule() {
   };
 
   const handleDeleteCategory = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?")) return;
+    if (!window.confirm("Are you sure you want to delete this category?"))
+      return;
     try {
       await fetch(`${API_BASE_URL}/api/Category/${id}`, {
         method: "DELETE",
@@ -407,7 +442,7 @@ export default function InventoryModule() {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify(warehouseData),
-          }
+          },
         );
       } else {
         response = await fetch(`${API_BASE_URL}/api/Warehouses`, {
@@ -415,15 +450,18 @@ export default function InventoryModule() {
           headers: getAuthHeaders(),
           body: JSON.stringify({
             ...warehouseData,
-            branchId: 0,  // Required by API schema
           }),
         });
       }
-      
+
       await fetchWarehouses();
       setShowWarehouseModal(false);
       setEditingWarehouse(null);
-      showSuccess(editingWarehouse ? "Warehouse updated successfully!" : "Warehouse added successfully!");
+      showSuccess(
+        editingWarehouse
+          ? "Warehouse updated successfully!"
+          : "Warehouse added successfully!",
+      );
     } catch (err) {
       console.error("Error saving warehouse:", err);
       await fetchWarehouses();
@@ -434,7 +472,8 @@ export default function InventoryModule() {
   };
 
   const handleDeleteWarehouse = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this warehouse?")) return;
+    if (!window.confirm("Are you sure you want to delete this warehouse?"))
+      return;
     try {
       await fetch(`${API_BASE_URL}/api/Warehouses/${id}`, {
         method: "DELETE",
@@ -459,7 +498,7 @@ export default function InventoryModule() {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify(unitData),
-          }
+          },
         );
       } else {
         response = await fetch(`${API_BASE_URL}/api/UnitOfMeasure`, {
@@ -468,11 +507,13 @@ export default function InventoryModule() {
           body: JSON.stringify(unitData),
         });
       }
-      
+
       await fetchUnitsOfMeasure();
       setShowUnitModal(false);
       setEditingUnit(null);
-      showSuccess(editingUnit ? "Unit updated successfully!" : "Unit added successfully!");
+      showSuccess(
+        editingUnit ? "Unit updated successfully!" : "Unit added successfully!",
+      );
     } catch (err) {
       console.error("Error saving unit:", err);
       await fetchUnitsOfMeasure();
@@ -501,7 +542,6 @@ export default function InventoryModule() {
   const handleStockIn = async (stockInData) => {
     try {
       const payload = {
-        branchId: 0,  // Required by API, using 0 as per Swagger example
         docDate: new Date().toISOString(),
         sourceType: "Manual Entry",
         sourceId: 0,
@@ -525,13 +565,13 @@ export default function InventoryModule() {
         headers: getAuthHeaders(),
         body: JSON.stringify(payload),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Stock In Error Response:", errorText);
         throw new Error(`API Error: ${errorText}`);
       }
-      
+
       await fetchStockBalance();
       setShowStockInModal(false);
       setSelectedProduct(null);
@@ -548,7 +588,7 @@ export default function InventoryModule() {
   const handleStockOut = async (stockOutData) => {
     try {
       const payload = {
-        branchId: 0,  // Required by API, using 0 as per Swagger example
+        branchId: 0, // Required by API, using 0 as per Swagger example
         docDate: new Date().toISOString(),
         sourceType: "Manual Entry",
         sourceId: 0,
@@ -571,13 +611,13 @@ export default function InventoryModule() {
         headers: getAuthHeaders(),
         body: JSON.stringify(payload),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Stock Out Error Response:", errorText);
         throw new Error(`API Error: ${errorText}`);
       }
-      
+
       await fetchStockBalance();
       setShowStockOutModal(false);
       setSelectedProduct(null);
@@ -607,7 +647,9 @@ export default function InventoryModule() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-orange-50 to-slate-50 p-6">
         <div className="bg-white rounded-2xl p-8 shadow-xl max-w-md w-full text-center">
           <AlertTriangle className="w-16 h-16 text-red-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Data</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Error Loading Data
+          </h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <button
             onClick={fetchAllData}
@@ -640,8 +682,12 @@ export default function InventoryModule() {
                   <Package className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold text-gray-900">Inventory Module</h1>
-                  <p className="text-gray-600">Multi-warehouse stock management</p>
+                  <h1 className="text-4xl font-bold text-gray-900">
+                    Inventory Module
+                  </h1>
+                  <p className="text-gray-600">
+                    Multi-warehouse stock management
+                  </p>
                 </div>
               </div>
               <button
@@ -656,23 +702,25 @@ export default function InventoryModule() {
 
           {/* Tabs */}
           <div className="flex gap-2 mb-6 bg-white p-2 rounded-xl shadow-md overflow-x-auto">
-            {["overview", "products", "warehouses", "lowStock", "settings"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
-                  activeTab === tab
-                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                {tab === "lowStock"
-                  ? "Low Stock"
-                  : tab === "settings"
-                  ? "Master Data"
-                  : tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
+            {["overview", "products", "warehouses", "lowStock", "settings"].map(
+              (tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                    activeTab === tab
+                      ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                      : "text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {tab === "lowStock"
+                    ? "Low Stock"
+                    : tab === "settings"
+                      ? "Master Data"
+                      : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ),
+            )}
           </div>
 
           {/* Tab Content */}
@@ -696,7 +744,7 @@ export default function InventoryModule() {
               getProductStock={getProductStock}
               getUnitSymbol={getUnitSymbol}
               getUnitId={getUnitId}
-              lowStockThreshold={lowStockThreshold}
+              lowStockThreshold={getLowStockThreshold}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               onAddProduct={() => {
@@ -706,9 +754,12 @@ export default function InventoryModule() {
               onEditProduct={async (product) => {
                 // Fetch full product details to get barcode and other fields
                 try {
-                  const response = await fetch(`${API_BASE_URL}/api/Products/${product.id}`, {
-                    headers: getAuthHeaders(),
-                  });
+                  const response = await fetch(
+                    `${API_BASE_URL}/api/Products/${product.id}`,
+                    {
+                      headers: getAuthHeaders(),
+                    },
+                  );
                   if (response.ok) {
                     const fullProduct = await response.json();
                     console.log("Full product data for editing:", fullProduct);
@@ -727,7 +778,9 @@ export default function InventoryModule() {
               onDeleteProduct={handleDeleteProduct}
               onStockIn={(product) => {
                 if (!product.unitOfMeasureId && !product.unitOfMeasureName) {
-                  alert("⚠️ Unit of Measure Required\n\nThis product doesn't have a unit of measure assigned. Please edit the product and assign a unit before performing stock operations.");
+                  alert(
+                    "⚠️ Unit of Measure Required\n\nThis product doesn't have a unit of measure assigned. Please edit the product and assign a unit before performing stock operations.",
+                  );
                   return;
                 }
                 setSelectedProduct(product);
@@ -735,7 +788,9 @@ export default function InventoryModule() {
               }}
               onStockOut={(product) => {
                 if (!product.unitOfMeasureId && !product.unitOfMeasureName) {
-                  alert("⚠️ Unit of Measure Required\n\nThis product doesn't have a unit of measure assigned. Please edit the product and assign a unit before performing stock operations.");
+                  alert(
+                    "⚠️ Unit of Measure Required\n\nThis product doesn't have a unit of measure assigned. Please edit the product and assign a unit before performing stock operations.",
+                  );
                   return;
                 }
                 setSelectedProduct(product);
@@ -765,7 +820,7 @@ export default function InventoryModule() {
               warehouses={warehouses}
               getProductStock={getProductStock}
               getUnitSymbol={getUnitSymbol}
-              lowStockThreshold={lowStockThreshold}
+              getLowStockThreshold={getLowStockThreshold}
             />
           )}
 
@@ -857,7 +912,7 @@ export default function InventoryModule() {
         {showStockInModal && selectedProduct && (
           <StockInModal
             product={selectedProduct}
-            warehouses={warehouses.filter(w => w.isActive)}
+            warehouses={warehouses.filter((w) => w.isActive)}
             getUnitSymbol={getUnitSymbol}
             getUnitName={getUnitName}
             getUnitId={getUnitId}
@@ -872,7 +927,7 @@ export default function InventoryModule() {
         {showStockOutModal && selectedProduct && (
           <StockOutModal
             product={selectedProduct}
-            warehouses={warehouses.filter(w => w.isActive)}
+            warehouses={warehouses.filter((w) => w.isActive)}
             stockBalances={stockBalances}
             getProductStock={getProductStock}
             getUnitSymbol={getUnitSymbol}
@@ -907,7 +962,15 @@ export default function InventoryModule() {
 }
 
 // Overview Tab - same as before
-function OverviewTab({ totalProducts, totalValue, lowStockItems, outOfStock, stockLevelsData, categoryData, COLORS }) {
+function OverviewTab({
+  totalProducts,
+  totalValue,
+  lowStockItems,
+  outOfStock,
+  stockLevelsData,
+  categoryData,
+  COLORS,
+}) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -919,7 +982,9 @@ function OverviewTab({ totalProducts, totalValue, lowStockItems, outOfStock, sto
         <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
           <TrendingUp className="w-10 h-10 text-green-600 mb-4" />
           <p className="text-sm text-gray-600 mb-1">Total Value</p>
-          <p className="text-3xl font-bold text-gray-900">${totalValue.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-gray-900">
+            ${totalValue.toLocaleString()}
+          </p>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
           <AlertTriangle className="w-10 h-10 text-yellow-600 mb-4" />
@@ -949,11 +1014,15 @@ function OverviewTab({ totalProducts, totalValue, lowStockItems, outOfStock, sto
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-center text-gray-500 py-12">No stock data available</p>
+            <p className="text-center text-gray-500 py-12">
+              No stock data available
+            </p>
           )}
         </div>
         <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Category Distribution</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-4">
+            Category Distribution
+          </h3>
           {categoryData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -962,20 +1031,27 @@ function OverviewTab({ totalProducts, totalValue, lowStockItems, outOfStock, sto
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
                 >
                   {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-center text-gray-500 py-12">No category data available</p>
+            <p className="text-center text-gray-500 py-12">
+              No category data available
+            </p>
           )}
         </div>
       </div>
@@ -1001,7 +1077,9 @@ function ProductsTab({
   onViewDetails,
   onRefresh,
 }) {
-  const productsWithoutUnits = products.filter(p => !p.unitOfMeasureId && !p.unitOfMeasureName);
+  const productsWithoutUnits = products.filter(
+    (p) => !p.unitOfMeasureId && !p.unitOfMeasureName,
+  );
 
   return (
     <div className="space-y-6">
@@ -1012,15 +1090,22 @@ function ProductsTab({
             <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h3 className="text-sm font-semibold text-amber-900">
-                {productsWithoutUnits.length} {productsWithoutUnits.length === 1 ? 'product needs' : 'products need'} a unit of measure
+                {productsWithoutUnits.length}{" "}
+                {productsWithoutUnits.length === 1
+                  ? "product needs"
+                  : "products need"}{" "}
+                a unit of measure
               </h3>
               <p className="text-sm text-amber-700 mt-1">
-                Stock operations (Add/Remove) are disabled for products without a unit of measure. 
-                Click the Edit button to assign a unit.
+                Stock operations (Add/Remove) are disabled for products without
+                a unit of measure. Click the Edit button to assign a unit.
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                {productsWithoutUnits.slice(0, 3).map(p => (
-                  <span key={p.id} className="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs">
+                {productsWithoutUnits.slice(0, 3).map((p) => (
+                  <span
+                    key={p.id}
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs"
+                  >
                     {p.name}
                   </span>
                 ))}
@@ -1071,36 +1156,72 @@ function ProductsTab({
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Barcode</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Product Name</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Unit</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Total Stock</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Price</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Barcode
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Product Name
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Category
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Unit
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Total Stock
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Min Stock
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Price
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
+                  <td
+                    colSpan="8"
+                    className="px-6 py-12 text-center text-gray-500"
+                  >
                     No products found. Click "Add Product" to create one.
                   </td>
                 </tr>
               ) : (
                 products.map((product) => {
                   const stock = getProductStock(product.id);
-                  const category = categories.find((c) => c.id === product.categoryId);
-                  const unit = unitsOfMeasure.find((u) => u.id === product.unitOfMeasureId);
+                  const category = categories.find(
+                    (c) => c.id === product.categoryId,
+                  );
+                  const unit = unitsOfMeasure.find(
+                    (u) => u.id === product.unitOfMeasureId,
+                  );
 
                   return (
-                    <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{product.code}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{product.name}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{product.categoryName || category?.name || "-"}</td>
+                    <tr
+                      key={product.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                        {product.code}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {product.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {product.categoryName || category?.name || "-"}
+                      </td>
                       <td className="px-6 py-4">
-                        {product.unitOfMeasureId || product.unitOfMeasureName ? (
+                        {product.unitOfMeasureId ||
+                        product.unitOfMeasureName ? (
                           <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-semibold">
                             <Ruler className="w-3 h-3" />
                             {product.unitOfMeasureName || unit?.name || "N/A"}
@@ -1114,10 +1235,19 @@ function ProductsTab({
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-sm font-semibold text-gray-900">
-                          {stock} {getUnitSymbol(product.unitOfMeasureId, product)}
+                          {stock}{" "}
+                          {getUnitSymbol(product.unitOfMeasureId, product)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">${product.defaultPrice || 0}</td>
+
+                      <td className="px-6 py-4">
+                        <span className="text-sm text-gray-900">
+                          {product.minQuantity || "-"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                        ${product.defaultPrice || 0}
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
                           <span
@@ -1125,11 +1255,15 @@ function ProductsTab({
                               stock === 0
                                 ? "bg-red-100 text-red-700"
                                 : stock <= lowStockThreshold
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-green-100 text-green-700"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-green-100 text-green-700"
                             }`}
                           >
-                            {stock === 0 ? "Out of Stock" : stock <= lowStockThreshold ? "Low Stock" : "In Stock"}
+                            {stock === 0
+                              ? "Out of Stock"
+                              : stock <= lowStockThreshold
+                                ? "Low Stock"
+                                : "In Stock"}
                           </span>
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -1153,25 +1287,43 @@ function ProductsTab({
                           </button>
                           <button
                             onClick={() => onStockIn(product)}
-                            disabled={!product.unitOfMeasureId && !product.unitOfMeasureName}
+                            disabled={
+                              !product.unitOfMeasureId &&
+                              !product.unitOfMeasureName
+                            }
                             className={`p-2 rounded-lg transition-colors ${
-                              (product.unitOfMeasureId || product.unitOfMeasureName)
+                              product.unitOfMeasureId ||
+                              product.unitOfMeasureName
                                 ? "text-green-600 hover:bg-green-50"
                                 : "text-gray-400 cursor-not-allowed"
                             }`}
-                            title={(product.unitOfMeasureId || product.unitOfMeasureName) ? "Add Stock" : "Unit of measure required"}
+                            title={
+                              product.unitOfMeasureId ||
+                              product.unitOfMeasureName
+                                ? "Add Stock"
+                                : "Unit of measure required"
+                            }
                           >
                             <ArrowUpCircle className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => onStockOut(product)}
-                            disabled={!product.unitOfMeasureId && !product.unitOfMeasureName}
+                            disabled={
+                              !product.unitOfMeasureId &&
+                              !product.unitOfMeasureName
+                            }
                             className={`p-2 rounded-lg transition-colors ${
-                              (product.unitOfMeasureId || product.unitOfMeasureName)
+                              product.unitOfMeasureId ||
+                              product.unitOfMeasureName
                                 ? "text-purple-600 hover:bg-purple-50"
                                 : "text-gray-400 cursor-not-allowed"
                             }`}
-                            title={(product.unitOfMeasureId || product.unitOfMeasureName) ? "Remove Stock" : "Unit of measure required"}
+                            title={
+                              product.unitOfMeasureId ||
+                              product.unitOfMeasureName
+                                ? "Remove Stock"
+                                : "Unit of measure required"
+                            }
                           >
                             <ArrowDownCircle className="w-4 h-4" />
                           </button>
@@ -1204,30 +1356,54 @@ function ProductsTab({
 }
 
 // Warehouses Tab - WITH UNIT SYMBOLS
-function WarehousesTab({ warehouses, products, stockBalances, getProductStock, getUnitSymbol }) {
+function WarehousesTab({
+  warehouses,
+  products,
+  stockBalances,
+  getProductStock,
+  getUnitSymbol,
+}) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {warehouses.map((warehouse) => {
-          const warehouseProducts = products.filter(p => getProductStock(p.id, warehouse.id) > 0);
-          const totalItems = warehouseProducts.reduce((sum, p) => sum + getProductStock(p.id, warehouse.id), 0);
-          const totalValue = warehouseProducts.reduce((sum, p) => sum + (getProductStock(p.id, warehouse.id) * (p.defaultPrice || 0)), 0);
+          const warehouseProducts = products.filter(
+            (p) => getProductStock(p.id, warehouse.id) > 0,
+          );
+          const totalItems = warehouseProducts.reduce(
+            (sum, p) => sum + getProductStock(p.id, warehouse.id),
+            0,
+          );
+          const totalValue = warehouseProducts.reduce(
+            (sum, p) =>
+              sum + getProductStock(p.id, warehouse.id) * (p.defaultPrice || 0),
+            0,
+          );
 
           return (
-            <div key={warehouse.id} className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+            <div
+              key={warehouse.id}
+              className="bg-white rounded-xl p-6 shadow-lg border border-gray-100"
+            >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                     <Warehouse className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900">{warehouse.name}</h3>
-                    <p className="text-sm text-gray-600">Code: {warehouse.code}</p>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      {warehouse.name}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Code: {warehouse.code}
+                    </p>
                   </div>
                 </div>
                 <span
                   className={`px-2 py-1 text-xs rounded-full ${
-                    warehouse.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+                    warehouse.isActive
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {warehouse.isActive ? "Active" : "Inactive"}
@@ -1244,28 +1420,40 @@ function WarehousesTab({ warehouses, products, stockBalances, getProductStock, g
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-gray-600">Products</p>
-                      <p className="text-lg font-bold text-gray-900">{warehouseProducts.length}</p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {warehouseProducts.length}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-600">Total Units</p>
-                      <p className="text-lg font-bold text-gray-900">{totalItems}</p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {totalItems}
+                      </p>
                     </div>
                   </div>
                   <div className="mt-3">
                     <p className="text-xs text-gray-600">Stock Value</p>
-                    <p className="text-xl font-bold text-green-600">${totalValue.toLocaleString()}</p>
+                    <p className="text-xl font-bold text-green-600">
+                      ${totalValue.toLocaleString()}
+                    </p>
                   </div>
                 </div>
 
                 {warehouseProducts.length > 0 && (
                   <div className="pt-3 border-t border-gray-200">
-                    <p className="text-xs font-semibold text-gray-700 mb-2">Top Products</p>
+                    <p className="text-xs font-semibold text-gray-700 mb-2">
+                      Top Products
+                    </p>
                     <div className="space-y-1">
-                      {warehouseProducts.slice(0, 3).map(p => (
-                        <div key={p.id} className="flex justify-between text-sm">
+                      {warehouseProducts.slice(0, 3).map((p) => (
+                        <div
+                          key={p.id}
+                          className="flex justify-between text-sm"
+                        >
                           <span className="text-gray-600">{p.name}</span>
                           <span className="font-semibold text-gray-900">
-                            {getProductStock(p.id, warehouse.id)} {getUnitSymbol(p.unitOfMeasureId, p)}
+                            {getProductStock(p.id, warehouse.id)}{" "}
+                            {getUnitSymbol(p.unitOfMeasureId, p)}
                           </span>
                         </div>
                       ))}
@@ -1280,7 +1468,9 @@ function WarehousesTab({ warehouses, products, stockBalances, getProductStock, g
         {warehouses.length === 0 && (
           <div className="col-span-full text-center py-12">
             <Warehouse className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No warehouses found. Go to Master Data to add warehouses.</p>
+            <p className="text-gray-500">
+              No warehouses found. Go to Master Data to add warehouses.
+            </p>
           </div>
         )}
       </div>
@@ -1289,13 +1479,18 @@ function WarehousesTab({ warehouses, products, stockBalances, getProductStock, g
 }
 
 // Low Stock Tab - WITH UNIT SYMBOLS
-function LowStockTab({ products, warehouses, getProductStock, getUnitSymbol, lowStockThreshold }) {
-  const lowStockProducts = products.filter(
-    (p) => {
-      const totalStock = getProductStock(p.id);
-      return totalStock > 0 && totalStock <= lowStockThreshold;
-    }
-  );
+function LowStockTab({
+  products,
+  warehouses,
+  getProductStock,
+  getUnitSymbol,
+  getLowStockThreshold,
+}) {
+  const lowStockProducts = products.filter((p) => {
+    const totalStock = getProductStock(p.id);
+    const threshold = getLowStockThreshold(p);
+    return totalStock > 0 && totalStock <= threshold;
+  });
 
   return (
     <div className="space-y-6">
@@ -1308,10 +1503,13 @@ function LowStockTab({ products, warehouses, getProductStock, getUnitSymbol, low
           {lowStockProducts.map((product) => {
             const totalStock = getProductStock(product.id);
             const unitSymbol = getUnitSymbol(product.unitOfMeasureId, product);
-            const warehouseStocks = warehouses.map(wh => ({
-              warehouse: wh,
-              stock: getProductStock(product.id, wh.id)
-            })).filter(ws => ws.stock > 0);
+            const threshold = getLowStockThreshold(product);
+            const warehouseStocks = warehouses
+              .map((wh) => ({
+                warehouse: wh,
+                stock: getProductStock(product.id, wh.id),
+              }))
+              .filter((ws) => ws.stock > 0);
 
             return (
               <div
@@ -1322,17 +1520,22 @@ function LowStockTab({ products, warehouses, getProductStock, getUnitSymbol, low
                   <div>
                     <h4 className="font-bold text-gray-900">{product.name}</h4>
                     <p className="text-sm text-gray-600">
-                      Total Stock: {totalStock} {unitSymbol} | Threshold: {lowStockThreshold} {unitSymbol}
+                      Total Stock: {totalStock} {unitSymbol} | Threshold:{" "}
+                      {threshold} {unitSymbol}
                     </p>
                   </div>
                 </div>
                 {warehouseStocks.length > 0 && (
                   <div className="mt-3 pt-3 border-t border-yellow-300">
-                    <p className="text-xs font-semibold text-gray-700 mb-2">Stock by Warehouse:</p>
+                    <p className="text-xs font-semibold text-gray-700 mb-2">
+                      Stock by Warehouse:
+                    </p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      {warehouseStocks.map(ws => (
+                      {warehouseStocks.map((ws) => (
                         <div key={ws.warehouse.id} className="text-sm">
-                          <span className="text-gray-600">{ws.warehouse.name}:</span>
+                          <span className="text-gray-600">
+                            {ws.warehouse.name}:
+                          </span>
                           <span className="ml-1 font-semibold text-gray-900">
                             {ws.stock} {unitSymbol}
                           </span>
@@ -1387,11 +1590,16 @@ function MasterDataTab({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((cat) => (
-            <div key={cat.id} className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+            <div
+              key={cat.id}
+              className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors"
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <h4 className="font-semibold text-gray-900">{cat.name}</h4>
-                  <p className="text-sm text-gray-600">{cat.description || "No description"}</p>
+                  <p className="text-sm text-gray-600">
+                    {cat.description || "No description"}
+                  </p>
                 </div>
                 <div className="flex gap-1">
                   <button
@@ -1435,7 +1643,10 @@ function MasterDataTab({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {warehouses.map((wh) => (
-            <div key={wh.id} className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 transition-colors">
+            <div
+              key={wh.id}
+              className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 transition-colors"
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <h4 className="font-semibold text-gray-900">{wh.name}</h4>
@@ -1443,7 +1654,9 @@ function MasterDataTab({
                   <p className="text-sm text-gray-600">{wh.address}</p>
                   <span
                     className={`inline-block mt-2 px-2 py-1 text-xs rounded-full ${
-                      wh.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+                      wh.isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-700"
                     }`}
                   >
                     {wh.isActive ? "Active" : "Inactive"}
@@ -1479,7 +1692,9 @@ function MasterDataTab({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Ruler className="w-6 h-6 text-green-600" />
-            <h3 className="text-xl font-bold text-gray-900">Units of Measure</h3>
+            <h3 className="text-xl font-bold text-gray-900">
+              Units of Measure
+            </h3>
           </div>
           <button
             onClick={onAddUnit}
@@ -1491,7 +1706,10 @@ function MasterDataTab({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {unitsOfMeasure.map((unit) => (
-            <div key={unit.id} className="p-4 border border-gray-200 rounded-lg hover:border-green-300 transition-colors">
+            <div
+              key={unit.id}
+              className="p-4 border border-gray-200 rounded-lg hover:border-green-300 transition-colors"
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <h4 className="font-semibold text-gray-900">{unit.name}</h4>
@@ -1527,44 +1745,58 @@ function MasterDataTab({
 
 // ============ MODAL COMPONENTS ============
 
-// Product Modal
-function ProductModal({ product, categories, unitsOfMeasure, onSave, onClose, onAddCategory, onAddUnit }) {
-  // Debug: Log the product being edited
+// Product Modal - WITH minQuantity field
+function ProductModal({
+  product,
+  categories,
+  unitsOfMeasure,
+  onSave,
+  onClose,
+  onAddCategory,
+  onAddUnit,
+}) {
   console.log("ProductModal opened with product:", product);
-  
-  // Helper to get category ID from name
+
   const getCategoryIdFromName = (categoryName) => {
-    const category = categories.find(c => c.name === categoryName);
+    const category = categories.find((c) => c.name === categoryName);
     return category?.id || "";
   };
 
-  // Helper to get unit ID from name
   const getUnitIdFromName = (unitName) => {
-    const unit = unitsOfMeasure.find(u => u.name === unitName);
+    const unit = unitsOfMeasure.find((u) => u.name === unitName);
     return unit?.id || "";
   };
 
   const [formData, setFormData] = useState(
-    product ? {
-      code: product.code || "",
-      name: product.name || "",
-      description: product.description || "",
-      categoryId: product.categoryId || getCategoryIdFromName(product.categoryName) || "",
-      unitOfMeasureId: product.unitOfMeasureId || getUnitIdFromName(product.unitOfMeasureName) || "",
-      defaultPrice: product.defaultPrice || "",
-      isActive: product.isActive !== false,
-    } : {
-      code: "",
-      name: "",
-      description: "",
-      categoryId: "",
-      unitOfMeasureId: "",
-      defaultPrice: "",
-      isActive: true,
-    }
+    product
+      ? {
+          code: product.code || "",
+          name: product.name || "",
+          description: product.description || "",
+          categoryId:
+            product.categoryId ||
+            getCategoryIdFromName(product.categoryName) ||
+            "",
+          unitOfMeasureId:
+            product.unitOfMeasureId ||
+            getUnitIdFromName(product.unitOfMeasureName) ||
+            "",
+          defaultPrice: product.defaultPrice || "",
+          minQuantity: product.minQuantity || "", // ADDED
+          isActive: product.isActive !== false,
+        }
+      : {
+          code: "",
+          name: "",
+          description: "",
+          categoryId: "",
+          unitOfMeasureId: "",
+          defaultPrice: "",
+          minQuantity: "", // ADDED
+          isActive: true,
+        },
   );
 
-  // Debug: Log the initial form data
   console.log("ProductModal formData initialized:", formData);
 
   const handleSubmit = () => {
@@ -1574,7 +1806,9 @@ function ProductModal({ product, categories, unitsOfMeasure, onSave, onClose, on
     }
 
     if (!formData.unitOfMeasureId) {
-      alert("Unit of Measure is required. Please select a unit or create a new one.");
+      alert(
+        "Unit of Measure is required. Please select a unit or create a new one.",
+      );
       return;
     }
 
@@ -1583,6 +1817,7 @@ function ProductModal({ product, categories, unitsOfMeasure, onSave, onClose, on
       categoryId: parseInt(formData.categoryId) || null,
       unitOfMeasureId: parseInt(formData.unitOfMeasureId) || null,
       defaultPrice: parseFloat(formData.defaultPrice) || 0,
+      minQuantity: formData.minQuantity ? parseInt(formData.minQuantity) : null, // ADDED
       isActive: formData.isActive !== false,
     });
   };
@@ -1594,41 +1829,56 @@ function ProductModal({ product, categories, unitsOfMeasure, onSave, onClose, on
           <h3 className="text-2xl font-bold text-gray-900">
             {product ? "Edit Product" : "Add Product"}
           </h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Barcode / Product Code *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Barcode / Product Code *
+            </label>
             <input
               type="text"
               required
               value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, code: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               placeholder="Enter product barcode"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Product Name *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Product Name *
+            </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Category
+            </label>
             <div className="flex gap-2">
               <select
                 value={formData.categoryId}
-                onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, categoryId: e.target.value })
+                }
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
               >
                 <option value="">Select Category</option>
@@ -1652,12 +1902,16 @@ function ProductModal({ product, categories, unitsOfMeasure, onSave, onClose, on
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Unit of Measure *
-              <span className="ml-2 text-xs font-normal text-gray-500">(Required for stock operations)</span>
+              <span className="ml-2 text-xs font-normal text-gray-500">
+                (Required for stock operations)
+              </span>
             </label>
             <div className="flex gap-2">
               <select
                 value={formData.unitOfMeasureId}
-                onChange={(e) => setFormData({ ...formData, unitOfMeasureId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, unitOfMeasureId: e.target.value })
+                }
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
                 required
               >
@@ -1678,26 +1932,59 @@ function ProductModal({ product, categories, unitsOfMeasure, onSave, onClose, on
               </button>
             </div>
             {!formData.unitOfMeasureId && (
-              <p className="mt-1 text-xs text-red-600">⚠️ Unit is required to perform stock in/out operations</p>
+              <p className="mt-1 text-xs text-red-600">
+                ⚠️ Unit is required to perform stock in/out operations
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Default Price ($)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Default Price ($)
+            </label>
             <input
               type="number"
               step="0.01"
               value={formData.defaultPrice}
-              onChange={(e) => setFormData({ ...formData, defaultPrice: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, defaultPrice: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
             />
           </div>
 
+          {/* ADDED: Min Quantity Field */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Minimum Quantity
+              <span className="ml-2 text-xs font-normal text-gray-500">
+                (Reorder level)
+              </span>
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={formData.minQuantity}
+              onChange={(e) =>
+                setFormData({ ...formData, minQuantity: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+              placeholder="Enter minimum stock level"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Alert when stock falls below this level
+            </p>
+          </div>
+
           <div className="col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Description
+            </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               rows="3"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
             />
@@ -1708,7 +1995,9 @@ function ProductModal({ product, categories, unitsOfMeasure, onSave, onClose, on
               <input
                 type="checkbox"
                 checked={formData.isActive}
-                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, isActive: e.target.checked })
+                }
                 className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500"
               />
               <span className="text-sm font-semibold text-gray-700">
@@ -1739,17 +2028,18 @@ function ProductModal({ product, categories, unitsOfMeasure, onSave, onClose, on
     </div>
   );
 }
-
 // Category Modal
 function CategoryModal({ category, onSave, onClose }) {
   const [formData, setFormData] = useState(
-    category ? {
-      name: category.name || "",
-      description: category.description || "",
-    } : {
-      name: "",
-      description: "",
-    }
+    category
+      ? {
+          name: category.name || "",
+          description: category.description || "",
+        }
+      : {
+          name: "",
+          description: "",
+        },
   );
 
   const handleSubmit = () => {
@@ -1767,28 +2057,39 @@ function CategoryModal({ category, onSave, onClose }) {
           <h3 className="text-2xl font-bold text-gray-900">
             {category ? "Edit Category" : "Add Category"}
           </h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Category Name *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Category Name *
+            </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Description
+            </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               rows="3"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
@@ -1817,17 +2118,19 @@ function CategoryModal({ category, onSave, onClose }) {
 // Warehouse Modal
 function WarehouseModal({ warehouse, onSave, onClose }) {
   const [formData, setFormData] = useState(
-    warehouse ? {
-      code: warehouse.code || "",
-      name: warehouse.name || "",
-      address: warehouse.address || "",
-      isActive: warehouse.isActive !== false,
-    } : {
-      code: "",
-      name: "",
-      address: "",
-      isActive: true,
-    }
+    warehouse
+      ? {
+          code: warehouse.code || "",
+          name: warehouse.name || "",
+          address: warehouse.address || "",
+          isActive: warehouse.isActive !== false,
+        }
+      : {
+          code: "",
+          name: "",
+          address: "",
+          isActive: true,
+        },
   );
 
   const handleSubmit = () => {
@@ -1845,39 +2148,54 @@ function WarehouseModal({ warehouse, onSave, onClose }) {
           <h3 className="text-2xl font-bold text-gray-900">
             {warehouse ? "Edit Warehouse" : "Add Warehouse"}
           </h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Warehouse Code *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Warehouse Code *
+            </label>
             <input
               type="text"
               required
               value={formData.code}
-              onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, code: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Warehouse Name *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Warehouse Name *
+            </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Address
+            </label>
             <textarea
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
+              }
               rows="3"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             />
@@ -1888,10 +2206,15 @@ function WarehouseModal({ warehouse, onSave, onClose }) {
               type="checkbox"
               id="isActive"
               checked={formData.isActive}
-              onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+              onChange={(e) =>
+                setFormData({ ...formData, isActive: e.target.checked })
+              }
               className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
             />
-            <label htmlFor="isActive" className="text-sm font-semibold text-gray-700">
+            <label
+              htmlFor="isActive"
+              className="text-sm font-semibold text-gray-700"
+            >
               Active
             </label>
           </div>
@@ -1919,13 +2242,15 @@ function WarehouseModal({ warehouse, onSave, onClose }) {
 // Unit Modal
 function UnitModal({ unit, onSave, onClose }) {
   const [formData, setFormData] = useState(
-    unit ? {
-      name: unit.name || "",
-      symbol: unit.symbol || "",
-    } : {
-      name: "",
-      symbol: "",
-    }
+    unit
+      ? {
+          name: unit.name || "",
+          symbol: unit.symbol || "",
+        }
+      : {
+          name: "",
+          symbol: "",
+        },
   );
 
   const handleSubmit = () => {
@@ -1943,31 +2268,42 @@ function UnitModal({ unit, onSave, onClose }) {
           <h3 className="text-2xl font-bold text-gray-900">
             {unit ? "Edit Unit of Measure" : "Add Unit of Measure"}
           </h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Unit Name *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Unit Name *
+            </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               placeholder="e.g., Kilogram, Piece, Box"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Symbol *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Symbol *
+            </label>
             <input
               type="text"
               required
               value={formData.symbol}
-              onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, symbol: e.target.value })
+              }
               placeholder="e.g., kg, pcs, box"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
             />
@@ -1994,7 +2330,15 @@ function UnitModal({ unit, onSave, onClose }) {
 }
 
 // Stock In Modal - WITH UNIT DISPLAY
-function StockInModal({ product, warehouses, getUnitSymbol, getUnitName, getUnitId, onSave, onClose }) {
+function StockInModal({
+  product,
+  warehouses,
+  getUnitSymbol,
+  getUnitName,
+  getUnitId,
+  onSave,
+  onClose,
+}) {
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [quantity, setQuantity] = useState("");
   const [unitCost, setUnitCost] = useState(product.defaultPrice || "");
@@ -2020,12 +2364,17 @@ function StockInModal({ product, warehouses, getUnitSymbol, getUnitName, getUnit
         productId: product.id,
         unitOfMeasureId: product.unitOfMeasureId,
         unitOfMeasureName: product.unitOfMeasureName,
-        derivedUnitId: unitId
+        derivedUnitId: unitId,
       });
       return;
     }
 
-    console.log("Submitting stock in with unit ID:", unitId, "for product:", product.name);
+    console.log(
+      "Submitting stock in with unit ID:",
+      unitId,
+      "for product:",
+      product.name,
+    );
 
     onSave({
       productId: product.id,
@@ -2048,7 +2397,10 @@ function StockInModal({ product, warehouses, getUnitSymbol, getUnitName, getUnit
             </div>
             <h3 className="text-2xl font-bold text-gray-900">Add Stock</h3>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -2064,7 +2416,9 @@ function StockInModal({ product, warehouses, getUnitSymbol, getUnitName, getUnit
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Warehouse *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Warehouse *
+            </label>
             <select
               value={selectedWarehouse}
               onChange={(e) => setSelectedWarehouse(e.target.value)}
@@ -2094,7 +2448,9 @@ function StockInModal({ product, warehouses, getUnitSymbol, getUnitName, getUnit
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Unit Cost ($)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Unit Cost ($)
+            </label>
             <input
               type="number"
               step="0.01"
@@ -2106,7 +2462,9 @@ function StockInModal({ product, warehouses, getUnitSymbol, getUnitName, getUnit
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Notes
+            </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -2120,10 +2478,14 @@ function StockInModal({ product, warehouses, getUnitSymbol, getUnitName, getUnit
             <div className="p-3 bg-green-50 rounded-lg">
               <p className="text-sm text-gray-600">Total Value</p>
               <p className="text-xl font-bold text-green-700">
-                ${((parseFloat(quantity) || 0) * (parseFloat(unitCost) || 0)).toLocaleString()}
+                $
+                {(
+                  (parseFloat(quantity) || 0) * (parseFloat(unitCost) || 0)
+                ).toLocaleString()}
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                {quantity} {unitSymbol} × ${parseFloat(unitCost) || 0} per {unitSymbol}
+                {quantity} {unitSymbol} × ${parseFloat(unitCost) || 0} per{" "}
+                {unitSymbol}
               </p>
             </div>
           )}
@@ -2149,12 +2511,24 @@ function StockInModal({ product, warehouses, getUnitSymbol, getUnitName, getUnit
 }
 
 // Stock Out Modal - WITH UNIT DISPLAY
-function StockOutModal({ product, warehouses, stockBalances, getProductStock, getUnitSymbol, getUnitName, getUnitId, onSave, onClose }) {
+function StockOutModal({
+  product,
+  warehouses,
+  stockBalances,
+  getProductStock,
+  getUnitSymbol,
+  getUnitName,
+  getUnitId,
+  onSave,
+  onClose,
+}) {
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [quantity, setQuantity] = useState("");
   const [notes, setNotes] = useState("");
 
-  const currentStock = selectedWarehouse ? getProductStock(product.id, parseInt(selectedWarehouse)) : 0;
+  const currentStock = selectedWarehouse
+    ? getProductStock(product.id, parseInt(selectedWarehouse))
+    : 0;
   const unitSymbol = getUnitSymbol(product.unitOfMeasureId, product);
   const unitName = getUnitName(product.unitOfMeasureId, product);
   const unitId = getUnitId(product);
@@ -2169,7 +2543,9 @@ function StockOutModal({ product, warehouses, stockBalances, getProductStock, ge
       return;
     }
     if (parseInt(quantity) > currentStock) {
-      alert(`Cannot remove ${quantity} ${unitSymbol}. Only ${currentStock} ${unitSymbol} available in this warehouse.`);
+      alert(
+        `Cannot remove ${quantity} ${unitSymbol}. Only ${currentStock} ${unitSymbol} available in this warehouse.`,
+      );
       return;
     }
     if (!unitId) {
@@ -2197,7 +2573,10 @@ function StockOutModal({ product, warehouses, stockBalances, getProductStock, ge
             </div>
             <h3 className="text-2xl font-bold text-gray-900">Remove Stock</h3>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -2213,7 +2592,9 @@ function StockOutModal({ product, warehouses, stockBalances, getProductStock, ge
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Warehouse *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Warehouse *
+            </label>
             <select
               value={selectedWarehouse}
               onChange={(e) => setSelectedWarehouse(e.target.value)}
@@ -2256,16 +2637,22 @@ function StockOutModal({ product, warehouses, stockBalances, getProductStock, ge
               </div>
 
               {quantity && (
-                <div className={`p-3 rounded-lg ${parseInt(quantity) > currentStock ? 'bg-red-50' : 'bg-purple-50'}`}>
+                <div
+                  className={`p-3 rounded-lg ${parseInt(quantity) > currentStock ? "bg-red-50" : "bg-purple-50"}`}
+                >
                   <p className="text-sm text-gray-600">Remaining Stock</p>
-                  <p className={`text-lg font-bold ${parseInt(quantity) > currentStock ? 'text-red-700' : 'text-purple-700'}`}>
+                  <p
+                    className={`text-lg font-bold ${parseInt(quantity) > currentStock ? "text-red-700" : "text-purple-700"}`}
+                  >
                     {currentStock - parseInt(quantity)} {unitSymbol}
                   </p>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Notes
+                </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -2299,18 +2686,31 @@ function StockOutModal({ product, warehouses, stockBalances, getProductStock, ge
 }
 
 // Product Detail Modal - WITH UNIT DISPLAY
-function ProductDetailModal({ product, warehouses, categories, unitsOfMeasure, stockBalances, getProductStock, getUnitSymbol, onClose }) {
-  const category = categories.find(c => c.id === product.categoryId) || 
-                   (product.categoryName ? { name: product.categoryName } : null);
-  const unit = unitsOfMeasure.find(u => u.id === product.unitOfMeasureId) || 
-               unitsOfMeasure.find(u => u.name === product.unitOfMeasureName);
+function ProductDetailModal({
+  product,
+  warehouses,
+  categories,
+  unitsOfMeasure,
+  stockBalances,
+  getProductStock,
+  getUnitSymbol,
+  onClose,
+}) {
+  const category =
+    categories.find((c) => c.id === product.categoryId) ||
+    (product.categoryName ? { name: product.categoryName } : null);
+  const unit =
+    unitsOfMeasure.find((u) => u.id === product.unitOfMeasureId) ||
+    unitsOfMeasure.find((u) => u.name === product.unitOfMeasureName);
   const totalStock = getProductStock(product.id);
   const unitSymbol = getUnitSymbol(product.unitOfMeasureId, product);
-  
-  const warehouseStocks = warehouses.map(wh => ({
-    warehouse: wh,
-    stock: getProductStock(product.id, wh.id)
-  })).filter(ws => ws.stock > 0);
+
+  const warehouseStocks = warehouses
+    .map((wh) => ({
+      warehouse: wh,
+      stock: getProductStock(product.id, wh.id),
+    }))
+    .filter((ws) => ws.stock > 0);
 
   const totalValue = totalStock * (product.defaultPrice || 0);
 
@@ -2323,8 +2723,8 @@ function ProductDetailModal({ product, warehouses, categories, unitsOfMeasure, s
     barcodeLength: product.barcode?.length,
     totalStock,
     warehouseStocks,
-    stockBalances: stockBalances.filter(b => b.productId === product.id),
-    allStockBalances: stockBalances
+    stockBalances: stockBalances.filter((b) => b.productId === product.id),
+    allStockBalances: stockBalances,
   });
 
   return (
@@ -2336,11 +2736,18 @@ function ProductDetailModal({ product, warehouses, categories, unitsOfMeasure, s
               <Eye className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">Product Details</h3>
-              <p className="text-sm text-gray-600">Complete product information</p>
+              <h3 className="text-2xl font-bold text-gray-900">
+                Product Details
+              </h3>
+              <p className="text-sm text-gray-600">
+                Complete product information
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -2349,7 +2756,9 @@ function ProductDetailModal({ product, warehouses, categories, unitsOfMeasure, s
           <div className="col-span-2 p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg border border-orange-200">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-2xl font-bold text-gray-900 mb-1">{product.name}</h4>
+                <h4 className="text-2xl font-bold text-gray-900 mb-1">
+                  {product.name}
+                </h4>
                 <p className="text-gray-600">Barcode: {product.code}</p>
               </div>
               <span
@@ -2366,20 +2775,26 @@ function ProductDetailModal({ product, warehouses, categories, unitsOfMeasure, s
 
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600 mb-1">Category</p>
-            <p className="text-lg font-semibold text-gray-900">{category?.name || "N/A"}</p>
+            <p className="text-lg font-semibold text-gray-900">
+              {category?.name || "N/A"}
+            </p>
           </div>
 
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600 mb-1">Unit of Measure</p>
             <div className="flex items-center gap-2">
               <Ruler className="w-5 h-5 text-blue-600" />
-              <p className="text-lg font-semibold text-gray-900">{unit?.name || "N/A"} ({unit?.symbol || "-"})</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {unit?.name || "N/A"} ({unit?.symbol || "-"})
+              </p>
             </div>
           </div>
 
           <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600 mb-1">Default Price</p>
-            <p className="text-lg font-semibold text-green-600">${product.defaultPrice || 0} per {unitSymbol}</p>
+            <p className="text-lg font-semibold text-green-600">
+              ${product.defaultPrice || 0} per {unitSymbol}
+            </p>
           </div>
 
           {product.description && product.description.trim() !== "" && (
@@ -2391,34 +2806,51 @@ function ProductDetailModal({ product, warehouses, categories, unitsOfMeasure, s
         </div>
 
         <div className="mb-6">
-          <h4 className="text-lg font-bold text-gray-900 mb-4">Stock Summary</h4>
+          <h4 className="text-lg font-bold text-gray-900 mb-4">
+            Stock Summary
+          </h4>
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-sm text-gray-600 mb-1">Total Stock</p>
-              <p className="text-3xl font-bold text-blue-600">{totalStock} {unitSymbol}</p>
+              <p className="text-3xl font-bold text-blue-600">
+                {totalStock} {unitSymbol}
+              </p>
             </div>
             <div className="p-4 bg-green-50 rounded-lg border border-green-200">
               <p className="text-sm text-gray-600 mb-1">Total Value</p>
-              <p className="text-3xl font-bold text-green-600">${totalValue.toLocaleString()}</p>
+              <p className="text-3xl font-bold text-green-600">
+                ${totalValue.toLocaleString()}
+              </p>
             </div>
           </div>
         </div>
 
         <div>
-          <h4 className="text-lg font-bold text-gray-900 mb-4">Stock by Warehouse</h4>
+          <h4 className="text-lg font-bold text-gray-900 mb-4">
+            Stock by Warehouse
+          </h4>
           {warehouseStocks.length > 0 ? (
             <div className="space-y-3">
               {warehouseStocks.map((ws) => (
-                <div key={ws.warehouse.id} className="p-4 bg-purple-50 rounded-lg border border-purple-200 flex items-center justify-between">
+                <div
+                  key={ws.warehouse.id}
+                  className="p-4 bg-purple-50 rounded-lg border border-purple-200 flex items-center justify-between"
+                >
                   <div className="flex items-center gap-3">
                     <Warehouse className="w-5 h-5 text-purple-600" />
                     <div>
-                      <p className="font-semibold text-gray-900">{ws.warehouse.name}</p>
-                      <p className="text-sm text-gray-600">{ws.warehouse.address}</p>
+                      <p className="font-semibold text-gray-900">
+                        {ws.warehouse.name}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {ws.warehouse.address}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-purple-600">{ws.stock}</p>
+                    <p className="text-2xl font-bold text-purple-600">
+                      {ws.stock}
+                    </p>
                     <p className="text-sm text-gray-600">{unitSymbol}</p>
                   </div>
                 </div>

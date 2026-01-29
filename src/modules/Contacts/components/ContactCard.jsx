@@ -27,9 +27,11 @@ export default function ContactCard({
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">{contact.name}</h3>
-            <p className="text-sm text-indigo-600 font-medium">
-              {contact.position}
-            </p>
+            {contact.position && (
+              <p className="text-sm text-indigo-600 font-medium">
+                {contact.position}
+              </p>
+            )}
           </div>
         </div>
         <button
@@ -49,7 +51,7 @@ export default function ContactCard({
       <div className="mb-4">
         <span
           className={`px-3 py-1 rounded-full text-xs font-semibold ${getTypeColor(
-            contact.type
+            contact.type,
           )}`}
         >
           {contact.type}
@@ -57,27 +59,35 @@ export default function ContactCard({
       </div>
 
       <div className="space-y-2 mb-4 text-sm text-gray-600">
-        <div className="flex items-center gap-2">
-          <Building2 className="w-4 h-4 flex-shrink-0" />{" "}
-          <span className="truncate">{contact.company}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Mail className="w-4 h-4 flex-shrink-0" />{" "}
-          <span className="truncate">{contact.email}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Phone className="w-4 h-4 flex-shrink-0" />{" "}
-          <span>{contact.phone}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 flex-shrink-0" />{" "}
-          <span>{contact.location}</span>
-        </div>
+        {contact.company && (
+          <div className="flex items-center gap-2">
+            <Building2 className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">{contact.company}</span>
+          </div>
+        )}
+        {contact.email && (
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">{contact.email}</span>
+          </div>
+        )}
+        {contact.phone && (
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4 flex-shrink-0" />
+            <span className="break-all">{contact.phone}</span>
+          </div>
+        )}
+        {contact.location && (
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">{contact.location}</span>
+          </div>
+        )}
         {contact.website && (
           <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 flex-shrink-0" />{" "}
+            <Globe className="w-4 h-4 flex-shrink-0" />
             <a
-              href={`https://${contact.website}`}
+              href={contact.website.startsWith('http') ? contact.website : `https://${contact.website}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-indigo-600 hover:underline truncate"
@@ -88,14 +98,14 @@ export default function ContactCard({
         )}
         {contact.linkedin && (
           <div className="flex items-center gap-2">
-            <Linkedin className="w-4 h-4 flex-shrink-0" />{" "}
+            <Linkedin className="w-4 h-4 flex-shrink-0" />
             <a
-              href={`https://${contact.linkedin}`}
+              href={contact.linkedin.startsWith('http') ? contact.linkedin : `https://${contact.linkedin}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-indigo-600 hover:underline truncate"
             >
-              LinkedIn
+              Profile
             </a>
           </div>
         )}

@@ -1,4 +1,4 @@
-import { Search, Filter, Download, Plus } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 
 export default function Toolbar({ searchQuery, setSearchQuery, openModal }) {
   return (
@@ -17,14 +17,6 @@ export default function Toolbar({ searchQuery, setSearchQuery, openModal }) {
       </div>
 
       <div className="flex gap-3">
-        <button className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-indigo-500 transition-colors">
-          <Filter className="w-4 h-4" />
-          Filter
-        </button>
-        <button className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-indigo-500 transition-colors">
-          <Download className="w-4 h-4" />
-          Export
-        </button>
         <button
           onClick={openModal}
           className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all shadow-md"
