@@ -1,139 +1,222 @@
-import { useState, useEffect } from "react";
-import {
-  Receipt,
-  Plus,
-  Search,
-  Filter,
-  Download,
-  Edit,
-  Trash2,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
+import { useState, useEffect, useContext } from "react";
+import { Receipt } from "lucide-react";
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 import ExpensesOverview from "./components/ExpensesOverview";
 import ExpensesTable from "./components/ExpensesTable";
 import ExpensesCategories from "./components/ExpensesCategories";
 import ExpenseModal from "./components/ExpenseModal";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function Expenses() {
+  const { isAuthenticated } = useContext(AuthContext);
+
   const [activeTab, setActiveTab] = useState("overview");
   const [expenses, setExpenses] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [stats, setStats] = useState(null);
 
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No authentication token found");
+
+      const response = await fetch(`${API_BASE_URL}/api/expense-categories`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch categories: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setCategories(data);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+      // Don't set error state for categories - just log it
+    }
+  };
+
+  // Fetch expenses
+  const fetchExpenses = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("No authentication token found");
+
+      const response = await fetch(`${API_BASE_URL}/api/expenses`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch expenses: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Transform API response to UI format
+      const transformedExpenses = data.items.map((expense) => ({
+        id: expense.id,
+        description: expense.description,
+        vendor: expense.vendor || "",
+        category: expense.categoryName,
+        categoryId: expense.categoryId,
+        amount: expense.amount,
+        date: new Date(expense.expenseDate).toISOString().split("T")[0],
+        expenseDate: expense.expenseDate,
+        status: expense.status.toLowerCase(),
+        paymentMethod: expense.paymentMethod,
+        notes: expense.notes || "",
+        referenceNumber: expense.referenceNumber || "",
+      }));
+
+      setExpenses(transformedExpenses);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching expenses:", err);
+      setError("Failed to load expenses: " + err.message);
+    }
+  };
+
+  // Fetch stats
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return;
+
+      const response = await fetch(`${API_BASE_URL}/api/expenses/stats/summary`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (err) {
+      console.error("Error fetching stats:", err);
+    }
+  };
+
+  // Initial data fetch
   useEffect(() => {
-    const saved = localStorage.getItem("expenses");
-    if (saved) {
-      setExpenses(JSON.parse(saved));
-    } else {
-      const sample = [
-        {
-          id: 1,
-          description: "Office Rent",
-          amount: 5000,
-          category: "Rent",
-          date: "2025-01-01",
-          vendor: "Property Management Inc",
-          status: "paid",
-          paymentMethod: "Bank Transfer",
-        },
-        {
-          id: 2,
-          description: "Software Licenses",
-          amount: 1200,
-          category: "Software",
-          date: "2025-01-05",
-          vendor: "Tech Solutions",
-          status: "paid",
-          paymentMethod: "Credit Card",
-        },
-        {
-          id: 3,
-          description: "Marketing Campaign",
-          amount: 3500,
-          category: "Marketing",
-          date: "2025-01-10",
-          vendor: "Ad Agency",
-          status: "pending",
-          paymentMethod: "Credit Card",
-        },
-        {
-          id: 4,
-          description: "Office Supplies",
-          amount: 450,
-          category: "Supplies",
-          date: "2025-01-12",
-          vendor: "Office Depot",
-          status: "paid",
-          paymentMethod: "Debit Card",
-        },
-        {
-          id: 5,
-          description: "Team Lunch",
-          amount: 280,
-          category: "Meals",
-          date: "2025-01-15",
-          vendor: "Restaurant",
-          status: "paid",
-          paymentMethod: "Cash",
-        },
-        {
-          id: 6,
-          description: "Internet Service",
-          amount: 150,
-          category: "Utilities",
-          date: "2025-01-20",
-          vendor: "ISP Provider",
-          status: "paid",
-          paymentMethod: "Auto-pay",
-        },
-        {
-          id: 7,
-          description: "Business Travel",
-          amount: 1800,
-          category: "Travel",
-          date: "2025-01-22",
-          vendor: "Airlines",
-          status: "pending",
-          paymentMethod: "Credit Card",
-        },
-      ];
-      setExpenses(sample);
-      localStorage.setItem("expenses", JSON.stringify(sample));
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
     }
-  }, []);
 
-  const saveExpenses = (newList) => {
-    setExpenses(newList);
-    localStorage.setItem("expenses", JSON.stringify(newList));
-  };
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([fetchCategories(), fetchExpenses(), fetchStats()]);
+      setLoading(false);
+    };
 
-  const handleSaveExpense = (expenseData) => {
-    if (editingExpense) {
-      const updated = expenses.map((e) =>
-        e.id === editingExpense.id ? { ...expenseData, id: e.id } : e
-      );
-      saveExpenses(updated);
-    } else {
-      const newExpense = {
-        ...expenseData,
-        id: Math.max(...expenses.map((e) => e.id), 0) + 1,
+    loadData();
+  }, [isAuthenticated]);
+
+  // Handle save expense (create or update)
+  const handleSaveExpense = async (expenseData) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        alert("You are not authenticated. Please log in again.");
+        return;
+      }
+
+      const isEditing = !!editingExpense;
+
+      // Prepare API data
+      const apiData = {
+        description: expenseData.description,
+        vendor: expenseData.vendor || "",
+        categoryId: parseInt(expenseData.categoryId),
+        amount: parseFloat(expenseData.amount),
+        expenseDate: new Date(expenseData.date).toISOString(),
+        status: expenseData.status.charAt(0).toUpperCase() + expenseData.status.slice(1), // Capitalize first letter
+        paymentMethod: expenseData.paymentMethod,
+        notes: expenseData.notes || "",
+        referenceNumber: expenseData.referenceNumber || "",
       };
-      saveExpenses([...expenses, newExpense]);
+
+      const url = isEditing
+        ? `${API_BASE_URL}/api/expenses/${editingExpense.id}`
+        : `${API_BASE_URL}/api/expenses`;
+      const method = isEditing ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+        body: JSON.stringify(apiData),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "");
+        throw new Error(errorText || `Failed to ${isEditing ? "update" : "create"} expense`);
+      }
+
+      // Close modal first
+      setShowExpenseModal(false);
+      setEditingExpense(null);
+
+      // Refetch data
+      await Promise.all([fetchExpenses(), fetchStats()]);
+    } catch (err) {
+      console.error("Error saving expense:", err);
+      alert("Error saving expense: " + err.message);
     }
-    setEditingExpense(null);
-    setShowExpenseModal(false);
   };
 
-  const handleDeleteExpense = (id) => {
-    if (window.confirm("Delete this expense?")) {
-      saveExpenses(expenses.filter((e) => e.id !== id));
+  // Handle delete expense
+  const handleDeleteExpense = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this expense?")) return;
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        alert("You are not authenticated. Please log in again.");
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/expenses/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "*/*",
+        },
+      });
+
+      if (!response.ok && response.status !== 204) {
+        const errorText = await response.text().catch(() => "Failed to delete expense");
+        throw new Error(errorText);
+      }
+
+      // Refetch data
+      await Promise.all([fetchExpenses(), fetchStats()]);
+    } catch (err) {
+      console.error("Error deleting expense:", err);
+      alert("Error deleting expense: " + err.message);
     }
   };
 
+  // Filter expenses based on search
   const filteredExpenses = expenses.filter(
     (e) =>
       e.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -141,81 +224,119 @@ export default function Expenses() {
       e.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex-1 min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-slate-50 p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-red-600 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-600">Loading expenses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex-1 min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-slate-50 p-6 flex items-center justify-center">
+        <div className="bg-white rounded-xl p-8 shadow-lg max-w-md">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-700">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              fetchExpenses();
+            }}
+            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <div className="flex">
-        <div className="flex-1 min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-slate-50 p-6">
-          <div className="max-w-7xl mx-auto">
-            {/* HEADER */}
-            <div className="mb-8">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg flex items-center justify-center">
-                  <Receipt className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-4xl font-bold text-gray-900">
-                    Expenses Module
-                  </h1>
-                  <p className="text-gray-600">
-                    Track and manage business expenses
-                  </p>
-                </div>
+    <div className="flex">
+      <div className="flex-1 min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-slate-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* HEADER */}
+          <div className="mb-8">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg flex items-center justify-center">
+                <Receipt className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900">
+                  Expenses Module
+                </h1>
+                <p className="text-gray-600">
+                  Track and manage business expenses
+                </p>
               </div>
             </div>
-
-            {/* TABS */}
-            <div className="flex gap-2 mb-6 bg-white p-2 rounded-xl shadow-md">
-              {["overview", "expenses", "categories"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-all ${
-                    activeTab === tab
-                      ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              ))}
-            </div>
-
-            {/* OVERVIEW */}
-            {activeTab === "overview" && (
-              <ExpensesOverview expenses={expenses} />
-            )}
-
-            {/* EXPENSES TABLE */}
-            {activeTab === "expenses" && (
-              <ExpensesTable
-                expenses={filteredExpenses}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                setShowExpenseModal={setShowExpenseModal}
-                setEditingExpense={setEditingExpense}
-                handleDeleteExpense={handleDeleteExpense}
-              />
-            )}
-
-            {/* CATEGORIES */}
-            {activeTab === "categories" && (
-              <ExpensesCategories expenses={expenses} />
-            )}
           </div>
 
-          {/* MODAL */}
-          {showExpenseModal && (
-            <ExpenseModal
-              expense={editingExpense}
-              onSave={handleSaveExpense}
-              onClose={() => {
-                setEditingExpense(null);
-                setShowExpenseModal(false);
-              }}
+          {/* TABS */}
+          <div className="flex gap-2 mb-6 bg-white p-2 rounded-xl shadow-md">
+            {["overview", "expenses", "categories"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-all ${
+                  activeTab === tab
+                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md"
+                    : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* OVERVIEW */}
+          {activeTab === "overview" && (
+            <ExpensesOverview expenses={expenses} stats={stats} />
+          )}
+
+          {/* EXPENSES TABLE */}
+          {activeTab === "expenses" && (
+            <ExpensesTable
+              expenses={filteredExpenses}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              setShowExpenseModal={setShowExpenseModal}
+              setEditingExpense={setEditingExpense}
+              handleDeleteExpense={handleDeleteExpense}
+            />
+          )}
+
+          {/* CATEGORIES */}
+          {activeTab === "categories" && (
+            <ExpensesCategories 
+              expenses={expenses} 
+              categories={categories}
+              fetchCategories={fetchCategories}
             />
           )}
         </div>
+
+        {/* MODAL */}
+        {showExpenseModal && (
+          <ExpenseModal
+            expense={editingExpense}
+            categories={categories}
+            onSave={handleSaveExpense}
+            onClose={() => {
+              setEditingExpense(null);
+              setShowExpenseModal(false);
+            }}
+            fetchCategories={fetchCategories}
+          />
+        )}
       </div>
-    </>
+    </div>
   );
 }
