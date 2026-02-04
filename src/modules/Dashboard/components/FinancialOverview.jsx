@@ -10,9 +10,32 @@ import {
 } from "recharts";
 import { Calendar } from "lucide-react";
 
-export default function FinancialOverview({ salesOrders, expenses }) {
-  const totalRevenue = salesOrders.reduce((s, o) => s + o.amount, 0);
-  const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0);
+export default function FinancialOverview({ salesInvoices, expenses }) {
+  // Calculate total revenue
+  const totalRevenue =
+    salesInvoices?.reduce((sum, invoice) => {
+      const total =
+        invoice.lines?.reduce(
+          (lineSum, line) =>
+            lineSum +
+            line.quantity *
+              line.unitPrice *
+              (1 - (line.discountPercent || 0) / 100),
+          0,
+        ) || 0;
+      return sum + total;
+    }, 0) || 0;
+  console.log("Expenses value:", expenses);
+  console.log("Type of expenses:", typeof expenses);
+  if (expenses && typeof expenses === "object") {
+    console.log("Keys in expenses:", Object.keys(expenses));
+  }
+  // Calculate total expenses
+  // FinancialOverview.jsx
+  const totalExpenses =
+    expenses?.items && Array.isArray(expenses.items)
+      ? expenses.items.reduce((sum, exp) => sum + (exp?.amount || 0), 0)
+      : 0;
   const netProfit = totalRevenue - totalExpenses;
 
   const data = [
@@ -76,12 +99,14 @@ export default function FinancialOverview({ salesOrders, expenses }) {
             dataKey="revenue"
             stroke="#10b981"
             fill="url(#rev)"
+            name="Revenue"
           />
           <Area
             type="monotone"
             dataKey="expenses"
             stroke="#ef4444"
             fill="url(#exp)"
+            name="Expenses"
           />
         </AreaChart>
       </ResponsiveContainer>

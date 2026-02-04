@@ -101,7 +101,7 @@ export default function Signup() {
           name: values.companyName,
           taxNumber: values.taxNumber,
           address: values.address,
-        }
+        },
       );
 
       setIsLoading(false);
@@ -127,9 +127,11 @@ export default function Signup() {
     validationSchema: userValidationSchema,
     onSubmit: async (values) => {
       setIsLoading(true);
-      
-      alert("User registration endpoint not yet configured. Please contact your administrator.");
-      
+
+      alert(
+        "User registration endpoint not yet configured. Please contact your administrator.",
+      );
+
       setIsLoading(false);
     },
   });
@@ -155,10 +157,7 @@ export default function Signup() {
             </div>
 
             <div className="mb-8">
-              <label className="block text-sm font-semibold text-gray-700 mb-4 text-center">
-                Select Account Type
-              </label>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <button
                   type="button"
                   onClick={() => setTypeOfUser("manager")}
@@ -183,36 +182,16 @@ export default function Signup() {
                     Register your company
                   </p>
                 </button>
-
-                <button
-                  type="button"
-                  onClick={() => setTypeOfUser("user")}
-                  className={`relative p-6 rounded-xl border-2 transition-all duration-200 ${
-                    typeOfUser === "user"
-                      ? "border-purple-600 bg-purple-50"
-                      : "border-gray-200 hover:border-purple-300"
-                  }`}
-                >
-                  {typeOfUser === "user" && (
-                    <CheckCircle2 className="absolute top-3 right-3 w-6 h-6 text-purple-600" />
-                  )}
-                  <User
-                    className={`w-12 h-12 mx-auto mb-3 ${
-                      typeOfUser === "user"
-                        ? "text-purple-600"
-                        : "text-gray-400"
-                    }`}
-                  />
-                  <h3 className="font-bold text-gray-900">User</h3>
-                  <p className="text-sm text-gray-600 mt-1">Join a company</p>
-                </button>
               </div>
             </div>
 
             {typeOfUser === "manager" && (
               <form onSubmit={managerFormik.handleSubmit} className="space-y-5">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="fullName"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Full Name
                   </label>
                   <div className="relative">
@@ -223,23 +202,28 @@ export default function Signup() {
                       type="text"
                       placeholder="Enter your full name"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.fullName && managerFormik.errors.fullName
+                        managerFormik.touched.fullName &&
+                        managerFormik.errors.fullName
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("fullName")}
                     />
                   </div>
-                  {managerFormik.touched.fullName && managerFormik.errors.fullName && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {managerFormik.errors.fullName}
-                    </p>
-                  )}
+                  {managerFormik.touched.fullName &&
+                    managerFormik.errors.fullName && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {managerFormik.errors.fullName}
+                      </p>
+                    )}
                 </div>
 
                 <div>
-                  <label htmlFor="companyName" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="companyName"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Company Name
                   </label>
                   <div className="relative">
@@ -250,23 +234,28 @@ export default function Signup() {
                       type="text"
                       placeholder="Enter company name"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.companyName && managerFormik.errors.companyName
+                        managerFormik.touched.companyName &&
+                        managerFormik.errors.companyName
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("companyName")}
                     />
                   </div>
-                  {managerFormik.touched.companyName && managerFormik.errors.companyName && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {managerFormik.errors.companyName}
-                    </p>
-                  )}
+                  {managerFormik.touched.companyName &&
+                    managerFormik.errors.companyName && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {managerFormik.errors.companyName}
+                      </p>
+                    )}
                 </div>
 
                 <div>
-                  <label htmlFor="taxNumber" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="taxNumber"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Tax Number
                   </label>
                   <div className="relative">
@@ -277,23 +266,28 @@ export default function Signup() {
                       type="text"
                       placeholder="Enter tax number"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.taxNumber && managerFormik.errors.taxNumber
+                        managerFormik.touched.taxNumber &&
+                        managerFormik.errors.taxNumber
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("taxNumber")}
                     />
                   </div>
-                  {managerFormik.touched.taxNumber && managerFormik.errors.taxNumber && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {managerFormik.errors.taxNumber}
-                    </p>
-                  )}
+                  {managerFormik.touched.taxNumber &&
+                    managerFormik.errors.taxNumber && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {managerFormik.errors.taxNumber}
+                      </p>
+                    )}
                 </div>
 
                 <div>
-                  <label htmlFor="address" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="address"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Company Address
                   </label>
                   <div className="relative">
@@ -304,23 +298,28 @@ export default function Signup() {
                       type="text"
                       placeholder="Enter company address"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.address && managerFormik.errors.address
+                        managerFormik.touched.address &&
+                        managerFormik.errors.address
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("address")}
                     />
                   </div>
-                  {managerFormik.touched.address && managerFormik.errors.address && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {managerFormik.errors.address}
-                    </p>
-                  )}
+                  {managerFormik.touched.address &&
+                    managerFormik.errors.address && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {managerFormik.errors.address}
+                      </p>
+                    )}
                 </div>
 
                 <div>
-                  <label htmlFor="managerPhone" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="managerPhone"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Phone Number
                   </label>
                   <div className="relative">
@@ -331,23 +330,28 @@ export default function Signup() {
                       type="tel"
                       placeholder="1234567890"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.phoneNumber && managerFormik.errors.phoneNumber
+                        managerFormik.touched.phoneNumber &&
+                        managerFormik.errors.phoneNumber
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("phoneNumber")}
                     />
                   </div>
-                  {managerFormik.touched.phoneNumber && managerFormik.errors.phoneNumber && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {managerFormik.errors.phoneNumber}
-                    </p>
-                  )}
+                  {managerFormik.touched.phoneNumber &&
+                    managerFormik.errors.phoneNumber && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {managerFormik.errors.phoneNumber}
+                      </p>
+                    )}
                 </div>
 
                 <div>
-                  <label htmlFor="managerEmail" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="managerEmail"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Email Address
                   </label>
                   <div className="relative">
@@ -358,23 +362,28 @@ export default function Signup() {
                       type="email"
                       placeholder="you@company.com"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.email && managerFormik.errors.email
+                        managerFormik.touched.email &&
+                        managerFormik.errors.email
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("email")}
                     />
                   </div>
-                  {managerFormik.touched.email && managerFormik.errors.email && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {managerFormik.errors.email}
-                    </p>
-                  )}
+                  {managerFormik.touched.email &&
+                    managerFormik.errors.email && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {managerFormik.errors.email}
+                      </p>
+                    )}
                 </div>
 
                 <div>
-                  <label htmlFor="managerPassword" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="managerPassword"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Password
                   </label>
                   <div className="relative">
@@ -385,23 +394,28 @@ export default function Signup() {
                       type="password"
                       placeholder="Create a strong password"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.password && managerFormik.errors.password
+                        managerFormik.touched.password &&
+                        managerFormik.errors.password
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("password")}
                     />
                   </div>
-                  {managerFormik.touched.password && managerFormik.errors.password && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {managerFormik.errors.password}
-                    </p>
-                  )}
+                  {managerFormik.touched.password &&
+                    managerFormik.errors.password && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {managerFormik.errors.password}
+                      </p>
+                    )}
                 </div>
 
                 <div>
-                  <label htmlFor="managerConfirmPassword" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="managerConfirmPassword"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -412,19 +426,21 @@ export default function Signup() {
                       type="password"
                       placeholder="Re-enter your password"
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        managerFormik.touched.confirmPassword && managerFormik.errors.confirmPassword
+                        managerFormik.touched.confirmPassword &&
+                        managerFormik.errors.confirmPassword
                           ? "border-red-300 focus:ring-red-500"
                           : "border-gray-300 focus:ring-blue-500"
                       }`}
                       {...managerFormik.getFieldProps("confirmPassword")}
                     />
                   </div>
-                  {managerFormik.touched.confirmPassword && managerFormik.errors.confirmPassword && (
-                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {managerFormik.errors.confirmPassword}
-                    </p>
-                  )}
+                  {managerFormik.touched.confirmPassword &&
+                    managerFormik.errors.confirmPassword && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {managerFormik.errors.confirmPassword}
+                      </p>
+                    )}
                 </div>
 
                 <button
@@ -444,21 +460,6 @@ export default function Signup() {
                     </>
                   )}
                 </button>
-              </form>
-            )}
-
-            {typeOfUser === "user" && (
-              <form onSubmit={userFormik.handleSubmit} className="space-y-5">
-                {/* User form fields - keeping code compact for brevity */}
-                <div className="text-center py-12">
-                  <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    User Registration Coming Soon
-                  </h3>
-                  <p className="text-gray-600">
-                    The user registration endpoint is not yet configured. Please contact your administrator.
-                  </p>
-                </div>
               </form>
             )}
 
@@ -491,7 +492,8 @@ export default function Signup() {
 
           {typeOfUser && (
             <p className="mt-8 text-center text-sm text-gray-600">
-              By signing up, you agree to our Terms of Service and Privacy Policy
+              By signing up, you agree to our Terms of Service and Privacy
+              Policy
             </p>
           )}
         </div>

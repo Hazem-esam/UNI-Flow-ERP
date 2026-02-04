@@ -9,16 +9,13 @@ import {
   CartesianGrid,
 } from "recharts";
 
-export default function DepartmentChart({ employees }) {
-  const departmentData = employees.reduce((acc, emp) => {
-    const found = acc.find((d) => d.name === emp.department);
-    if (found) {
-      found.count += 1;
-    } else {
-      acc.push({ name: emp.department, count: 1 });
-    }
-    return acc;
-  }, []);
+export default function DepartmentChart({ departments }) {
+  console.log(departments);
+  const departmentData =
+    departments?.map((dept) => ({
+      name: dept.name || "Unknown",
+      count: dept.employeeCount || 0,
+    })) || [];
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">

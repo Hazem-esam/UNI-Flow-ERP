@@ -1,15 +1,28 @@
 import { TrendingUp, Target, Briefcase, Activity } from "lucide-react";
 
-export default function QuickStats({ salesOrders, expenses, leads }) {
-  const totalRevenue = salesOrders.reduce((s, o) => s + o.amount, 0);
-  const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0);
-  const netProfit = totalRevenue - totalExpenses;
-  const profitMargin = totalRevenue
-    ? ((netProfit / totalRevenue) * 100).toFixed(1)
+export default function QuickStats({
+  salesInvoices,
+  expenses,
+  leads,
+  invoice,
+}) {
+  const Revenue = invoice
+    .filter((inv) => inv.paymentStatus === "Paid")
+    .reduce((sum, inv) => sum + (inv.subTotal - inv.discountAmount), 0);
+  // Total paid expenses
+  const paidExpenses = expenses.items
+    .filter((exp) => exp.status === "Paid")
+    .reduce((sum, exp) => sum + exp.amount, 0);
+  // Net revenue
+  const netProfit = Revenue - paidExpenses;
+  // Calculate total expenses
+  const totalExpenses = Array.isArray(expenses?.items)
+    ? expenses.items.reduce((sum, exp) => sum + (Number(exp?.amount) || 0), 0)
     : 0;
+  const profitMargin = Revenue ? ((netProfit / Revenue) * 100).toFixed(2) : 0;
 
-  const totalLeads = leads.length;
-  const pipelineValue = leads.reduce((s, l) => s + l.value, 0);
+  const totalLeads = leads?.length || 0;
+  const pipelineValue = leads?.reduce((s, l) => s + (l.dealValue || 0), 0) || 0;
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
@@ -20,7 +33,11 @@ export default function QuickStats({ salesOrders, expenses, leads }) {
           <div>
             <p className="text-sm text-gray-600">Net Profit</p>
             <p className="text-2xl font-bold text-green-600">
-              ${netProfit.toLocaleString()}
+              $
+              {netProfit.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </p>
           </div>
           <TrendingUp className="w-8 h-8 text-green-600" />

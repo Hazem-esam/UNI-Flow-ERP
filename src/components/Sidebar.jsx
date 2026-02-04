@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   TrendingUp,
   Users,
@@ -14,6 +14,8 @@ import {
   Layers,
   Sparkles,
   Zap,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 
 const moduleIcons = {
@@ -23,6 +25,7 @@ const moduleIcons = {
   CRM: MessageSquare,
   Inventory: Package,
   Dashboard: LayoutDashboard,
+  CONTACT: BookUser,
   Contacts: BookUser,
 };
 
@@ -33,25 +36,103 @@ const moduleColors = {
   CRM: "from-pink-500 to-fuchsia-600",
   Inventory: "from-orange-500 to-amber-600",
   Dashboard: "from-blue-500 to-indigo-600",
+  CONTACT: "from-indigo-500 to-purple-600",
   Contacts: "from-indigo-500 to-purple-600",
 };
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [subscribedModules, setSubscribedModules] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Load modules on mount
-  useEffect(() => {
+  // Extract fetchCompanyModules as a useCallback to prevent recreating on every render
+  const fetchCompanyModules = useCallback(async () => {
     try {
-      const modules = JSON.parse(localStorage.getItem("modules")) || [];
-      setSubscribedModules(modules);
-    } catch (error) {
-      console.error("Failed to load modules:", error);
+      setLoading(true);
+      setError(null);
+
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/company-modules`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch company modules");
+      }
+
+      const data = await response.json();
+      
+      // Filter only enabled modules
+      const enabledModules = data
+        .filter((mod) => mod.isEnabled)
+        .map((mod) => ({
+          name: mod.moduleName,
+          key: mod.moduleKey,
+          moduleId: mod.moduleId,
+        }));
+
+      setSubscribedModules(enabledModules);
+      console.log("Sidebar modules refreshed:", enabledModules.length, "modules");
+    } catch (err) {
+      console.error("Failed to load modules:", err);
+      setError(err.message);
       setSubscribedModules([]);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  }, []); // Empty dependency array since it doesn't depend on any props or state
+
+  // Load modules from API on mount
+  useEffect(() => {
+    fetchCompanyModules();
+  }, [fetchCompanyModules]);
+
+  // ⭐ Listen for module update events from Dashboard
+  useEffect(() => {
+    const handleModulesUpdate = () => {
+      console.log("📡 Module update event received - refetching sidebar modules...");
+      fetchCompanyModules();
+    };
+
+    // Listen for custom event
+    window.addEventListener("modulesUpdated", handleModulesUpdate);
+
+    // Listen for storage changes (cross-tab synchronization)
+    const handleStorageChange = (e) => {
+      if (e.key === "modulesLastUpdated") {
+        console.log("📡 Module update detected from another tab - refetching...");
+        fetchCompanyModules();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("modulesUpdated", handleModulesUpdate);
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [fetchCompanyModules]);
+
+  // Refetch when returning to dashboard (in case modules were updated elsewhere)
+  useEffect(() => {
+    if (location.pathname === "/dashboard") {
+      console.log("📍 Dashboard visited - refreshing modules");
+      fetchCompanyModules();
+    }
+  }, [location.pathname, fetchCompanyModules]);
 
   // Close sidebar when route changes (mobile)
   useEffect(() => {
@@ -93,6 +174,12 @@ export default function Sidebar() {
     return location.pathname.includes(
       `/modules/${moduleName.toLowerCase().trim()}`
     );
+  };
+
+  // Manual refresh function
+  const handleRefresh = () => {
+    console.log("🔄 Manual refresh triggered");
+    fetchCompanyModules();
   };
 
   return (
@@ -159,8 +246,11 @@ export default function Sidebar() {
             <div>
               <h2 className="text-xl font-bold tracking-tight">Your Modules</h2>
               <p className="text-sm text-blue-100 font-medium">
-                {subscribedModules.length} active module
-                {subscribedModules.length !== 1 ? "s" : ""}
+                {loading ? (
+                  "Loading..."
+                ) : (
+                  `${subscribedModules.length} active module${subscribedModules.length !== 1 ? "s" : ""}`
+                )}
               </p>
             </div>
           </div>
@@ -168,10 +258,26 @@ export default function Sidebar() {
 
         {/* Modules List - Modern Cards with custom scrollbar */}
         <nav className="flex-1 overflow-y-auto p-4 md:p-6 space-y-3 custom-scrollbar">
-          {hasModules ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+              <p className="text-gray-600 font-medium">Loading modules...</p>
+            </div>
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center py-16 px-6">
+              <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+              <p className="text-sm text-red-600 text-center mb-4">{error}</p>
+              <button
+                onClick={handleRefresh}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          ) : hasModules ? (
             <ul className="space-y-2" role="list">
               {subscribedModules.map((mod, index) => {
-                const moduleName = typeof mod === "string" ? mod : mod?.name;
+                const moduleName = mod.name;
 
                 if (!moduleName) return null;
 
@@ -265,7 +371,7 @@ export default function Sidebar() {
         </nav>
 
         {/* Footer - Modern Button */}
-        {hasModules && (
+        {hasModules && !loading && (
           <div className="p-4 md:p-6 border-t border-gray-200/50 bg-gradient-to-br from-gray-50 to-white flex-shrink-0">
             <Link
               to="/dashboard"

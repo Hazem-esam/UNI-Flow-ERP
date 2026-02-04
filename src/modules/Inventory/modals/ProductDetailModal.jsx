@@ -1,3 +1,4 @@
+import { X,Eye,Ruler,Warehouse   } from "lucide-react";
 export default function ProductDetailModal({
   product,
   warehouses,

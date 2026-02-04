@@ -1,6 +1,6 @@
 import { LayoutDashboard } from "lucide-react";
 
-export default function Header({ timeframe, setTimeframe }) {
+export default function Header() {
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
@@ -10,24 +10,10 @@ export default function Header({ timeframe, setTimeframe }) {
           </div>
           <div>
             <h1 className="text-4xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600">Welcome back! Here's your business overview</p>
+            <p className="text-gray-600">
+              Welcome back! Here's your business overview
+            </p>
           </div>
-        </div>
-
-        <div className="flex gap-2">
-          {["daily", "weekly", "monthly", "yearly"].map((period) => (
-            <button
-              key={period}
-              onClick={() => setTimeframe(period)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                timeframe === period
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-white text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              {period.charAt(0).toUpperCase() + period.slice(1)}
-            </button>
-          ))}
         </div>
       </div>
     </div>

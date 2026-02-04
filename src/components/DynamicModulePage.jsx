@@ -14,7 +14,7 @@ const moduleRegistry = {
   crm: CRM,
   dashboard: DashboardModule,
   expenses: Expenses,
-  contacts: Contacts,
+  contact: Contacts,
 };
 
 export default function DynamicModulePage() {

@@ -1,0 +1,1377 @@
+UserRoles
+
+
+POST
+/api/access/user-roles/assign
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "roleName": "string"
+}
+Responses
+Code	Description	Links
+204	
+No Content
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+403	
+Forbidden
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+POST
+/api/access/user-roles/remove
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "roleName": "string"
+}
+Responses
+Code	Description	Links
+204	
+No Content
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+403	
+Forbidden
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/access/user-roles/{userId}
+
+
+Parameters
+Try it out
+Name	Description
+userId *
+string($uuid)
+(path)
+userId
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "roles": [
+    "string"
+  ]
+}
+No links
+403	
+Forbidden
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}POST
+/api/Payroll/{id}/recalculate
+
+
+Permissions
+
+
+GET
+/api/access/permissions
+
+
+Parameters
+Cancel
+No parameters
+
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:39246/api/access/permissions' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZmM1YzVhYi02MzVjLTQ5NjgtYjQ5Mi1lNTFiNjEzNmE3OWYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMjEwMDg2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.alNPsSb8zJYFO9C9y7oY00ewn4mhRdNZiWQt8oGe8LY'
+Request URL
+http://localhost:39246/api/access/permissions
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "module": "contacts",
+    "resource": "items",
+    "permissions": [
+      {
+        "key": "contacts.items.read",
+        "action": "read",
+        "description": "View Items (Contacts)"
+      },
+      {
+        "key": "contacts.items.create",
+        "action": "create",
+        "description": "Create new Items (Contacts)"
+      },
+      {
+        "key": "contacts.items.update",
+        "action": "update",
+        "description": "Edit existing Items (Contacts)"
+      },
+      {
+        "key": "contacts.items.delete",
+        "action": "delete",
+        "description": "Remove Items (Contacts)"
+      }
+    ]
+  },
+  {
+    "module": "core",
+    "resource": "companies",
+    "permissions": [
+      {
+        "key": "core.companies.read",
+        "action": "read",
+        "description": "View Companies (Core)"
+      },
+      {
+        "key": "core.companies.update",
+        "action": "update",
+        "description": "Edit existing Companies (Core)"
+      }
+    ]
+  },
+  {
+    "module": "core",
+    "resource": "modules",
+    "permissions": [
+      {
+        "key": "core.modules.read",
+        "action": "read",
+        "description": "View Modules (Core)"
+      },
+      {
+        "key": "core.modules.manage",
+        "action": "manage",
+        "description": "Manage Modules (Core)"
+      }
+    ]
+  },
+  {
+    "module": "core",
+    "resource": "users",
+    "permissions": [
+      {
+        "key": "core.users.read",
+        "action": "read",
+        "description": "View Users (Core)"
+      },
+      {
+        "key": "core.users.create",
+        "action": "create",
+        "description": "Create new Users (Core)"
+      },
+      {
+        "key": "core.users.update",
+        "action": "update",
+        "description": "Edit existing Users (Core)"
+      },
+      {
+        "key": "core.users.delete",
+        "action": "delete",
+        "description": "Remove Users (Core)"
+      }
+    ]
+  },
+  {
+    "module": "expenses",
+    "resource": "categories",
+    "permissions": [
+      {
+        "key": "expenses.categories.read",
+        "action": "read",
+        "description": "View Categories (Expenses)"
+      },
+      {
+        "key": "expenses.categories.create",
+        "action": "create",
+        "description": "Create new Categories (Expenses)"
+      },
+      {
+        "key": "expenses.categories.update",
+        "action": "update",
+        "description": "Edit existing Categories (Expenses)"
+      },
+      {
+        "key": "expenses.categories.delete",
+        "action": "delete",
+        "description": "Remove Categories (Expenses)"
+      }
+    ]
+  },
+  {
+    "module": "expenses",
+    "resource": "items",
+    "permissions": [
+      {
+        "key": "expenses.items.read",
+        "action": "read",
+        "description": "View Items (Expenses)"
+      },
+      {
+        "key": "expenses.items.create",
+        "action": "create",
+        "description": "Create new Items (Expenses)"
+      },
+      {
+        "key": "expenses.items.update",
+        "action": "update",
+        "description": "Edit existing Items (Expenses)"
+      },
+      {
+        "key": "expenses.items.delete",
+        "action": "delete",
+        "description": "Remove Items (Expenses)"
+      },
+      {
+        "key": "expenses.items.approve",
+        "action": "approve",
+        "description": "Approve Items (Expenses)"
+      },
+      {
+        "key": "expenses.items.reject",
+        "action": "reject",
+        "description": "Reject Items (Expenses)"
+      }
+    ]
+  },
+  {
+    "module": "hr",
+    "resource": "departments",
+    "permissions": [
+      {
+        "key": "hr.departments.read",
+        "action": "read",
+        "description": "View Departments (Hr)"
+      },
+      {
+        "key": "hr.departments.create",
+        "action": "create",
+        "description": "Create new Departments (Hr)"
+      },
+      {
+        "key": "hr.departments.update",
+        "action": "update",
+        "description": "Edit existing Departments (Hr)"
+      },
+      {
+        "key": "hr.departments.delete",
+        "action": "delete",
+        "description": "Remove Departments (Hr)"
+      }
+    ]
+  },
+  {
+    "module": "hr",
+    "resource": "employees",
+    "permissions": [
+      {
+        "key": "hr.employees.read",
+        "action": "read",
+        "description": "View Employees (Hr)"
+      },
+      {
+        "key": "hr.employees.create",
+        "action": "create",
+        "description": "Create new Employees (Hr)"
+      },
+      {
+        "key": "hr.employees.update",
+        "action": "update",
+        "description": "Edit existing Employees (Hr)"
+      },
+      {
+        "key": "hr.employees.delete",
+        "action": "delete",
+        "description": "Remove Employees (Hr)"
+      }
+    ]
+  },
+  {
+    "module": "hr",
+    "resource": "positions",
+    "permissions": [
+      {
+        "key": "hr.positions.read",
+        "action": "read",
+        "description": "View Positions (Hr)"
+      },
+      {
+        "key": "hr.positions.create",
+        "action": "create",
+        "description": "Create new Positions (Hr)"
+      },
+      {
+        "key": "hr.positions.update",
+        "action": "update",
+        "description": "Edit existing Positions (Hr)"
+      },
+      {
+        "key": "hr.positions.delete",
+        "action": "delete",
+        "description": "Remove Positions (Hr)"
+      }
+    ]
+  },
+  {
+    "module": "inventory",
+    "resource": "reports",
+    "permissions": [
+      {
+        "key": "inventory.reports.read",
+        "action": "read",
+        "description": "View Reports (Inventory)"
+      }
+    ]
+  },
+  {
+    "module": "inventory",
+    "resource": "stock",
+    "permissions": [
+      {
+        "key": "inventory.stock.read",
+        "action": "read",
+        "description": "View Stock (Inventory)"
+      },
+      {
+        "key": "inventory.stock.adjust",
+        "action": "adjust",
+        "description": "Adjust Stock (Inventory)"
+      },
+      {
+        "key": "inventory.stock.transfer",
+        "action": "transfer",
+        "description": "Transfer Stock (Inventory)"
+      },
+      {
+        "key": "inventory.stock.opening",
+        "action": "opening",
+        "description": "Set opening balances for Stock (Inventory)"
+      }
+    ]
+  },
+  {
+    "module": "inventory",
+    "resource": "warehouses",
+    "permissions": [
+      {
+        "key": "inventory.warehouses.read",
+        "action": "read",
+        "description": "View Warehouses (Inventory)"
+      },
+      {
+        "key": "inventory.warehouses.create",
+        "action": "create",
+        "description": "Create new Warehouses (Inventory)"
+      },
+      {
+        "key": "inventory.warehouses.update",
+        "action": "update",
+        "description": "Edit existing Warehouses (Inventory)"
+      },
+      {
+        "key": "inventory.warehouses.delete",
+        "action": "delete",
+        "description": "Remove Warehouses (Inventory)"
+      }
+    ]
+  },
+  {
+    "module": "products",
+    "resource": "categories",
+    "permissions": [
+      {
+        "key": "products.categories.read",
+        "action": "read",
+        "description": "View Categories (Products)"
+      },
+      {
+        "key": "products.categories.create",
+        "action": "create",
+        "description": "Create new Categories (Products)"
+      },
+      {
+        "key": "products.categories.update",
+        "action": "update",
+        "description": "Edit existing Categories (Products)"
+      },
+      {
+        "key": "products.categories.delete",
+        "action": "delete",
+        "description": "Remove Categories (Products)"
+      }
+    ]
+  },
+  {
+    "module": "products",
+    "resource": "items",
+    "permissions": [
+      {
+        "key": "products.items.read",
+        "action": "read",
+        "description": "View Items (Products)"
+      },
+      {
+        "key": "products.items.create",
+        "action": "create",
+        "description": "Create new Items (Products)"
+      },
+      {
+        "key": "products.items.update",
+        "action": "update",
+        "description": "Edit existing Items (Products)"
+      },
+      {
+        "key": "products.items.delete",
+        "action": "delete",
+        "description": "Remove Items (Products)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "customers",
+    "permissions": [
+      {
+        "key": "sales.customers.read",
+        "action": "read",
+        "description": "View Customers (Sales)"
+      },
+      {
+        "key": "sales.customers.create",
+        "action": "create",
+        "description": "Create new Customers (Sales)"
+      },
+      {
+        "key": "sales.customers.update",
+        "action": "update",
+        "description": "Edit existing Customers (Sales)"
+      },
+      {
+        "key": "sales.customers.delete",
+        "action": "delete",
+        "description": "Remove Customers (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "deliveries",
+    "permissions": [
+      {
+        "key": "sales.deliveries.read",
+        "action": "read",
+        "description": "View Deliveries (Sales)"
+      },
+      {
+        "key": "sales.deliveries.create",
+        "action": "create",
+        "description": "Create new Deliveries (Sales)"
+      },
+      {
+        "key": "sales.deliveries.update",
+        "action": "update",
+        "description": "Edit existing Deliveries (Sales)"
+      },
+      {
+        "key": "sales.deliveries.delete",
+        "action": "delete",
+        "description": "Remove Deliveries (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "invoices",
+    "permissions": [
+      {
+        "key": "sales.invoices.read",
+        "action": "read",
+        "description": "View Invoices (Sales)"
+      },
+      {
+        "key": "sales.invoices.create",
+        "action": "create",
+        "description": "Create new Invoices (Sales)"
+      },
+      {
+        "key": "sales.invoices.update",
+        "action": "update",
+        "description": "Edit existing Invoices (Sales)"
+      },
+      {
+        "key": "sales.invoices.delete",
+        "action": "delete",
+        "description": "Remove Invoices (Sales)"
+      },
+      {
+        "key": "sales.invoices.post",
+        "action": "post",
+        "description": "Post/finalize Invoices (Sales)"
+      },
+      {
+        "key": "sales.invoices.void",
+        "action": "void",
+        "description": "Void/cancel Invoices (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "receipts",
+    "permissions": [
+      {
+        "key": "sales.receipts.read",
+        "action": "read",
+        "description": "View Receipts (Sales)"
+      },
+      {
+        "key": "sales.receipts.create",
+        "action": "create",
+        "description": "Create new Receipts (Sales)"
+      },
+      {
+        "key": "sales.receipts.update",
+        "action": "update",
+        "description": "Edit existing Receipts (Sales)"
+      },
+      {
+        "key": "sales.receipts.delete",
+        "action": "delete",
+        "description": "Remove Receipts (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "returns",
+    "permissions": [
+      {
+        "key": "sales.returns.read",
+        "action": "read",
+        "description": "View Returns (Sales)"
+      },
+      {
+        "key": "sales.returns.create",
+        "action": "create",
+        "description": "Create new Returns (Sales)"
+      },
+      {
+        "key": "sales.returns.update",
+        "action": "update",
+        "description": "Edit existing Returns (Sales)"
+      },
+      {
+        "key": "sales.returns.delete",
+        "action": "delete",
+        "description": "Remove Returns (Sales)"
+      }
+    ]
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Wed,04 Feb 2026 11:02:00 GMT 
+ server: Microsoft-IIS/10.0 
+ transfer-encoding: chunked 
+ x-powered-by: ASP.NET 
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "module": "string",
+    "resource": "string",
+    "permissions": [
+      {
+        "key": "string",
+        "action": "string",
+        "description": "string"
+      }
+    ]
+  }
+]
+No links
+Pipeline
+
+Products
+
+Roles
+
+
+GET
+/api/access/roles
+
+
+Parameters
+Cancel
+No parameters
+
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:39246/api/access/roles' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZmM1YzVhYi02MzVjLTQ5NjgtYjQ5Mi1lNTFiNjEzNmE3OWYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMjEwMDg2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.alNPsSb8zJYFO9C9y7oY00ewn4mhRdNZiWQt8oGe8LY'
+Request URL
+http://localhost:39246/api/access/roles
+Server response
+Code	Details
+200	
+Response body
+Download
+[]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Wed,04 Feb 2026 11:02:09 GMT 
+ server: Microsoft-IIS/10.0 
+ transfer-encoding: chunked 
+ x-powered-by: ASP.NET 
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "name": "string",
+    "permissions": [
+      "string"
+    ]
+  }
+]
+No links
+
+POST
+/api/access/roles
+
+
+Parameters
+Cancel
+No parameters
+
+Request body
+
+application/json
+{
+  "name": "string",
+  "permissions": [
+    "string"
+  ]
+}
+Execute
+Responses
+Code	Description	Links
+201	
+Created
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "name": "string",
+  "permissions": [
+    "string"
+  ]
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+409	
+Conflict
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+PUT
+/api/access/roles/{roleName}
+
+
+Parameters
+Try it out
+Name	Description
+roleName *
+string
+(path)
+roleName
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "permissions": [
+    "string"
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "name": "string",
+  "permissions": [
+    "string"
+  ]
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+DELETE
+/api/access/roles/{roleName}
+
+
+Parameters
+Try it out
+Name	Description
+roleName *
+string
+(path)
+roleName
+Responses
+Code	Description	Links
+204	
+No Content
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}Modules
+
+
+GET
+/api/modules
+
+
+Parameters
+Cancel
+No parameters
+
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:39246/api/modules' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZmM1YzVhYi02MzVjLTQ5NjgtYjQ5Mi1lNTFiNjEzNmE3OWYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMjEwMDg2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.alNPsSb8zJYFO9C9y7oY00ewn4mhRdNZiWQt8oGe8LY'
+Request URL
+http://localhost:39246/api/modules
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "id": 3,
+    "key": "CONTACT",
+    "name": "CONTACT",
+    "description": "Contacts management module",
+    "isActive": true
+  },
+  {
+    "id": 6,
+    "key": "CRM",
+    "name": "CRM",
+    "description": "Customer Relationship Management module",
+    "isActive": true
+  },
+  {
+    "id": 7,
+    "key": "DASHBOARD",
+    "name": "Dashboard",
+    "description": "Dashboard  module",
+    "isActive": true
+  },
+  {
+    "id": 4,
+    "key": "EXPENSES",
+    "name": "Expenses",
+    "description": "Expenses management module",
+    "isActive": true
+  },
+  {
+    "id": 5,
+    "key": "HR",
+    "name": "HR",
+    "description": "Human Resources module",
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "key": "INVENTORY",
+    "name": "Inventory",
+    "description": "Inventory management module",
+    "isActive": true
+  },
+  {
+    "id": 1,
+    "key": "SALES",
+    "name": "Sales",
+    "description": "Sales management module",
+    "isActive": true
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Wed,04 Feb 2026 11:03:34 GMT 
+ server: Microsoft-IIS/10.0 
+ transfer-encoding: chunked 
+ x-powered-by: ASP.NET 
+Responses
+CompanyUsers
+
+
+GET
+/api/company-users
+
+
+Parameters
+Cancel
+No parameters
+
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:39246/api/company-users' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZmM1YzVhYi02MzVjLTQ5NjgtYjQ5Mi1lNTFiNjEzNmE3OWYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMjEwMDg2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.alNPsSb8zJYFO9C9y7oY00ewn4mhRdNZiWQt8oGe8LY'
+Request URL
+http://localhost:39246/api/company-users
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "id": "5fc5c5ab-635c-4968-b492-e51b6136a79f",
+    "email": "esamh4049@gmail.com",
+    "fullName": "Hazem Esam  Abdeltawab Mohamed",
+    "isActive": true,
+    "isLockedOut": false,
+    "roles": [
+      "CompanyOwner"
+    ]
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Wed,04 Feb 2026 11:04:12 GMT 
+ server: Microsoft-IIS/10.0 
+ transfer-encoding: chunked 
+ x-powered-by: ASP.NET 
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/company-users
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "email": "string",
+  "password": "string",
+  "fullName": "string",
+  "roles": [
+    "string"
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/company-users/{userId}/roles
+
+
+Parameters
+Try it out
+Name	Description
+userId *
+string($uuid)
+(path)
+userId
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "roles": [
+    "string"
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/company-users/{userId}/status
+
+
+Parameters
+Try it out
+Name	Description
+userId *
+string($uuid)
+(path)
+userId
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "isActive": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+
+
+CompanyModules
+
+
+GET
+/api/company-modules
+
+
+Parameters
+Cancel
+No parameters
+
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:39246/api/company-modules' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZmM1YzVhYi02MzVjLTQ5NjgtYjQ5Mi1lNTFiNjEzNmE3OWYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMjEwMDg2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.alNPsSb8zJYFO9C9y7oY00ewn4mhRdNZiWQt8oGe8LY'
+Request URL
+http://localhost:39246/api/company-modules
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "moduleId": 3,
+    "moduleKey": "CONTACT",
+    "moduleName": "CONTACT",
+    "isEnabled": false,
+    "enabledAt": null,
+    "expiresAt": null
+  },
+  {
+    "moduleId": 6,
+    "moduleKey": "CRM",
+    "moduleName": "CRM",
+    "isEnabled": false,
+    "enabledAt": null,
+    "expiresAt": null
+  },
+  {
+    "moduleId": 7,
+    "moduleKey": "DASHBOARD",
+    "moduleName": "Dashboard",
+    "isEnabled": false,
+    "enabledAt": null,
+    "expiresAt": null
+  },
+  {
+    "moduleId": 4,
+    "moduleKey": "EXPENSES",
+    "moduleName": "Expenses",
+    "isEnabled": false,
+    "enabledAt": null,
+    "expiresAt": null
+  },
+  {
+    "moduleId": 5,
+    "moduleKey": "HR",
+    "moduleName": "HR",
+    "isEnabled": false,
+    "enabledAt": null,
+    "expiresAt": null
+  },
+  {
+    "moduleId": 2,
+    "moduleKey": "INVENTORY",
+    "moduleName": "Inventory",
+    "isEnabled": false,
+    "enabledAt": null,
+    "expiresAt": null
+  },
+  {
+    "moduleId": 1,
+    "moduleKey": "SALES",
+    "moduleName": "Sales",
+    "isEnabled": false,
+    "enabledAt": null,
+    "expiresAt": null
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Wed,04 Feb 2026 11:04:43 GMT 
+ server: Microsoft-IIS/10.0 
+ transfer-encoding: chunked 
+ x-powered-by: ASP.NET 
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/company-modules/{moduleId}
+
+
+Parameters
+Cancel
+Name	Description
+moduleId *
+integer($int32)
+(path)
+moduleId
+Request body
+
+application/json
+{
+  "isEnabled": true
+}
+Execute
+Responses
+Code	Description	Links
+200	
+OK

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import {
   TrendingUp,
@@ -13,11 +13,14 @@ import {
   DollarSign,
   CheckCircle2,
   Sparkles,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 
 const availableModules = [
   {
     name: "Sales",
+    key: "SALES",
     description: "Manage sales orders and invoices",
     price: 20,
     icon: TrendingUp,
@@ -25,6 +28,7 @@ const availableModules = [
   },
   {
     name: "HR",
+    key: "HR",
     description: "Employee records, payroll, and attendance",
     price: 15,
     icon: Users,
@@ -32,6 +36,7 @@ const availableModules = [
   },
   {
     name: "Expenses",
+    key: "EXPENSES",
     description: "Track company expenses and budgets",
     price: 10,
     icon: Receipt,
@@ -39,6 +44,7 @@ const availableModules = [
   },
   {
     name: "CRM",
+    key: "CRM",
     description: "Customer relationship management",
     price: 25,
     icon: MessageSquare,
@@ -46,6 +52,7 @@ const availableModules = [
   },
   {
     name: "Inventory",
+    key: "INVENTORY",
     description: "Stock levels and warehouse management",
     price: 30,
     icon: Package,
@@ -53,6 +60,7 @@ const availableModules = [
   },
   {
     name: "Dashboard",
+    key: "DASHBOARD",
     description: "Analytics and insights overview",
     price: 10,
     icon: LayoutDashboard,
@@ -60,6 +68,7 @@ const availableModules = [
   },
   {
     name: "Contacts",
+    key: "CONTACT",
     description: "Centralized contacts directory",
     price: 5,
     icon: BookUser,
@@ -67,45 +76,152 @@ const availableModules = [
   },
 ];
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function Dashboard() {
   const { user } = useContext(AuthContext);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [companyModules, setCompanyModules] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   // Get company name from user context
   const companyName = user?.companyName || user?.fullName || "Your Company";
 
-  // Clean up anything invalid (null, string, etc.)
-  const [selectedModules, setSelectedModules] = useState(
-    (JSON.parse(localStorage.getItem("modules")) || []).filter(
-      (m) => m && typeof m === "object" && m.name
-    )
-  );
+  // Fetch company modules from API
+  useEffect(() => {
+    const fetchCompanyModules = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const handleToggle = (module) => {
-    const exists = selectedModules.some((m) => m?.name === module.name);
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
 
-    if (exists) {
-      setSelectedModules(
-        selectedModules.filter((m) => m?.name !== module.name)
+        const response = await fetch(`${API_BASE_URL}/api/company-modules`, {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch company modules");
+        }
+
+        const data = await response.json();
+        setCompanyModules(data);
+      } catch (err) {
+        console.error("Error fetching modules:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompanyModules();
+  }, []);
+
+  // Get currently enabled modules
+  const selectedModules = companyModules
+    .filter((mod) => mod.isEnabled)
+    .map((mod) => {
+      const moduleInfo = availableModules.find((m) => m.key === mod.moduleKey);
+      return {
+        moduleId: mod.moduleId,
+        name: mod.moduleName,
+        key: mod.moduleKey,
+        price: moduleInfo?.price || 0,
+      };
+    });
+
+  const handleToggle = async (module) => {
+    const companyModule = companyModules.find(
+      (m) => m.moduleKey === module.key,
+    );
+    if (!companyModule) return;
+
+    const isCurrentlyEnabled = companyModule.isEnabled;
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/company-modules/${companyModule.moduleId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            isEnabled: !isCurrentlyEnabled,
+          }),
+        },
       );
-    } else {
-      setSelectedModules([
-        ...selectedModules,
-        { name: module.name, price: module.price },
-      ]);
+
+      if (!response.ok) {
+        throw new Error("Failed to update module");
+      }
+
+      // Update local state
+      setCompanyModules((prev) =>
+        prev.map((m) =>
+          m.moduleId === companyModule.moduleId
+            ? { ...m, isEnabled: !isCurrentlyEnabled }
+            : m,
+        ),
+      );
+
+      // ⭐ IMPORTANT: Notify sidebar to refresh modules
+      window.dispatchEvent(new Event("modulesUpdated"));
+      localStorage.setItem("modulesLastUpdated", Date.now().toString());
+
+      console.log(
+        `Module ${module.name} ${!isCurrentlyEnabled ? "enabled" : "disabled"} - sidebar notified`,
+      );
+    } catch (err) {
+      console.error("Error toggling module:", err);
+      setError(err.message);
     }
   };
 
-  const handleSave = () => {
-    localStorage.setItem("modules", JSON.stringify(selectedModules));
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      // Show success message
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (err) {
+      console.error("Error saving:", err);
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const totalPrice = selectedModules.reduce(
     (sum, m) => sum + (m?.price || 0),
-    0
+    0,
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 p-6 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <p className="text-gray-600 font-medium">Loading modules...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 p-6">
@@ -130,6 +246,14 @@ function Dashboard() {
           </div>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
+            <p className="text-red-700 font-medium">{error}</p>
+          </div>
+        )}
+
         {/* Success Message */}
         {showSuccess && (
           <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 animate-fade-in">
@@ -144,13 +268,14 @@ function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {availableModules.map((mod) => {
             const Icon = mod.icon;
-            const isSelected = selectedModules.some(
-              (m) => m?.name === mod.name
+            const companyModule = companyModules.find(
+              (m) => m.moduleKey === mod.key,
             );
+            const isSelected = companyModule?.isEnabled || false;
 
             return (
               <div
-                key={mod.name}
+                key={mod.key}
                 onClick={() => handleToggle(mod)}
                 className={`group relative bg-white rounded-2xl p-6 cursor-pointer transition-all duration-300 border-2 ${
                   isSelected
@@ -228,15 +353,7 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Save Button */}
-            <button
-              onClick={handleSave}
-              disabled={selectedModules.length === 0}
-              className="group flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <Save className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span>Save Selection</span>
-            </button>
+   
           </div>
 
           {/* Selected Modules List */}
@@ -248,7 +365,7 @@ function Dashboard() {
               <div className="flex flex-wrap gap-2">
                 {selectedModules.map((mod) => (
                   <div
-                    key={mod.name}
+                    key={mod.key}
                     className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium"
                   >
                     <CheckCircle2 className="w-4 h-4" />

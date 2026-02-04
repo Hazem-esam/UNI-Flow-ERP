@@ -8,24 +8,52 @@ import {
 } from "lucide-react";
 
 export default function KPICards({
-  salesOrders,
+  salesInvoices,
   expenses,
   employees,
-  inventory,
+  products,
+  stock,
+  invoice,
 }) {
-  const totalRevenue = salesOrders.reduce((sum, o) => sum + o.amount, 0);
-  const totalOrders = salesOrders.length;
-  const completed = salesOrders.filter((o) => o.status === "completed").length;
-  const pending = salesOrders.filter((o) => o.status === "pending").length;
+  // Calculate total revenue from invoices
+  console.log(salesInvoices);
+  console.log(products);
+  console.log(stock);
+  console.log(expenses);
+  console.log(invoice);
 
-  const activeEmployees = employees.filter((e) => e.status === "active").length;
+  // Paid revenue from invoices after discount
+  const Revenue = invoice
+    .filter((inv) => inv.paymentStatus === "Paid")
+    .reduce((sum, inv) => sum + (inv.subTotal - inv.discountAmount), 0);
+  // Total paid expenses
+  const paidExpenses = expenses.items
+    .filter((exp) => exp.status === "Paid")
+    .reduce((sum, exp) => sum + exp.amount, 0);
+  // Net revenue
+  const netProfit = Revenue - paidExpenses;
+  console.log("totalRevenue:", netProfit);
 
-  const lowStock = inventory.filter((p) => p.quantity <= p.reorderLevel).length;
-  const inventoryValue = inventory.reduce(
-    (s, p) => s + p.quantity * p.price,
-    0
-  );
-  const totalProducts = inventory.length;
+  const totalOrders = salesInvoices?.length || 0;
+  const completed =
+    salesInvoices?.filter(
+      (o) => o.status === "FullyDelivered" && o.paymentStatus === "Paid",
+    )?.length || 0; // Posted
+  const pending =
+    salesInvoices?.filter((o) => o.status === "PartiallyDelivered")?.length ||
+    0; // Draft
+
+  const activeEmployees =
+    employees?.filter((e) => e.status === "Active")?.length || 0;
+  const totalEmployees = employees?.length || 0;
+
+  // Calculate inventory value and low stock
+  const inventoryValue = stock.flat().reduce((sum, s) => sum + s.totalValue, 0);
+  console.log(inventoryValue);
+  const lowStock =
+    products?.filter((p) => (p.currentStock || 0) <= (p.minQuantity || 0))
+      ?.length || 0;
+  const totalProducts = products?.length || 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -35,15 +63,19 @@ export default function KPICards({
           <DollarSign className="w-10 h-10 opacity-80" />
           <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full">
             <ArrowUp className="w-4 h-4" />
-            <span>12.5%</span>
+            <span>{((netProfit / Revenue) * 100).toFixed(2)} %</span>
           </div>
         </div>
         <p className="text-green-100 text-sm mb-1">Total Revenue</p>
         <p className="text-3xl font-bold mb-1">
-          ${totalRevenue.toLocaleString()}
+          $
+          {Revenue.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </p>
         <p className="text-green-100 text-xs">
-          +${(totalRevenue * 0.125).toFixed(0)} from last month
+          -${paidExpenses.toFixed(0)} Expenses
         </p>
       </div>
 
@@ -53,7 +85,7 @@ export default function KPICards({
           <ShoppingCart className="w-10 h-10 opacity-80" />
           <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full">
             <ArrowUp className="w-4 h-4" />
-            <span>8.2%</span>
+            <span>{(completed / (pending + completed)) * 100} %</span>
           </div>
         </div>
         <p className="text-blue-100 text-sm mb-1">Total Orders</p>
@@ -74,9 +106,7 @@ export default function KPICards({
         </div>
         <p className="text-purple-100 text-sm mb-1">Active Employees</p>
         <p className="text-3xl font-bold mb-1">{activeEmployees}</p>
-        <p className="text-purple-100 text-xs">
-          Out of {employees.length} total
-        </p>
+        <p className="text-purple-100 text-xs">Out of {totalEmployees} total</p>
       </div>
 
       {/* Inventory */}
@@ -96,7 +126,7 @@ export default function KPICards({
         </div>
         <p className="text-orange-100 text-sm mb-1">Inventory Value</p>
         <p className="text-3xl font-bold mb-1">
-          ${(inventoryValue / 1000).toFixed(0)}K
+          ${(inventoryValue / 1000).toFixed(3)}K
         </p>
         <p className="text-orange-100 text-xs">
           {totalProducts} products in stock

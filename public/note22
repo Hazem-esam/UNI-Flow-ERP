@@ -1,0 +1,4764 @@
+Select a definition
+
+ERPSyatem.API v1
+ERPSyatem.API
+ 1.0 
+OAS 3.0
+http://localhost:39246/swagger/v1/swagger.json
+
+Authorize
+Attendance
+
+
+POST
+/api/Attendance/checkin
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "checkInTime": "2026-02-04T01:16:49.076Z",
+  "notes": "string",
+  "location": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "employeeName": "string",
+  "date": "2026-02-04",
+  "checkInTime": "string",
+  "checkOutTime": "string",
+  "status": "string",
+  "workedHours": 0,
+  "overtimeHours": 0,
+  "notes": "string",
+  "isManualEntry": true
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+POST
+/api/Attendance/checkout
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "checkOutTime": "2026-02-04T01:16:49.087Z",
+  "notes": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "employeeName": "string",
+  "date": "2026-02-04",
+  "checkInTime": "string",
+  "checkOutTime": "string",
+  "status": "string",
+  "workedHours": 0,
+  "overtimeHours": 0,
+  "notes": "string",
+  "isManualEntry": true
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+POST
+/api/Attendance/manual
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "date": "2026-02-04",
+  "checkInTime": "string",
+  "checkOutTime": "string",
+  "status": 1,
+  "notes": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "employeeName": "string",
+  "date": "2026-02-04",
+  "checkInTime": "string",
+  "checkOutTime": "string",
+  "status": "string",
+  "workedHours": 0,
+  "overtimeHours": 0,
+  "notes": "string",
+  "isManualEntry": true
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+PUT
+/api/Attendance/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "checkInTime": "string",
+  "checkOutTime": "string",
+  "status": 1,
+  "notes": "string",
+  "reason": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "employeeName": "string",
+  "date": "2026-02-04",
+  "checkInTime": "string",
+  "checkOutTime": "string",
+  "status": "string",
+  "workedHours": 0,
+  "overtimeHours": 0,
+  "notes": "string",
+  "isManualEntry": true
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/Attendance/summary/{employeeId}/{month}/{year}
+
+
+Parameters
+Try it out
+Name	Description
+employeeId *
+string($uuid)
+(path)
+employeeId
+month *
+integer($int32)
+(path)
+month
+year *
+integer($int32)
+(path)
+year
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeName": "string",
+  "month": 0,
+  "year": 0,
+  "totalWorkingDays": 0,
+  "presentDays": 0,
+  "absentDays": 0,
+  "lateDays": 0,
+  "leaveDays": 0,
+  "totalWorkedHours": 0,
+  "totalOvertimeHours": 0,
+  "attendanceRate": 0
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+Auth
+
+Category
+
+
+GET
+/api/Category
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/Category
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "description": "string",
+  "parentCategoryId": 0
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/Category/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/Category/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "description": "string",
+  "parentCategoryId": 0
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+DELETE
+/api/Category/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+Companies
+
+
+GET
+/api/companies/me
+
+
+Parameters
+Cancel
+No parameters
+
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:39246/api/companies/me' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNDBlNzczYi1mZmMxLTQzMjktODM1MS0yNjU1YWU3YTg4M2IiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMTc0NjkwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.0KFsGdTcItVO7Ji64rUCLBiSkesi1oij3DEqR4UUKJg'
+Request URL
+http://localhost:39246/api/companies/me
+Server response
+Code	Details
+200	
+Response body
+Download
+{
+  "id": 1,
+  "name": "string",
+  "commercialName": null,
+  "address": "string",
+  "isActive": true,
+  "createdAt": "2026-02-03T23:50:45.0047828"
+}
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Wed,04 Feb 2026 01:16:17 GMT 
+ server: Microsoft-IIS/10.0 
+ transfer-encoding: chunked 
+ x-powered-by: ASP.NET 
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/companies/me
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "commercialName": "string",
+  "address": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+CompanyModules
+
+
+GET
+/api/company-modules
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:39246/api/company-modules' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNDBlNzczYi1mZmMxLTQzMjktODM1MS0yNjU1YWU3YTg4M2IiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMTc0NjkwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.0KFsGdTcItVO7Ji64rUCLBiSkesi1oij3DEqR4UUKJg'
+Request URL
+http://localhost:39246/api/company-modules
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "moduleId": 3,
+    "moduleKey": "CONTACT",
+    "moduleName": "CONTACT",
+    "isEnabled": true,
+    "enabledAt": "2026-02-03T23:51:11.2054005",
+    "expiresAt": null
+  },
+  {
+    "moduleId": 6,
+    "moduleKey": "CRM",
+    "moduleName": "CRM",
+    "isEnabled": true,
+    "enabledAt": "2026-02-03T23:51:16.6912832",
+    "expiresAt": null
+  },
+  {
+    "moduleId": 7,
+    "moduleKey": "DASHBOARD",
+    "moduleName": "Dashboard",
+    "isEnabled": false,
+    "enabledAt": null,
+    "expiresAt": null
+  },
+  {
+    "moduleId": 4,
+    "moduleKey": "EXPENSES",
+    "moduleName": "Expenses",
+    "isEnabled": true,
+    "enabledAt": "2026-02-03T23:51:12.9602033",
+    "expiresAt": null
+  },
+  {
+    "moduleId": 5,
+    "moduleKey": "HR",
+    "moduleName": "HR",
+    "isEnabled": true,
+    "enabledAt": "2026-02-03T23:51:14.9602582",
+    "expiresAt": null
+  },
+  {
+    "moduleId": 2,
+    "moduleKey": "INVENTORY",
+    "moduleName": "Inventory",
+    "isEnabled": true,
+    "enabledAt": "2026-02-03T23:51:09.4146529",
+    "expiresAt": null
+  },
+  {
+    "moduleId": 1,
+    "moduleKey": "SALES",
+    "moduleName": "Sales",
+    "isEnabled": true,
+    "enabledAt": "2026-02-03T23:51:06.583887",
+    "expiresAt": null
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Wed,04 Feb 2026 01:12:01 GMT 
+ server: Microsoft-IIS/10.0 
+ transfer-encoding: chunked 
+ x-powered-by: ASP.NET 
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/company-modules/{moduleId}
+
+
+Parameters
+Try it out
+Name	Description
+moduleId *
+integer($int32)
+(path)
+7
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "isEnabled": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+CompanyUsers
+
+
+GET
+/api/company-users
+
+
+Parameters
+Cancel
+No parameters
+
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:39246/api/company-users' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNDBlNzczYi1mZmMxLTQzMjktODM1MS0yNjU1YWU3YTg4M2IiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMTc0NjkwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.0KFsGdTcItVO7Ji64rUCLBiSkesi1oij3DEqR4UUKJg'
+Request URL
+http://localhost:39246/api/company-users
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "id": "b40e773b-ffc1-4329-8351-2655ae7a883b",
+    "email": "esamh4049@gmail.com",
+    "fullName": "string",
+    "isActive": true,
+    "isLockedOut": false,
+    "roles": [
+      "CompanyOwner"
+    ]
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Wed,04 Feb 2026 01:16:34 GMT 
+ server: Microsoft-IIS/10.0 
+ transfer-encoding: chunked 
+ x-powered-by: ASP.NET 
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/company-users
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "email": "string",
+  "password": "string",
+  "fullName": "string",
+  "roles": [
+    "string"
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/company-users/{userId}/roles
+
+
+Parameters
+Try it out
+Name	Description
+userId *
+string($uuid)
+(path)
+userId
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "roles": [
+    "string"
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/company-users/{userId}/status
+
+
+Parameters
+Try it out
+Name	Description
+userId *
+string($uuid)
+(path)
+userId
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "isActive": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+Contact
+
+
+GET
+/api/Contact
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/Contact
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "fullName": "string",
+  "email": "user@example.com",
+  "phoneNumber": "string",
+  "company": "string",
+  "position": "string",
+  "type": 1,
+  "location": "string",
+  "website": "string",
+  "profileLink": "string",
+  "notes": "string",
+  "favorite": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/Contact
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "id": 0,
+  "fullName": "string",
+  "email": "user@example.com",
+  "phoneNumber": "string",
+  "company": "string",
+  "position": "string",
+  "type": 1,
+  "location": "string",
+  "website": "string",
+  "profileLink": "string",
+  "notes": "string",
+  "favorite": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+DELETE
+/api/Contact
+
+
+Parameters
+Try it out
+Name	Description
+id
+integer($int32)
+(query)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/Contact/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+Customers
+
+
+GET
+/api/sales/Customers
+
+
+Parameters
+Try it out
+Name	Description
+isActive
+boolean
+(query)
+
+--
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/sales/Customers
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "code": "string",
+  "name": "string",
+  "email": "string",
+  "phone": "string",
+  "address": "string",
+  "taxNumber": "string",
+  "creditLimit": 0
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/sales/Customers/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/sales/Customers/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "email": "string",
+  "phone": "string",
+  "address": "string",
+  "taxNumber": "string",
+  "creditLimit": 0,
+  "isActive": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+DELETE
+/api/sales/Customers/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+Department
+
+
+GET
+/api/Department
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "code": "string",
+    "name": "string",
+    "description": "string",
+    "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "managerName": "string",
+    "employeeCount": 0,
+    "isActive": true,
+    "createdAt": "2026-02-04T01:16:49.236Z"
+  }
+]
+No links
+
+POST
+/api/Department
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "code": "string",
+  "name": "string",
+  "description": "string",
+  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "isActive": true
+}
+Responses
+Code	Description	Links
+201	
+Created
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "code": "string",
+  "name": "string",
+  "description": "string",
+  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "managerName": "string",
+  "employeeCount": 0,
+  "isActive": true,
+  "createdAt": "2026-02-04T01:16:49.244Z"
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/Department/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "code": "string",
+  "name": "string",
+  "description": "string",
+  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "managerName": "string",
+  "employeeCount": 0,
+  "isActive": true,
+  "createdAt": "2026-02-04T01:16:49.251Z",
+  "manager": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "employeeCode": "string",
+    "fullName": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "departmentName": "string",
+    "positionTitle": "string",
+    "status": "string",
+    "hireDate": "2026-02-04T01:16:49.251Z",
+    "profileImageUrl": "string"
+  },
+  "employees": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "employeeCode": "string",
+      "fullName": "string",
+      "email": "string",
+      "phoneNumber": "string",
+      "departmentName": "string",
+      "positionTitle": "string",
+      "status": "string",
+      "hireDate": "2026-02-04T01:16:49.251Z",
+      "profileImageUrl": "string"
+    }
+  ]
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+PUT
+/api/Department/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "description": "string",
+  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "isActive": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "code": "string",
+  "name": "string",
+  "description": "string",
+  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "managerName": "string",
+  "employeeCount": 0,
+  "isActive": true,
+  "createdAt": "2026-02-04T01:16:49.264Z"
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+DELETE
+/api/Department/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Responses
+Code	Description	Links
+204	
+No Content
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+Employee
+
+
+GET
+/api/Employee
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "employeeCode": "string",
+    "fullName": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "departmentName": "string",
+    "positionTitle": "string",
+    "status": "string",
+    "hireDate": "2026-02-04T01:16:49.280Z",
+    "profileImageUrl": "string"
+  }
+]
+No links
+
+POST
+/api/Employee
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "employeeCode": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "email": "user@example.com",
+  "phoneNumber": "string",
+  "dateOfBirth": "2026-02-04T01:16:49.287Z",
+  "gender": 1,
+  "nationality": "string",
+  "nationalId": "string",
+  "maritalStatus": 1,
+  "bankAccountNumber": "string",
+  "bankName": "string",
+  "bankBranch": "string",
+  "hireDate": "2026-02-04T01:16:49.287Z",
+  "probationPeriodMonths": 0,
+  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "positionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "reportsToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "currentAddress": {
+    "city": "string",
+    "country": "string",
+    "postalCode": "string"
+  },
+  "salary": 0,
+  "currency": "string"
+}
+Responses
+Code	Description	Links
+201	
+Created
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "fullName": "string",
+  "email": "string",
+  "phoneNumber": "string",
+  "dateOfBirth": "2026-02-04T01:16:49.297Z",
+  "gender": "string",
+  "nationality": "string",
+  "nationalId": "string",
+  "maritalStatus": "string",
+  "bankAccountNumber": "string",
+  "bankName": "string",
+  "bankBranch": "string",
+  "hireDate": "2026-02-04T01:16:49.297Z",
+  "probationEndDate": "2026-02-04T01:16:49.297Z",
+  "terminationDate": "2026-02-04T01:16:49.297Z",
+  "status": "string",
+  "department": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "code": "string",
+    "name": "string",
+    "description": "string",
+    "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "managerName": "string",
+    "employeeCount": 0,
+    "isActive": true,
+    "createdAt": "2026-02-04T01:16:49.297Z"
+  },
+  "position": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "code": "string",
+    "title": "string",
+    "description": "string",
+    "level": "string",
+    "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "departmentName": "string",
+    "minSalary": 0,
+    "maxSalary": 0,
+    "isActive": true
+  },
+  "reportsTo": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "employeeCode": "string",
+    "fullName": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "departmentName": "string",
+    "positionTitle": "string",
+    "status": "string",
+    "hireDate": "2026-02-04T01:16:49.297Z",
+    "profileImageUrl": "string"
+  },
+  "directReports": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "employeeCode": "string",
+      "fullName": "string",
+      "email": "string",
+      "phoneNumber": "string",
+      "departmentName": "string",
+      "positionTitle": "string",
+      "status": "string",
+      "hireDate": "2026-02-04T01:16:49.297Z",
+      "profileImageUrl": "string"
+    }
+  ],
+  "currentAddress": {
+    "city": "string",
+    "country": "string",
+    "postalCode": "string"
+  },
+  "salary": 0,
+  "currency": "string",
+  "profileImageUrl": "string",
+  "documents": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "documentName": "string",
+      "documentType": "string",
+      "filePath": "string",
+      "fileSizeBytes": 0,
+      "fileExtension": "string",
+      "uploadedAt": "2026-02-04T01:16:49.297Z",
+      "uploadedBy": "string"
+    }
+  ],
+  "createdAt": "2026-02-04T01:16:49.297Z",
+  "modifiedAt": "2026-02-04T01:16:49.297Z"
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/Employee/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "fullName": "string",
+  "email": "string",
+  "phoneNumber": "string",
+  "dateOfBirth": "2026-02-04T01:16:49.307Z",
+  "gender": "string",
+  "nationality": "string",
+  "nationalId": "string",
+  "maritalStatus": "string",
+  "bankAccountNumber": "string",
+  "bankName": "string",
+  "bankBranch": "string",
+  "hireDate": "2026-02-04T01:16:49.307Z",
+  "probationEndDate": "2026-02-04T01:16:49.307Z",
+  "terminationDate": "2026-02-04T01:16:49.307Z",
+  "status": "string",
+  "department": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "code": "string",
+    "name": "string",
+    "description": "string",
+    "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "managerName": "string",
+    "employeeCount": 0,
+    "isActive": true,
+    "createdAt": "2026-02-04T01:16:49.307Z"
+  },
+  "position": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "code": "string",
+    "title": "string",
+    "description": "string",
+    "level": "string",
+    "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "departmentName": "string",
+    "minSalary": 0,
+    "maxSalary": 0,
+    "isActive": true
+  },
+  "reportsTo": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "employeeCode": "string",
+    "fullName": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "departmentName": "string",
+    "positionTitle": "string",
+    "status": "string",
+    "hireDate": "2026-02-04T01:16:49.307Z",
+    "profileImageUrl": "string"
+  },
+  "directReports": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "employeeCode": "string",
+      "fullName": "string",
+      "email": "string",
+      "phoneNumber": "string",
+      "departmentName": "string",
+      "positionTitle": "string",
+      "status": "string",
+      "hireDate": "2026-02-04T01:16:49.307Z",
+      "profileImageUrl": "string"
+    }
+  ],
+  "currentAddress": {
+    "city": "string",
+    "country": "string",
+    "postalCode": "string"
+  },
+  "salary": 0,
+  "currency": "string",
+  "profileImageUrl": "string",
+  "documents": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "documentName": "string",
+      "documentType": "string",
+      "filePath": "string",
+      "fileSizeBytes": 0,
+      "fileExtension": "string",
+      "uploadedAt": "2026-02-04T01:16:49.307Z",
+      "uploadedBy": "string"
+    }
+  ],
+  "createdAt": "2026-02-04T01:16:49.307Z",
+  "modifiedAt": "2026-02-04T01:16:49.307Z"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+PUT
+/api/Employee/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "firstName": "string",
+  "lastName": "string",
+  "email": "user@example.com",
+  "phoneNumber": "string",
+  "dateOfBirth": "2026-02-04T01:16:49.322Z",
+  "gender": 1,
+  "nationality": "string",
+  "maritalStatus": 1,
+  "bankAccountNumber": "string",
+  "bankName": "string",
+  "bankBranch": "string",
+  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "positionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "reportsToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "currentAddress": {
+    "city": "string",
+    "country": "string",
+    "postalCode": "string"
+  },
+  "salary": 0,
+  "status": 1,
+  "effectiveDate": "2026-02-04T01:16:49.322Z",
+  "reason": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "fullName": "string",
+  "email": "string",
+  "phoneNumber": "string",
+  "dateOfBirth": "2026-02-04T01:16:49.325Z",
+  "gender": "string",
+  "nationality": "string",
+  "nationalId": "string",
+  "maritalStatus": "string",
+  "bankAccountNumber": "string",
+  "bankName": "string",
+  "bankBranch": "string",
+  "hireDate": "2026-02-04T01:16:49.325Z",
+  "probationEndDate": "2026-02-04T01:16:49.325Z",
+  "terminationDate": "2026-02-04T01:16:49.325Z",
+  "status": "string",
+  "department": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "code": "string",
+    "name": "string",
+    "description": "string",
+    "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "managerName": "string",
+    "employeeCount": 0,
+    "isActive": true,
+    "createdAt": "2026-02-04T01:16:49.325Z"
+  },
+  "position": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "code": "string",
+    "title": "string",
+    "description": "string",
+    "level": "string",
+    "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "departmentName": "string",
+    "minSalary": 0,
+    "maxSalary": 0,
+    "isActive": true
+  },
+  "reportsTo": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "employeeCode": "string",
+    "fullName": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "departmentName": "string",
+    "positionTitle": "string",
+    "status": "string",
+    "hireDate": "2026-02-04T01:16:49.325Z",
+    "profileImageUrl": "string"
+  },
+  "directReports": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "employeeCode": "string",
+      "fullName": "string",
+      "email": "string",
+      "phoneNumber": "string",
+      "departmentName": "string",
+      "positionTitle": "string",
+      "status": "string",
+      "hireDate": "2026-02-04T01:16:49.325Z",
+      "profileImageUrl": "string"
+    }
+  ],
+  "currentAddress": {
+    "city": "string",
+    "country": "string",
+    "postalCode": "string"
+  },
+  "salary": 0,
+  "currency": "string",
+  "profileImageUrl": "string",
+  "documents": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "documentName": "string",
+      "documentType": "string",
+      "filePath": "string",
+      "fileSizeBytes": 0,
+      "fileExtension": "string",
+      "uploadedAt": "2026-02-04T01:16:49.325Z",
+      "uploadedBy": "string"
+    }
+  ],
+  "createdAt": "2026-02-04T01:16:49.325Z",
+  "modifiedAt": "2026-02-04T01:16:49.325Z"
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+DELETE
+/api/Employee/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Responses
+Code	Description	Links
+204	
+No Content
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/Employee/department/{departmentId}
+
+
+Parameters
+Try it out
+Name	Description
+departmentId *
+string($uuid)
+(path)
+departmentId
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "employeeCode": "string",
+    "fullName": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "departmentName": "string",
+    "positionTitle": "string",
+    "status": "string",
+    "hireDate": "2026-02-04T01:16:49.345Z",
+    "profileImageUrl": "string"
+  }
+]
+No links
+
+GET
+/api/Employee/status/{status}
+
+
+Parameters
+Try it out
+Name	Description
+status *
+integer($int32)
+(path)
+Available values : 1, 2, 3, 4
+
+
+1
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "employeeCode": "string",
+    "fullName": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "departmentName": "string",
+    "positionTitle": "string",
+    "status": "string",
+    "hireDate": "2026-02-04T01:16:49.350Z",
+    "profileImageUrl": "string"
+  }
+]
+No links
+
+PUT
+/api/Employee/{id}/status
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "firstName": "string",
+  "lastName": "string",
+  "email": "user@example.com",
+  "phoneNumber": "string",
+  "dateOfBirth": "2026-02-04T01:16:49.359Z",
+  "gender": 1,
+  "nationality": "string",
+  "maritalStatus": 1,
+  "bankAccountNumber": "string",
+  "bankName": "string",
+  "bankBranch": "string",
+  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "positionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "reportsToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "currentAddress": {
+    "city": "string",
+    "country": "string",
+    "postalCode": "string"
+  },
+  "salary": 0,
+  "status": 1,
+  "effectiveDate": "2026-02-04T01:16:49.359Z",
+  "reason": "string"
+}
+Responses
+Code	Description	Links
+204	
+No Content
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+ExpenseCategories
+
+
+GET
+/api/expense-categories
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/expense-categories
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "description": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/expense-categories/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/expense-categories/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "description": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+DELETE
+/api/expense-categories/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+Expenses
+
+
+GET
+/api/expenses
+
+
+Parameters
+Try it out
+Name	Description
+Search
+string
+(query)
+Search
+CategoryId
+integer($int32)
+(query)
+CategoryId
+Status
+string
+(query)
+Status
+PaymentMethod
+string
+(query)
+PaymentMethod
+FromDate
+string($date-time)
+(query)
+FromDate
+ToDate
+string($date-time)
+(query)
+ToDate
+MinAmount
+number($double)
+(query)
+MinAmount
+MaxAmount
+number($double)
+(query)
+MaxAmount
+SortBy
+string
+(query)
+SortBy
+SortDir
+string
+(query)
+SortDir
+Page
+integer($int32)
+(query)
+Page
+PageSize
+integer($int32)
+(query)
+PageSize
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/expenses
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "description": "string",
+  "vendor": "string",
+  "categoryId": 0,
+  "amount": 0.01,
+  "expenseDate": "2026-02-04T01:16:49.411Z",
+  "status": "string",
+  "paymentMethod": "string",
+  "notes": "string",
+  "referenceNumber": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/expenses/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/expenses/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "description": "string",
+  "vendor": "string",
+  "categoryId": 0,
+  "amount": 0.01,
+  "expenseDate": "2026-02-04T01:16:49.423Z",
+  "status": "string",
+  "paymentMethod": "string",
+  "notes": "string",
+  "referenceNumber": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+DELETE
+/api/expenses/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PATCH
+/api/expenses/{id}/status
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "status": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+ExpenseStats
+
+
+GET
+/api/expenses/stats/summary
+
+
+Parameters
+Try it out
+Name	Description
+FromDate
+string($date-time)
+(query)
+FromDate
+ToDate
+string($date-time)
+(query)
+ToDate
+Grouping
+string
+(query)
+Grouping
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/expenses/stats/over-time
+
+
+Parameters
+Try it out
+Name	Description
+FromDate
+string($date-time)
+(query)
+FromDate
+ToDate
+string($date-time)
+(query)
+ToDate
+Grouping
+string
+(query)
+Grouping
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/expenses/stats/by-category
+
+
+Parameters
+Try it out
+Name	Description
+FromDate
+string($date-time)
+(query)
+FromDate
+ToDate
+string($date-time)
+(query)
+ToDate
+Grouping
+string
+(query)
+Grouping
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+Inventory
+
+
+POST
+/api/Inventory/in
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "docDate": "2026-02-04T01:16:49.458Z",
+  "sourceType": "string",
+  "sourceId": 0,
+  "notes": "string",
+  "lines": [
+    {
+      "productId": 0,
+      "warehouseId": 0,
+      "quantity": 0,
+      "minQuantity": 0,
+      "unitId": 0,
+      "unitCost": 0,
+      "notes": "string"
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/Inventory/out
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "docDate": "2026-02-04T01:16:49.465Z",
+  "sourceType": "string",
+  "sourceId": 0,
+  "notes": "string",
+  "lines": [
+    {
+      "productId": 0,
+      "warehouseId": 0,
+      "quantity": 0,
+      "unitId": 0,
+      "notes": "string"
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/Inventory/transfer
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "docDate": "2026-02-04T01:16:49.471Z",
+  "sourceType": "string",
+  "notes": "string",
+  "lines": [
+    {
+      "productId": 0,
+      "fromWarehouseId": 0,
+      "toWarehouseId": 0,
+      "quantity": 0,
+      "unitId": 0,
+      "notes": "string"
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/Inventory/opening-balance
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "docDate": "2026-02-04T01:16:49.478Z",
+  "notes": "string",
+  "lines": [
+    {
+      "productId": 0,
+      "warehouseId": 0,
+      "quantity": 0,
+      "unitId": 0,
+      "minQuantity": 0,
+      "unitCost": 0,
+      "notes": "string"
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/Inventory/adjustment
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "docDate": "2026-02-04T01:16:49.484Z",
+  "notes": "string",
+  "lines": [
+    {
+      "productId": 0,
+      "warehouseId": 0,
+      "actualQuantity": 0,
+      "unitId": 0,
+      "unitCost": 0,
+      "notes": "string"
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+InventoryReports
+
+
+GET
+/api/InventoryReports/stock-balance
+
+
+Parameters
+Try it out
+Name	Description
+productId
+integer($int32)
+(query)
+productId
+warehouseId
+integer($int32)
+(query)
+warehouseId
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/InventoryReports/warehouse/{warehouseId}/stock
+
+
+Parameters
+Try it out
+Name	Description
+warehouseId *
+integer($int32)
+(path)
+warehouseId
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/InventoryReports/product/{productId}/stock
+
+
+Parameters
+Try it out
+Name	Description
+productId *
+integer($int32)
+(path)
+productId
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/InventoryReports/movements
+
+
+Parameters
+Try it out
+Name	Description
+productId
+integer($int32)
+(query)
+productId
+warehouseId
+integer($int32)
+(query)
+warehouseId
+from
+string($date-time)
+(query)
+from
+to
+string($date-time)
+(query)
+to
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/InventoryReports/low-stock
+
+
+Parameters
+Try it out
+Name	Description
+warehouseId
+integer($int32)
+(query)
+warehouseId
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/InventoryReports/valuation
+
+
+Parameters
+Try it out
+Name	Description
+warehouseId
+integer($int32)
+(query)
+warehouseId
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+JobPosition
+
+
+GET
+/api/JobPosition
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "code": "string",
+    "title": "string",
+    "description": "string",
+    "level": "string",
+    "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "departmentName": "string",
+    "minSalary": 0,
+    "maxSalary": 0,
+    "isActive": true
+  }
+]
+No links
+
+POST
+/api/JobPosition
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "code": "string",
+  "title": "string",
+  "description": "string",
+  "level": 1,
+  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "minSalary": 0,
+  "maxSalary": 0,
+  "isActive": true
+}
+Responses
+Code	Description	Links
+201	
+Created
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "code": "string",
+  "title": "string",
+  "description": "string",
+  "level": "string",
+  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "departmentName": "string",
+  "minSalary": 0,
+  "maxSalary": 0,
+  "isActive": true
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/JobPosition/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "code": "string",
+  "title": "string",
+  "description": "string",
+  "level": "string",
+  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "departmentName": "string",
+  "minSalary": 0,
+  "maxSalary": 0,
+  "isActive": true
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+PUT
+/api/JobPosition/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "title": "string",
+  "description": "string",
+  "level": 1,
+  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "minSalary": 0,
+  "maxSalary": 0,
+  "isActive": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "code": "string",
+  "title": "string",
+  "description": "string",
+  "level": "string",
+  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "departmentName": "string",
+  "minSalary": 0,
+  "maxSalary": 0,
+  "isActive": true
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+DELETE
+/api/JobPosition/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Responses
+Code	Description	Links
+204	
+No Content
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+Lead
+
+
+GET
+/api/Lead
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": 0,
+    "companyId": 0,
+    "companyName": "string",
+    "name": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "source": 1,
+    "stage": 1,
+    "dealValue": 0,
+    "lastContactDate": "2026-02-04T01:16:49.564Z",
+    "assignedToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "convertedCustomerId": 0,
+    "convertedDate": "2026-02-04T01:16:49.564Z",
+    "createdDealId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  }
+]
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+POST
+/api/Lead
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "companyId": 0,
+  "companyName": "string",
+  "name": "string",
+  "email": "string",
+  "phoneNumber": "string",
+  "source": 1,
+  "stage": 1,
+  "dealValue": 0,
+  "lastContactDate": "2026-02-04T01:16:49.573Z",
+  "assignedToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+Responses
+Code	Description	Links
+201	
+Created
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/Lead/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": 0,
+  "companyId": 0,
+  "companyName": "string",
+  "name": "string",
+  "email": "string",
+  "phoneNumber": "string",
+  "source": 1,
+  "stage": 1,
+  "dealValue": 0,
+  "lastContactDate": "2026-02-04T01:16:49.585Z",
+  "assignedToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "convertedCustomerId": 0,
+  "convertedDate": "2026-02-04T01:16:49.585Z",
+  "createdDealId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+PUT
+/api/Lead/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "companyName": "string",
+  "name": "string",
+  "email": "string",
+  "phoneNumber": "string",
+  "source": 1,
+  "stage": 1,
+  "dealValue": 0,
+  "lastContactDate": "2026-02-04T01:16:49.598Z",
+  "assignedToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+DELETE
+/api/Lead/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+POST
+/api/Lead/{id}/convert
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "customerId": 0,
+  "createDeal": true,
+  "dealName": "string",
+  "dealAmount": 0,
+  "expectedCloseDate": "2026-02-04",
+  "dealStage": 1,
+  "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+LeaveRequest
+
+
+POST
+/api/LeaveRequest
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "leaveType": 1,
+  "startDate": "2026-02-04",
+  "endDate": "2026-02-04",
+  "reason": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "employeeName": "string",
+  "leaveType": "string",
+  "startDate": "2026-02-04",
+  "endDate": "2026-02-04",
+  "totalDays": 0,
+  "status": "string",
+  "requestDate": "2026-02-04T01:16:49.641Z",
+  "reason": "string"
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/LeaveRequest/{id}
+
+
+
+DELETE
+/api/LeaveRequest/{id}
+
+
+
+GET
+/api/LeaveRequest/employee/{employeeId}
+
+
+
+GET
+/api/LeaveRequest/pending
+
+
+
+POST
+/api/LeaveRequest/{id}/approve
+
+
+
+POST
+/api/LeaveRequest/{id}/reject
+
+
+
+POST
+/api/LeaveRequest/{id}/cancel
+
+
+
+GET
+/api/LeaveRequest/balance/{employeeId}/{year}
+
+
+Modules
+
+
+GET
+/api/modules
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+Payroll
+
+
+POST
+/api/Payroll/generate
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "month": 12,
+  "year": 0,
+  "employeeIds": [
+    "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  ],
+  "departmentIds": [
+    "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  ],
+  "includeInactive": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "month": 0,
+  "year": 0,
+  "totalEmployees": 0,
+  "totalGrossPay": 0,
+  "totalDeductions": 0,
+  "totalNetPay": 0,
+  "generatedCount": 0,
+  "failedCount": 0,
+  "errors": [
+    "string"
+  ]
+}
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/Payroll/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string($uuid)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "employeeCode": "string",
+  "employeeName": "string",
+  "month": 0,
+  "year": 0,
+  "payPeriodStart": "2026-02-04",
+  "payPeriodEnd": "2026-02-04",
+  "basicSalary": 0,
+  "totalAllowances": 0,
+  "totalDeductions": 0,
+  "netSalary": 0,
+  "status": "string",
+  "processedDate": "2026-02-04T01:16:49.662Z",
+  "paidDate": "2026-02-04T01:16:49.662Z",
+  "employee": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "employeeCode": "string",
+    "fullName": "string",
+    "email": "string",
+    "phoneNumber": "string",
+    "departmentName": "string",
+    "positionTitle": "string",
+    "status": "string",
+    "hireDate": "2026-02-04T01:16:49.662Z",
+    "profileImageUrl": "string"
+  },
+  "workingDays": 0,
+  "presentDays": 0,
+  "absentDays": 0,
+  "unpaidLeaveDays": 0,
+  "overtimeHours": 0,
+  "allowances": [
+    {
+      "description": "string",
+      "amount": 0,
+      "type": "string"
+    }
+  ],
+  "deductions": [
+    {
+      "description": "string",
+      "amount": 0,
+      "type": "string"
+    }
+  ],
+  "paymentMethod": "string",
+  "bankAccountNumber": "string",
+  "transactionReference": "string",
+  "generatedBy": "string",
+  "processedBy": "string",
+  "paidBy": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+PUT
+/api/Payroll/{id}
+
+
+
+DELETE
+/api/Payroll/{id}
+
+
+
+GET
+/api/Payroll/employee/{employeeId}
+
+
+
+GET
+/api/Payroll/period/{month}/{year}
+
+
+
+POST
+/api/Payroll/{id}/process
+
+
+
+POST
+/api/Payroll/{id}/mark-paid
+
+
+
+POST
+/api/Payroll/{id}/revert
+
+
+
+GET
+/api/Payroll/summary/{month}/{year}
+
+
+
+POST
+/api/Payroll/{id}/recalculate
+
+
+Pipeline
+
+
+GET
+/api/Pipeline
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "id": 0,
+    "companyId": 0,
+    "customerId": 0,
+    "dealName": "string",
+    "dealAmount": 0,
+    "leadId": 0,
+    "expectedCloseDate": "2026-02-04",
+    "dealStage": 1,
+    "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  }
+]
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+POST
+/api/Pipeline
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "companyId": 0,
+  "customerId": 0,
+  "dealName": "string",
+  "dealAmount": 0,
+  "leadId": 0,
+  "expectedCloseDate": "2026-02-04",
+  "dealStage": 1,
+  "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+Responses
+Code	Description	Links
+201	
+Created
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+string
+No links
+400	
+Bad Request
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+GET
+/api/Pipeline/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+Media type
+
+text/plain
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": 0,
+  "companyId": 0,
+  "customerId": 0,
+  "dealName": "string",
+  "dealAmount": 0,
+  "leadId": 0,
+  "expectedCloseDate": "2026-02-04",
+  "dealStage": 1,
+  "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+No links
+401	
+Unauthorized
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+404	
+Not Found
+
+Media type
+
+text/plain
+Example Value
+Schema
+{
+  "type": "string",
+  "title": "string",
+  "status": 0,
+  "detail": "string",
+  "instance": "string",
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}
+No links
+
+PUT
+/api/Pipeline/{id}
+
+
+
+DELETE
+/api/Pipeline/{id}
+
+
+
+PATCH
+/api/Pipeline/{id}/move-stage
+
+
+Products
+
+
+GET
+/api/Products
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/Products
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "code": "string",
+  "name": "string",
+  "description": "string",
+  "categoryId": 0,
+  "unitOfMeasureId": 0,
+  "defaultPrice": 0,
+  "minQuantity": 0,
+  "barcode": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/Products/{id}
+
+
+
+PUT
+/api/Products/{id}
+
+
+
+DELETE
+/api/Products/{id}
+
+
+SalesDeliveries
+
+
+GET
+/api/sales/deliveries
+
+
+Parameters
+Try it out
+Name	Description
+invoiceId
+integer($int32)
+(query)
+invoiceId
+status
+integer($int32)
+(query)
+Available values : 0, 1, 2
+
+
+--
+fromDate
+string($date-time)
+(query)
+fromDate
+toDate
+string($date-time)
+(query)
+toDate
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/sales/deliveries
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "deliveryDate": "2026-02-04T01:16:49.719Z",
+  "salesInvoiceId": 0,
+  "warehouseId": 0,
+  "notes": "string",
+  "lines": [
+    {
+      "salesInvoiceLineId": 0,
+      "quantity": 0,
+      "notes": "string"
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/sales/deliveries/{id}
+
+
+
+DELETE
+/api/sales/deliveries/{id}
+
+
+
+POST
+/api/sales/deliveries/{id}/post
+
+
+
+POST
+/api/sales/deliveries/{id}/cancel
+
+
+SalesInvoices
+
+
+GET
+/api/sales/invoices
+
+
+Parameters
+Try it out
+Name	Description
+customerId
+integer($int32)
+(query)
+customerId
+status
+integer($int32)
+(query)
+Available values : 0, 1, 2, 3, 4
+
+
+--
+fromDate
+string($date-time)
+(query)
+fromDate
+toDate
+string($date-time)
+(query)
+toDate
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/sales/invoices
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "invoiceDate": "2026-02-04T01:16:49.736Z",
+  "dueDate": "2026-02-04T01:16:49.736Z",
+  "customerId": 0,
+  "notes": "string",
+  "lines": [
+    {
+      "productId": 0,
+      "unitId": 0,
+      "quantity": 0,
+      "unitPrice": 0,
+      "discountPercent": 0,
+      "taxPercent": 0,
+      "notes": "string"
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/sales/invoices/{id}
+
+
+
+PUT
+/api/sales/invoices/{id}
+
+
+
+DELETE
+/api/sales/invoices/{id}
+
+
+
+POST
+/api/sales/invoices/{id}/post
+
+
+
+POST
+/api/sales/invoices/{id}/cancel
+
+
+SalesReceipts
+
+
+GET
+/api/sales/receipts
+
+
+Parameters
+Try it out
+Name	Description
+customerId
+integer($int32)
+(query)
+customerId
+status
+integer($int32)
+(query)
+Available values : 0, 1, 2
+
+
+--
+fromDate
+string($date-time)
+(query)
+fromDate
+toDate
+string($date-time)
+(query)
+toDate
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/sales/receipts
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "receiptDate": "2026-02-04T01:16:49.753Z",
+  "customerId": 0,
+  "amount": 0,
+  "paymentMethod": "string",
+  "referenceNumber": "string",
+  "notes": "string",
+  "allocations": [
+    {
+      "salesInvoiceId": 0,
+      "allocatedAmount": 0
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/sales/receipts/{id}
+
+
+
+DELETE
+/api/sales/receipts/{id}
+
+
+
+POST
+/api/sales/receipts/{id}/post
+
+
+
+POST
+/api/sales/receipts/{id}/cancel
+
+
+SalesReturns
+
+
+GET
+/api/sales/returns
+
+
+Parameters
+Try it out
+Name	Description
+customerId
+integer($int32)
+(query)
+customerId
+status
+integer($int32)
+(query)
+Available values : 0, 1, 2
+
+
+--
+fromDate
+string($date-time)
+(query)
+fromDate
+toDate
+string($date-time)
+(query)
+toDate
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/sales/returns
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "returnDate": "2026-02-04T01:16:49.769Z",
+  "salesInvoiceId": 0,
+  "customerId": 0,
+  "warehouseId": 0,
+  "reason": "string",
+  "notes": "string",
+  "lines": [
+    {
+      "productId": 0,
+      "unitId": 0,
+      "quantity": 0,
+      "unitPrice": 0,
+      "taxPercent": 0,
+      "notes": "string"
+    }
+  ]
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/sales/returns/{id}
+
+
+
+DELETE
+/api/sales/returns/{id}
+
+
+
+POST
+/api/sales/returns/{id}/post
+
+
+
+POST
+/api/sales/returns/{id}/cancel
+
+
+UnitOfMeasure
+
+
+GET
+/api/UnitOfMeasure
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/UnitOfMeasure
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "symbol": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/UnitOfMeasure/{id}
+
+
+
+PUT
+/api/UnitOfMeasure/{id}
+
+
+
+DELETE
+/api/UnitOfMeasure/{id}
+
+
+Warehouses
+
+
+GET
+/api/Warehouses
+
+
+Parameters
+Try it out
+Name	Description
+branchId
+integer($int32)
+(query)
+branchId
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+POST
+/api/Warehouses
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "branchId": 0,
+  "code": "string",
+  "name": "string",
+  "address": "string"
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/Warehouses/{id}
+
+
+
+PUT
+/api/Warehouses/{id}
+
+
+
+DELETE
+/api/Warehouses/{id}
+
+
+
+Schemas
+AddressDto
+ApproveLeaveDto
+AttendanceDto
+AttendanceStatus
+AttendanceSummaryDto
+AuthResponse
+CancelLeaveDto
+CheckInDto
+CheckOutDto
+CompanyOnboardingRequest
+ContactPersonType
+ConvertLeadDto
+CreateCategoryRequest
+CreateCompanyUserDto
+CreateContactRequest
+CreateCustomerRequest
+CreateDepartmentDto
+CreateEmployeeDto
+CreateExpenseCategoryDto
+CreateExpenseDto
+CreateLeadDto
+CreateLeaveRequestDto
+CreatePipelineDto
+CreatePositionDto
+CreateProductDto
+CreateReceiptAllocationRequest
+CreateSalesDeliveryLineRequest
+CreateSalesDeliveryRequest
+CreateSalesInvoiceLineRequest
+CreateSalesInvoiceRequest
+CreateSalesReceiptRequest
+CreateSalesReturnLineRequest
+CreateSalesReturnRequest
+CreateUnitOfMeasureRequest
+CreateWarehouseDto
+DealStatus
+DepartmentDetailDto
+DepartmentDto
+DocumentDto
+EmployeeDetailDto
+EmployeeListDto
+EmployeeStatus
+Gender
+GeneratePayrollDto
+LeadDto
+LeadSource
+LeadStatus
+LeaveBalanceDto
+LeaveRequestDetailDto
+LeaveRequestDto
+LeaveType
+LeaveTypeBalance
+LoginRequest
+ManualAttendanceDto
+MaritalStatus
+MarkPaidDto
+MovePiplineStageDto
+OpeningBalanceLineRequest
+OpeningBalanceRequest
+PaymentMethod
+PayrollBatchDto
+PayrollDetailDto
+PayrollDto
+PayrollItemDto
+PayrollSummaryDto
+PipelineDto
+PositionDto
+PositionLevel
+ProblemDetails
+RegisterOwnerRequest
+RejectLeaveDto
+SalesDeliveryStatus
+SalesInvoiceStatus
+SalesReceiptStatus
+SalesReturnStatus
+StockAdjustmentLineRequest
+StockAdjustmentRequest
+StockInLineRequest
+StockInRequest
+StockOutLineRequest
+StockOutRequest
+StockTransferLineRequest
+StockTransferRequest
+ToggleCompanyModuleDto
+UpdateAttendanceDto
+UpdateCategoryRequest
+UpdateCompanyMeDto
+UpdateContactDto
+UpdateCustomerRequest
+UpdateDepartmentDto
+UpdateEmployeeDto
+UpdateExpenseCategoryDto
+UpdateExpenseDto
+UpdateExpenseStatusDto
+UpdateLeadDto
+UpdatePayrollDto
+UpdatePipelineDto
+UpdatePositionDto
+UpdateProductDto
+UpdateSalesInvoiceLineRequest
+UpdateSalesInvoiceRequest
+UpdateUnitOfMeasureRequest
+UpdateUserRolesDto
+UpdateUserStatusDto
+UpdateWarehouseDto
+
+
+now u have all the endpoints available use what will help u get the data iam using in dashboard givee me to full fully working and well structrured

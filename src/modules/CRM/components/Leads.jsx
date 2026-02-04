@@ -41,10 +41,7 @@ export default function Leads({
             <Filter className="w-4 h-4" />
             Filter
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-pink-500 transition-colors">
-            <Download className="w-4 h-4" />
-            Export
-          </button>
+      
           <button
             onClick={() => {
               setEditingLead(null);
@@ -120,7 +117,7 @@ export default function Leads({
                   <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${getStageColor(
-                        lead.stage
+                        lead.stage,
                       )}`}
                     >
                       {lead.stage}

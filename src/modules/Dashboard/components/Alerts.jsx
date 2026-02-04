@@ -4,14 +4,28 @@ import {
   TrendingUp,
   Calendar,
 } from "lucide-react";
+export default function Alerts({ products, stock, salesInvoices, leads }) {
+  const flatStock = stock.flat();
 
-export default function Alerts({ inventory, salesOrders, leads }) {
-  const lowStock = inventory.filter((p) => p.quantity <= p.reorderLevel).length;
-  const pendingOrders = salesOrders.filter(
-    (o) => o.status === "pending"
-  ).length;
-  const totalLeads = leads.length;
-  const pipelineValue = leads.reduce((s, l) => s + l.value, 0);
+  const lowStock = flatStock
+    .map((s) => {
+      const p = products.find((p) => p.id === s.productId);
+      if (!p) return null;
+
+      return {
+        productId: s.productId,
+        productName: s.productName,
+        quantityOnHand: s.quantityOnHand,
+        minQuantity: p.minQuantity,
+        isLowStock: s.quantityOnHand <= p.minQuantity,
+      };
+    })
+    .filter((i) => i && i.isLowStock);
+
+  const pendingOrders =
+    salesInvoices?.filter((o) => o.status === 0)?.length || 0;
+  const totalLeads = leads?.length || 0;
+  const pipelineValue = leads?.reduce((s, l) => s + (l.dealValue || 0), 0) || 0;
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
@@ -20,13 +34,13 @@ export default function Alerts({ inventory, salesOrders, leads }) {
       </h3>
 
       <div className="space-y-4">
-        {lowStock > 0 && (
+        {lowStock.length > 0 && (
           <div className="flex items-start gap-4 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
             <AlertTriangle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-gray-900">Low Stock Alert</p>
               <p className="text-sm text-gray-600">
-                {lowStock} products are below reorder level
+                {lowStock.length} products are below reorder level
               </p>
             </div>
           </div>
@@ -55,16 +69,6 @@ export default function Alerts({ inventory, salesOrders, leads }) {
             </div>
           </div>
         )}
-
-        <div className="flex items-start gap-4 p-4 bg-purple-50 rounded-xl border border-purple-200">
-          <Calendar className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold text-gray-900">Monthly Review</p>
-            <p className="text-sm text-gray-600">
-              Team meeting scheduled for next Monday
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );

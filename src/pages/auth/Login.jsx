@@ -42,14 +42,31 @@ function Login() {
       setIsLoading(true);
       setLoginError("");
 
-      const result = await login(values.email, values.password);
+      try {
+        const result = await login(values.email, values.password);
 
-      setIsLoading(false);
+        setIsLoading(false);
 
-      if (result.success) {
-        navigate("/dashboard");
-      } else {
-        setLoginError(result.error || "Invalid email or password. Please try again.");
+        if (result.success) {
+          // Check if user is active
+          if (result.user && result.user.isActive === false) {
+            setLoginError("Your account has been deactivated. Please contact your administrator.");
+            return;
+          }
+
+          // Check if user is locked out
+          if (result.user && result.user.isLockedOut === true) {
+            setLoginError("Your account has been locked. Please contact your administrator.");
+            return;
+          }
+
+          navigate("/dashboard");
+        } else {
+          setLoginError(result.error || "Invalid email or password. Please try again.");
+        }
+      } catch (error) {
+        setIsLoading(false);
+        setLoginError("An error occurred during login. Please try again.");
       }
     },
   });
