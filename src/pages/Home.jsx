@@ -102,28 +102,27 @@ export default function Home() {
   ];
 
   const valueProps = [
-  {
-    icon: Zap,
-    title: "High Performance",
-    description: "Optimized for fast, real-time operations",
-  },
-  {
-    icon: Shield,
-    title: "Enterprise-Grade Security",
-    description: "End-to-end encryption and access control",
-  },
-  {
-    icon: BarChart3,
-    title: "Data-Driven Decisions",
-    description: "Actionable insights from real-time analytics",
-  },
-  {
-    icon: Globe,
-    title: "Global Business Ready",
-    description: "Multi-currency and multi-location support",
-  },
-];
-
+    {
+      icon: Zap,
+      title: "High Performance",
+      description: "Optimized for fast, real-time operations",
+    },
+    {
+      icon: Shield,
+      title: "Enterprise-Grade Security",
+      description: "End-to-end encryption and access control",
+    },
+    {
+      icon: BarChart3,
+      title: "Data-Driven Decisions",
+      description: "Actionable insights from real-time analytics",
+    },
+    {
+      icon: Globe,
+      title: "Global Business Ready",
+      description: "Multi-currency and multi-location support",
+    },
+  ];
 
   const benefits = [
     {
@@ -160,7 +159,6 @@ export default function Home() {
     },
   ];
 
-
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -187,7 +185,9 @@ export default function Home() {
           {/* Main Headline */}
           <div className="text-center max-w-5xl mx-auto">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
-              <span className="text-gray-900">Transform Your Business with</span>
+              <span className="text-gray-900">
+                Transform Your Business with
+              </span>
               <br />
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
                 UNI Flow ERP
@@ -195,7 +195,9 @@ export default function Home() {
             </h1>
 
             <p className="text-xl sm:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-              The intelligent ERP platform that unifies your operations, automates workflows, and scales with your growth—all from one powerful dashboard.
+              The intelligent ERP platform that unifies your operations,
+              automates workflows, and scales with your growth—all from one
+              powerful dashboard.
             </p>
 
             {/* CTAs */}
@@ -229,8 +231,12 @@ export default function Home() {
                     <prop.icon className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="text-left">
-                    <div className="text-sm font-bold text-gray-900">{prop.title}</div>
-                    <div className="text-xs text-gray-600">{prop.description}</div>
+                    <div className="text-sm font-bold text-gray-900">
+                      {prop.title}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      {prop.description}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -238,8 +244,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-
 
       {/* Modules Section */}
       <section className="py-24 bg-gradient-to-b from-white to-slate-50">
@@ -252,7 +256,8 @@ export default function Home() {
               Everything You Need in One Platform
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Powerful modules that work together seamlessly to manage your entire business
+              Powerful modules that work together seamlessly to manage your
+              entire business
             </p>
           </div>
 
@@ -260,18 +265,18 @@ export default function Home() {
             {modules.map((mod) => {
               const Icon = mod.icon;
               const isHovered = hoveredModule === mod.name;
-              
+
               return (
                 <div
                   key={mod.name}
                   onMouseEnter={() => setHoveredModule(mod.name)}
                   onMouseLeave={() => setHoveredModule(null)}
                   onClick={() => navigate(`/modules-samples/${mod.name}`)}
-                  className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100 hover:border-transparent overflow-hidden transform hover:-translate-y-2"
+                  className="group relative bg-white rounded-2xl p-8 shadow-lg  hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100 hover:border-transparent overflow-hidden transform hover:-translate-y-2"
                 >
                   {/* Gradient Background on Hover */}
                   <div
-                    className={`absolute inset-0 bg-gradient-to-br ${mod.color} opacity-0 group-hover:opacity-100 transition-all duration-500`}
+                    className={`absolute inset-0 bg-gradient-to-br ${mod.color} opacity-0 group-hover:opacity-100  transition-all duration-500`}
                   ></div>
 
                   {/* Content */}
@@ -283,7 +288,7 @@ export default function Home() {
                       >
                         <Icon className="w-7 h-7 text-white" />
                       </div>
-                      <span className="text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-blue-50 to-purple-50 group-hover:bg-white/30 text-blue-700 group-hover:text-white rounded-full transition-all duration-300">
+                      <span className="text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-blue-50 to-purple-50 group-hover:bg-white/30 text-blue-700 group-hover:text-black rounded-full transition-all duration-300">
                         {mod.badge}
                       </span>
                     </div>
@@ -337,14 +342,15 @@ export default function Home() {
               Built for Modern Businesses
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Experience measurable improvements in efficiency, cost savings, and business growth
+              Experience measurable improvements in efficiency, cost savings,
+              and business growth
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {benefits.map((benefit, index) => {
               const Icon = benefit.icon;
-              
+
               return (
                 <div
                   key={index}
@@ -353,16 +359,22 @@ export default function Home() {
                   className="group relative bg-gradient-to-br from-slate-50 to-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 overflow-hidden"
                 >
                   {/* Gradient Accent */}
-                  <div className={`absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${benefit.color}`}></div>
+                  <div
+                    className={`absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${benefit.color}`}
+                  ></div>
 
                   <div className="flex items-start gap-6">
                     {/* Icon & Stat */}
                     <div className="flex-shrink-0">
-                      <div className={`relative p-4 rounded-2xl bg-gradient-to-br ${benefit.color} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <div
+                        className={`relative p-4 rounded-2xl bg-gradient-to-br ${benefit.color} shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                      >
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                       <div className="mt-4 text-center">
-                        <div className={`text-3xl font-bold bg-gradient-to-r ${benefit.color} bg-clip-text text-transparent`}>
+                        <div
+                          className={`text-3xl font-bold bg-gradient-to-r ${benefit.color} bg-clip-text text-transparent`}
+                        >
                           {benefit.stat}
                         </div>
                       </div>
@@ -389,7 +401,7 @@ export default function Home() {
       <section className="relative py-24 overflow-hidden">
         {/* Gradient Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600"></div>
-        
+
         {/* Animated Circles */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"></div>
@@ -397,16 +409,13 @@ export default function Home() {
         </div>
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block mb-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-semibold">
-            Join 10,000+ Companies
-          </div>
-
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
             Ready to Transform Your Business?
           </h2>
-          
+
           <p className="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
-            Start your free trial today. No credit card required. Cancel anytime.
+            Start your free trial today. No credit card required. Cancel
+            anytime.
           </p>
 
           {/* Trust Signals */}
@@ -436,7 +445,8 @@ export default function Home() {
           </button>
 
           <p className="mt-6 text-blue-100 text-sm">
-            Setup in 5 minutes • Full access to all modules • 24/7 support included
+            Setup in 5 minutes • Full access to all modules • 24/7 support
+            included
           </p>
         </div>
       </section>
@@ -450,9 +460,11 @@ export default function Home() {
                 <Building2 className="w-6 h-6" />
                 UNI Flow ERP
               </div>
-              <p className="text-sm">© 2025 UNI Flow ERP. All rights reserved.</p>
+              <p className="text-sm">
+                © 2025 UNI Flow ERP. All rights reserved.
+              </p>
             </div>
-            
+
             <div className="flex items-center gap-2 text-sm">
               <Shield className="w-4 h-4 text-green-500" />
               <span>Enterprise-Grade Security & Compliance</span>

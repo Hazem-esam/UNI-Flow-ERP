@@ -1,6 +1,6 @@
 import { Search, Plus } from "lucide-react";
 
-export default function Toolbar({ searchQuery, setSearchQuery, openModal }) {
+export default function Toolbar({ searchQuery, setSearchQuery, openModal,canManageContacts }) {
   return (
     <div className="bg-white rounded-xl p-4 shadow-md flex flex-wrap gap-4 items-center justify-between mb-6">
       <div className="flex gap-3 flex-1 min-w-[300px]">
@@ -17,13 +17,13 @@ export default function Toolbar({ searchQuery, setSearchQuery, openModal }) {
       </div>
 
       <div className="flex gap-3">
-        <button
+      {canManageContacts&& <button
           onClick={openModal}
           className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all shadow-md"
         >
           <Plus className="w-4 h-4" />
           Add Contact
-        </button>
+        </button>}
       </div>
     </div>
   );

@@ -18,6 +18,7 @@ import {
   X,
   CheckCircle,
   AlertCircle,
+  Lock,
 } from "lucide-react";
 import {
   PieChart,
@@ -53,8 +54,9 @@ import {
   DealStage,
 } from "./services/crmService";
 
-export default function CRM() {
-  const { user } = useContext(AuthContext);
+function CRMContent() {
+  const { user, hasPermission, hasAnyPermission } = useContext(AuthContext);
+
   const [activeTab, setActiveTab] = useState("overview");
   const [leads, setLeads] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -67,7 +69,48 @@ export default function CRM() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Load data from API on mount
+  // ═══════════════════════════════════════════════════════════
+  // PERMISSION CHECKS - Using CRM-specific permissions
+  // ═══════════════════════════════════════════════════════════
+
+  // Lead Permissions (crm.leads.*)
+  const canViewLeads = hasAnyPermission([
+    "crm.leads.read",
+    "crm.leads.access",
+    "crm.leads.manage",
+  ]);
+  const canAccessLeads = hasAnyPermission([
+    "crm.leads.access",
+    "crm.leads.manage",
+  ]);
+  const canManageLeads = hasPermission("crm.leads.manage");
+
+  // Customer Permissions (crm.Customers.*)
+  const canViewCustomers = hasAnyPermission([
+    "crm.Customers.read",
+    "crm.Customers.access",
+    "crm.Customers.manage",
+  ]);
+  const canAccessCustomers = hasAnyPermission([
+    "crm.Customers.access",
+    "crm.Customers.manage",
+  ]);
+  const canManageCustomers = hasPermission("crm.Customers.manage");
+
+  // Check if user has ANY CRM access
+  const hasAnyCRMAccess = hasAnyPermission([
+    "crm.leads.read",
+    "crm.leads.access",
+    "crm.leads.manage",
+    "crm.Customers.read",
+    "crm.Customers.access",
+    "crm.Customers.manage",
+  ]);
+
+  // ═══════════════════════════════════════════════════════════
+  // DATA LOADING
+  // ═══════════════════════════════════════════════════════════
+
   useEffect(() => {
     loadAllData();
   }, []);
@@ -76,7 +119,13 @@ export default function CRM() {
     try {
       setLoading(true);
       setError(null);
-      await Promise.all([loadLeads(), loadCustomers(), loadPipeline()]);
+      const fetchPromises = [];
+
+      if (canViewLeads) fetchPromises.push(loadLeads());
+      if (canViewCustomers) fetchPromises.push(loadCustomers());
+      if (canViewLeads || canViewCustomers) fetchPromises.push(loadPipeline());
+
+      await Promise.all(fetchPromises);
     } catch (err) {
       setError("Failed to load data. Please try again.");
       console.error("Error loading data:", err);
@@ -85,12 +134,15 @@ export default function CRM() {
     }
   };
 
-  // Load leads from API
   const loadLeads = async () => {
+    if (!canViewLeads) {
+      console.log("User doesn't have permission to read leads");
+      return;
+    }
+
     try {
       const apiLeads = await leadsApi.getAll();
 
-      // Transform API data to frontend format
       const transformedLeads = apiLeads.map((lead) => ({
         id: lead.id,
         name: lead.companyName || lead.name,
@@ -115,20 +167,23 @@ export default function CRM() {
     }
   };
 
-  // Load customers from API
   const loadCustomers = async () => {
-    try {
-      const apiCustomers = await customersApi.getAll(true); // Only active customers
+    if (!canViewCustomers) {
+      console.log("User doesn't have permission to read customers");
+      return;
+    }
 
-      // Transform API data to frontend format
+    try {
+      const apiCustomers = await customersApi.getAll(true);
+
       const transformedCustomers = apiCustomers.map((customer) => ({
         id: customer.id,
         name: customer.name,
-        contact: customer.name, // API doesn't have separate contact field
+        contact: customer.name,
         email: customer.email,
         phone: customer.phone,
-        lifetimeValue: customer.creditLimit || 0, // Using creditLimit as placeholder
-        lastPurchase: new Date().toISOString().split("T")[0], // Placeholder
+        lifetimeValue: customer.creditLimit || 0,
+        lastPurchase: new Date().toISOString().split("T")[0],
         status: customer.isActive ? "active" : "inactive",
         address: customer.address,
         taxNumber: customer.taxNumber,
@@ -142,7 +197,6 @@ export default function CRM() {
     }
   };
 
-  // Load pipeline from API
   const loadPipeline = async () => {
     try {
       const apiDeals = await pipelineApi.getAll();
@@ -153,56 +207,65 @@ export default function CRM() {
     }
   };
 
-  // Calculate stats
-  const totalLeads = leads.length;
-  const totalLeadValue = leads.reduce((sum, lead) => sum + lead.value, 0);
-  const conversionRate = (
-    (customers.length / (customers.length + leads.length)) *
-    100
-  ).toFixed(1);
+  // ═══════════════════════════════════════════════════════════
+  // CALCULATIONS
+  // ═══════════════════════════════════════════════════════════
 
-  // Pipeline stages data for leads
-  const pipelineData = [
-    {
-      stage: "New",
-      count: leads.filter((l) => l.stage === "new").length,
-      value: leads
-        .filter((l) => l.stage === "new")
-        .reduce((s, l) => s + l.value, 0),
-    },
-    {
-      stage: "Qualified",
-      count: leads.filter((l) => l.stage === "qualified").length,
-      value: leads
-        .filter((l) => l.stage === "qualified")
-        .reduce((s, l) => s + l.value, 0),
-    },
-    {
-      stage: "Proposal",
-      count: leads.filter((l) => l.stage === "proposal").length,
-      value: leads
-        .filter((l) => l.stage === "proposal")
-        .reduce((s, l) => s + l.value, 0),
-    },
-    {
-      stage: "Negotiation",
-      count: leads.filter((l) => l.stage === "negotiation").length,
-      value: leads
-        .filter((l) => l.stage === "negotiation")
-        .reduce((s, l) => s + l.value, 0),
-    },
-  ];
+  const totalLeads = canViewLeads ? leads.length : 0;
+  const totalLeadValue = canViewLeads
+    ? leads.reduce((sum, lead) => sum + lead.value, 0)
+    : 0;
+  const conversionRate =
+    canViewLeads && canViewCustomers
+      ? ((customers.length / (customers.length + leads.length)) * 100).toFixed(
+          1,
+        )
+      : 0;
 
-  // Lead sources
-  const sourceData = leads.reduce((acc, lead) => {
-    const existing = acc.find((item) => item.name === lead.source);
-    if (existing) {
-      existing.value += 1;
-    } else {
-      acc.push({ name: lead.source, value: 1 });
-    }
-    return acc;
-  }, []);
+  const pipelineData = canViewLeads
+    ? [
+        {
+          stage: "New",
+          count: leads.filter((l) => l.stage === "new").length,
+          value: leads
+            .filter((l) => l.stage === "new")
+            .reduce((s, l) => s + l.value, 0),
+        },
+        {
+          stage: "Qualified",
+          count: leads.filter((l) => l.stage === "qualified").length,
+          value: leads
+            .filter((l) => l.stage === "qualified")
+            .reduce((s, l) => s + l.value, 0),
+        },
+        {
+          stage: "Proposal",
+          count: leads.filter((l) => l.stage === "proposal").length,
+          value: leads
+            .filter((l) => l.stage === "proposal")
+            .reduce((s, l) => s + l.value, 0),
+        },
+        {
+          stage: "Negotiation",
+          count: leads.filter((l) => l.stage === "negotiation").length,
+          value: leads
+            .filter((l) => l.stage === "negotiation")
+            .reduce((s, l) => s + l.value, 0),
+        },
+      ]
+    : [];
+
+  const sourceData = canViewLeads
+    ? leads.reduce((acc, lead) => {
+        const existing = acc.find((item) => item.name === lead.source);
+        if (existing) {
+          existing.value += 1;
+        } else {
+          acc.push({ name: lead.source, value: 1 });
+        }
+        return acc;
+      }, [])
+    : [];
 
   const COLORS = [
     "#3b82f6",
@@ -213,17 +276,25 @@ export default function CRM() {
     "#ec4899",
   ];
 
-  // Filter leads
-  const filteredLeads = leads.filter(
-    (lead) =>
-      lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.contact.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredLeads = canViewLeads
+    ? leads.filter(
+        (lead) =>
+          lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          lead.contact.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : [];
 
-  // CRUD operations for Leads
+  // ═══════════════════════════════════════════════════════════
+  // LEAD CRUD OPERATIONS
+  // ═══════════════════════════════════════════════════════════
+
   const handleSaveLead = async (leadData) => {
+    if (!canManageLeads && !canAccessLeads) {
+      alert("You don't have permission to save leads");
+      return;
+    }
+
     try {
-      // Transform frontend data to API format
       const apiLeadData = {
         companyId: user?.companyId || 0,
         companyName: leadData.name,
@@ -234,25 +305,21 @@ export default function CRM() {
         stage: mapStageToEnum(leadData.stage),
         dealValue: parseFloat(leadData.value),
         lastContactDate: leadData.lastContact,
-        assignedToId: null, // Set to null - can be assigned later through employee management
+        assignedToId: null,
       };
 
       if (editingLead) {
-        // Update existing lead
         await leadsApi.update(editingLead.id, apiLeadData);
       } else {
-        // Create new lead
         await leadsApi.create(apiLeadData);
       }
 
-      // Reload leads
       await loadLeads();
       setShowLeadModal(false);
       setEditingLead(null);
     } catch (err) {
       console.error("Error saving lead:", err);
-      
-      // Parse error message for user-friendly display
+
       let errorMessage = "Failed to save lead. Please try again.";
       if (err.message) {
         try {
@@ -262,19 +329,24 @@ export default function CRM() {
           errorMessage = err.message;
         }
       }
-      
+
       alert(errorMessage);
     }
   };
 
   const handleDeleteLead = async (id) => {
+    if (!canManageLeads) {
+      alert("You don't have permission to delete leads");
+      return;
+    }
+
     if (window.confirm("Are you sure you want to delete this lead?")) {
       try {
         await leadsApi.delete(id);
         await loadLeads();
       } catch (err) {
         console.error("Error deleting lead:", err);
-        
+
         let errorMessage = "Failed to delete lead. Please try again.";
         if (err.message) {
           try {
@@ -284,15 +356,24 @@ export default function CRM() {
             errorMessage = err.message;
           }
         }
-        
+
         alert(errorMessage);
       }
     }
   };
 
   const handleConvertToCustomer = async (lead) => {
+    if (!canManageLeads) {
+      alert("You don't have permission to convert leads");
+      return;
+    }
+
+    if (!canManageCustomers && !canAccessCustomers) {
+      alert("You don't have permission to create customers");
+      return;
+    }
+
     try {
-      // First, create the customer
       const customerData = {
         code: `CUST-${Date.now()}`,
         name: lead.name,
@@ -305,7 +386,6 @@ export default function CRM() {
 
       const newCustomer = await customersApi.create(customerData);
 
-      // Then convert the lead
       const conversionData = {
         customerId: newCustomer.id || 0,
         createDeal: true,
@@ -313,20 +393,19 @@ export default function CRM() {
         dealAmount: lead.value,
         expectedCloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
           .toISOString()
-          .split("T")[0], // 30 days from now
+          .split("T")[0],
         dealStage: DealStage.PROPOSAL,
-        ownerId: null, // Set to null - can be assigned later
+        ownerId: null,
       };
 
       await leadsApi.convert(lead.id, conversionData);
 
-      // Reload data
       await Promise.all([loadLeads(), loadCustomers(), loadPipeline()]);
 
       alert(`${lead.name} converted to customer successfully!`);
     } catch (err) {
       console.error("Error converting lead:", err);
-      
+
       let errorMessage = "Failed to convert lead. Please try again.";
       if (err.message) {
         try {
@@ -336,16 +415,23 @@ export default function CRM() {
           errorMessage = err.message;
         }
       }
-      
+
       alert(errorMessage);
     }
   };
 
-  // CRUD operations for Customers
+  // ═══════════════════════════════════════════════════════════
+  // CUSTOMER CRUD OPERATIONS
+  // ═══════════════════════════════════════════════════════════
+
   const handleSaveCustomer = async (customerData) => {
+    if (!canManageCustomers && !canAccessCustomers) {
+      alert("You don't have permission to save customers");
+      return;
+    }
+
     try {
       if (editingCustomer) {
-        // Update existing customer
         const updateData = {
           name: customerData.name,
           email: customerData.email,
@@ -357,17 +443,15 @@ export default function CRM() {
         };
         await customersApi.update(editingCustomer.id, updateData);
       } else {
-        // Create new customer
         await customersApi.create(customerData);
       }
 
-      // Reload customers
       await loadCustomers();
       setShowCustomerModal(false);
       setEditingCustomer(null);
     } catch (err) {
       console.error("Error saving customer:", err);
-      
+
       let errorMessage = "Failed to save customer. Please try again.";
       if (err.message) {
         try {
@@ -377,19 +461,24 @@ export default function CRM() {
           errorMessage = err.message;
         }
       }
-      
+
       alert(errorMessage);
     }
   };
 
   const handleDeleteCustomer = async (id) => {
+    if (!canManageCustomers) {
+      alert("You don't have permission to delete customers");
+      return;
+    }
+
     if (window.confirm("Are you sure you want to delete this customer?")) {
       try {
         await customersApi.delete(id);
         await loadCustomers();
       } catch (err) {
         console.error("Error deleting customer:", err);
-        
+
         let errorMessage = "Failed to delete customer. Please try again.";
         if (err.message) {
           try {
@@ -399,11 +488,15 @@ export default function CRM() {
             errorMessage = err.message;
           }
         }
-        
+
         alert(errorMessage);
       }
     }
   };
+
+  // ═══════════════════════════════════════════════════════════
+  // HELPER FUNCTIONS
+  // ═══════════════════════════════════════════════════════════
 
   const getStageColor = (stage) => {
     switch (stage) {
@@ -419,6 +512,10 @@ export default function CRM() {
         return "bg-gray-100 text-gray-700";
     }
   };
+
+  // ═══════════════════════════════════════════════════════════
+  // RENDER GUARDS
+  // ═══════════════════════════════════════════════════════════
 
   if (loading) {
     return (
@@ -451,65 +548,167 @@ export default function CRM() {
     );
   }
 
+  // ═══════════════════════════════════════════════════════════
+  // MAIN RENDER
+  // ═══════════════════════════════════════════════════════════
+
   return (
     <div className="flex">
       <div className="flex-1 min-h-screen bg-gradient-to-br from-slate-50 via-pink-50 to-slate-50 p-6">
         <div className="max-w-7xl mx-auto">
           <Header />
 
-          <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+          {/* Tabs - Only show tabs user has permission for */}
+          <div className="flex gap-2 mb-6 bg-white p-2 rounded-xl shadow-md overflow-x-auto">
+            <button
+              onClick={() => setActiveTab("overview")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeTab === "overview"
+                  ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              Overview
+            </button>
 
+            {canViewLeads && (
+              <button
+                onClick={() => setActiveTab("leads")}
+                className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                  activeTab === "leads"
+                    ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md"
+                    : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                Leads
+              </button>
+            )}
+
+            {canViewCustomers && (
+              <button
+                onClick={() => setActiveTab("customers")}
+                className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                  activeTab === "customers"
+                    ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md"
+                    : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                Customers
+              </button>
+            )}
+
+            {(canViewLeads || canViewCustomers) && (
+              <button
+                onClick={() => setActiveTab("pipeline")}
+                className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                  activeTab === "pipeline"
+                    ? "bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md"
+                    : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                Pipeline
+              </button>
+            )}
+          </div>
+
+          {/* Tab Content */}
           {activeTab === "overview" && (
             <Overview
               totalLeads={totalLeads}
               totalLeadValue={totalLeadValue}
-              customers={customers}
+              customers={canViewCustomers ? customers : []}
               conversionRate={conversionRate}
               pipelineData={pipelineData}
               sourceData={sourceData}
               COLORS={COLORS}
+              canViewLeads={canViewLeads}
+              canViewCustomers={canViewCustomers}
             />
           )}
 
-          {activeTab === "leads" && (
+          {activeTab === "leads" && canViewLeads && (
             <Leads
               leads={leads}
               filteredLeads={filteredLeads}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
-              setEditingLead={setEditingLead}
-              setShowLeadModal={setShowLeadModal}
-              handleDeleteLead={handleDeleteLead}
-              handleConvertToCustomer={handleConvertToCustomer}
+              setEditingLead={
+                canManageLeads || canAccessLeads
+                  ? setEditingLead
+                  : () => alert("You don't have permission to edit leads")
+              }
+              setShowLeadModal={
+                canManageLeads || canAccessLeads
+                  ? setShowLeadModal
+                  : () => alert("You don't have permission to create leads")
+              }
+              handleDeleteLead={canManageLeads ? handleDeleteLead : null}
+              handleConvertToCustomer={
+                canManageLeads ? handleConvertToCustomer : null
+              }
               getStageColor={getStageColor}
+              canManage={canManageLeads}
+              canAccess={canAccessLeads}
             />
           )}
 
           {activeTab === "customers" && (
-            <Customers 
-              customers={customers}
-              onAdd={() => {
-                setEditingCustomer(null);
-                setShowCustomerModal(true);
-              }}
-              onEdit={(customer) => {
-                setEditingCustomer(customer);
-                setShowCustomerModal(true);
-              }}
-              onDelete={handleDeleteCustomer}
-            />
+            <>
+              {canViewCustomers ? (
+                <Customers
+                  customers={customers}
+                  onAdd={
+                    canManageCustomers || canAccessCustomers
+                      ? () => {
+                          setEditingCustomer(null);
+                          setShowCustomerModal(true);
+                        }
+                      : null
+                  }
+                  onEdit={
+                    canManageCustomers || canAccessCustomers
+                      ? (customer) => {
+                          setEditingCustomer(customer);
+                          setShowCustomerModal(true);
+                        }
+                      : null
+                  }
+                  onDelete={canManageCustomers ? handleDeleteCustomer : null}
+                  canManage={canManageCustomers}
+                  canAccess={canAccessCustomers}
+                />
+              ) : (
+                <div className="bg-white rounded-xl p-8 shadow-lg text-center">
+                  <Lock className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Access Denied
+                  </h3>
+                  <p className="text-gray-600">
+                    You don't have permission to view customers.
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Required: crm.Customers.read, crm.Customers.access, or
+                    crm.Customers.manage
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
-          {activeTab === "pipeline" && (
-            <Pipeline 
+          {activeTab === "pipeline" && (canViewLeads || canViewCustomers) && (
+            <Pipeline
               pipelineDeals={pipelineDeals}
               pipelineData={pipelineData}
               loadPipeline={loadPipeline}
+          
+              canManage={canManageCustomers}
+              canAccess={canAccessCustomers}
             />
           )}
         </div>
 
-        {showLeadModal && (
+        {/* Modals */}
+        {showLeadModal && (canManageLeads || canAccessLeads) && (
           <LeadModal
             lead={editingLead}
             onSave={handleSaveLead}
@@ -520,7 +719,7 @@ export default function CRM() {
           />
         )}
 
-        {showCustomerModal && (
+        {showCustomerModal && (canManageCustomers || canAccessCustomers) && (
           <CustomerModal
             customer={editingCustomer}
             onSave={handleSaveCustomer}
@@ -533,4 +732,56 @@ export default function CRM() {
       </div>
     </div>
   );
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN EXPORT WITH ACCESS GUARD
+// ═══════════════════════════════════════════════════════════
+
+export default function CRM() {
+  const { user, hasAnyPermission } = useContext(AuthContext);
+
+  // Check if user has any CRM permissions
+  const hasAnyCRMAccess = hasAnyPermission([
+    "crm.leads.read",
+    "crm.leads.access",
+    "crm.leads.manage",
+    "crm.Customers.read",
+    "crm.Customers.access",
+    "crm.Customers.manage",
+  ]);
+
+  if (!hasAnyCRMAccess) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-pink-50 to-slate-50 p-6">
+        <div className="bg-white rounded-xl p-8 shadow-lg max-w-md text-center">
+          <Lock className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Access Denied
+          </h2>
+          <p className="text-gray-600 mb-4">
+            You don't have permission to access the CRM module.
+          </p>
+          <div className="text-sm text-gray-500 text-left bg-gray-50 p-4 rounded-lg">
+            <p className="font-semibold mb-2">Required Permissions (any):</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>crm.leads.read</li>
+              <li>crm.leads.access</li>
+              <li>crm.leads.manage</li>
+              <li>crm.Customers.read</li>
+              <li>crm.Customers.access</li>
+              <li>crm.Customers.manage</li>
+            </ul>
+          </div>
+          {user?.roles && (
+            <p className="text-sm text-gray-500 mt-4">
+              Your roles: {user.roles.join(", ")}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return <CRMContent />;
 }

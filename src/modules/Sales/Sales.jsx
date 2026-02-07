@@ -1,11 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import PermissionGuard from "../../components/PermissionGuard";
 import {
   TrendingUp,
   Loader,
   AlertTriangle,
   CheckCircle2,
   RefreshCw,
+  Lock,
 } from "lucide-react";
 
 import OverviewTab from "./tabs/OverviewTab";
@@ -28,10 +30,32 @@ import {
   getStatusStyle,
 } from "./utils/salesHelpers";
 
+import { createProductFromManualEntry } from "./utils/Createproductfrommanualentry ";
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5225";
 
 export default function SalesModule() {
-  const { user } = useContext(AuthContext);
+  const { user, hasPermission, hasAnyPermission } = useContext(AuthContext);
+
+  // Check if user has ANY sales permission to access the module
+  const hasSalesAccess = hasAnyPermission([
+    "sales.invoices.read",
+    "sales.invoices.access",
+    "sales.invoices.manage",
+    "sales.customers.read",
+    "sales.customers.access",
+    "sales.customers.manage",
+    "sales.deliveries.read",
+    "sales.deliveries.access",
+    "sales.deliveries.manage",
+    "sales.receipts.read",
+    "sales.receipts.access",
+    "sales.receipts.manage",
+    "sales.returns.read",
+    "sales.returns.access",
+    "sales.returns.manage",
+  ]);
+
   const handleAction = async (type, id, action) => {
     const actions = {
       delivery: {
@@ -57,7 +81,7 @@ export default function SalesModule() {
         headers: getAuthHeaders(),
       });
       if (response.ok) {
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         showSuccess(
           `${type.charAt(0).toUpperCase() + type.slice(1)} ${action}ed!`,
         );
@@ -66,6 +90,7 @@ export default function SalesModule() {
       console.error(`Error ${action}ing ${type}:`, err);
     }
   };
+
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -97,21 +122,25 @@ export default function SalesModule() {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
 
   useEffect(() => {
-    fetchAllData();
-  }, []);
+    if (hasSalesAccess) {
+      fetchAllData();
+    }
+  }, [hasSalesAccess]);
 
   const fetchAllData = async () => {
     setLoading(true);
     setError(null);
     try {
       await checkModuleSubscription();
-      await Promise.all([
-        fetchCustomers(),
-        fetchInvoices(),
-        fetchDeliveries(),
-        fetchReceipts(),
-        fetchReturns(),
-      ]);
+      await Promise.all(
+        [
+          hasPermission("sales.customers.read") && fetchCustomers(),
+          hasPermission("sales.invoices.read") && fetchInvoices(),
+          hasPermission("sales.deliveries.read") && fetchDeliveries(),
+          hasPermission("sales.receipts.read") && fetchReceipts(),
+          hasPermission("sales.returns.read") && fetchReturns(),
+        ].filter(Boolean),
+      );
     } catch (err) {
       console.error(err);
       setError("Failed to load sales data");
@@ -155,10 +184,6 @@ export default function SalesModule() {
       console.error("Inventory data fetch failed:", err);
     }
   };
-
-  // ───────────────────────────────────────
-  //  Fetch functions (shortened)
-  // ───────────────────────────────────────
 
   const fetchCustomers = async () => {
     try {
@@ -218,16 +243,151 @@ export default function SalesModule() {
     } catch {}
   };
 
-  // ───────────────────────────────────────
-  //  CRUD Handlers (moved logic here)
-  // ───────────────────────────────────────
-
   const showSuccess = (msg) => {
     setSuccessMessage(msg);
     setTimeout(() => setSuccessMessage(""), 3000);
   };
 
+  // ───────────────────────────────────────
+  //  Invoice Handler Functions
+  // ───────────────────────────────────────
+
+  const handleAddInvoice = () => {
+    if (hasAnyPermission(["sales.invoices.manage", "sales.invoices.access"])) {
+      setEditingItem(null);
+      setShowInvoiceModal(true);
+    } else {
+      alert("You don't have permission to create invoices");
+    }
+  };
+
+  const handleEditInvoice = (inv) => {
+    if (hasAnyPermission(["sales.invoices.manage", "sales.invoices.access"])) {
+      setEditingItem(inv);
+      setShowInvoiceModal(true);
+    } else {
+      alert("You don't have permission to edit invoices");
+    }
+  };
+
+  const handleCreateDeliveryFromInvoice = (inv) => {
+    if (!hasPermission("sales.deliveries.manage")) {
+      alert("You don't have permission to create deliveries");
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/api/sales/invoices/${inv.id}`, {
+      headers: getAuthHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Failed to load invoice: ${res.status}`);
+        return res.json();
+      })
+      .then((fullInvoice) => {
+        if (!fullInvoice.lines || fullInvoice.lines.length === 0) {
+          alert("This invoice has no lines or cannot be delivered.");
+          return;
+        }
+        const hasRemaining = fullInvoice.lines.some(
+          (line) => (line.remainingQuantity || line.quantity || 0) > 0,
+        );
+        if (!hasRemaining) {
+          alert("Nothing left to deliver (all quantities already delivered).");
+          return;
+        }
+        setSelectedInvoice(fullInvoice);
+        setShowDeliveryModal(true);
+      })
+      .catch((err) => {
+        console.error("Cannot open delivery modal:", err);
+        alert("Failed to load invoice details for delivery.\n" + err.message);
+      });
+  };
+
+  const handleCreateReceiptFromInvoice = (inv) => {
+    if (!hasAnyPermission(["sales.receipts.manage", "sales.receipts.access"])) {
+      alert("You don't have permission to create receipts");
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/api/sales/invoices/${inv.id}`, {
+      headers: getAuthHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Cannot load invoice: ${res.status}`);
+        return res.json();
+      })
+      .then((fullInvoice) => {
+        if (!fullInvoice.customerId) {
+          alert("Cannot record payment: Customer ID missing from invoice.");
+          return;
+        }
+        const balanceDue = parseFloat(
+          fullInvoice.balanceDue || fullInvoice.grandTotal || 0,
+        );
+        if (balanceDue <= 0) {
+          alert("This invoice is already fully paid or has no balance due.");
+          return;
+        }
+        setSelectedInvoice(fullInvoice);
+        setShowReceiptModal(true);
+      })
+      .catch((err) => {
+        console.error("Failed to load invoice for receipt:", err);
+        alert("Cannot open payment modal: " + err.message);
+      });
+  };
+
+  // ───────────────────────────────────────
+  //  Customer Handler Functions
+  // ───────────────────────────────────────
+
+  const handleAddCustomer = () => {
+    if (
+      hasAnyPermission(["sales.customers.manage", "sales.customers.access"])
+    ) {
+      setEditingItem(null);
+      setShowCustomerModal(true);
+    } else {
+      alert("You don't have permission to create customers");
+    }
+  };
+
+  const handleEditCustomer = (c) => {
+    if (
+      hasAnyPermission(["sales.customers.manage", "sales.customers.access"])
+    ) {
+      setEditingItem(c);
+      setShowCustomerModal(true);
+    } else {
+      alert("You don't have permission to edit customers");
+    }
+  };
+
+  // ───────────────────────────────────────
+  //  Returns Handler Functions
+  // ───────────────────────────────────────
+
+  const handleAddReturn = () => {
+    if (hasAnyPermission(["sales.returns.manage", "sales.returns.access"])) {
+      setShowReturnModal(true);
+    } else {
+      alert("You don't have permission to create returns");
+    }
+  };
+
+  // ───────────────────────────────────────
+  //  CRUD Handlers
+  // ───────────────────────────────────────
+
   const handleSaveCustomer = async (customerData) => {
+    if (
+      !hasAnyPermission(["sales.customers.manage", "sales.customers.access"])
+    ) {
+      alert("You don't have permission to manage customers");
+      return;
+    }
+
     try {
       const response = await fetch(
         editingItem
@@ -240,7 +400,7 @@ export default function SalesModule() {
         },
       );
       if (response.ok) {
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         setShowCustomerModal(false);
         setEditingItem(null);
         showSuccess(editingItem ? "Customer updated!" : "Customer created!");
@@ -250,7 +410,15 @@ export default function SalesModule() {
       alert("Failed to save customer");
     }
   };
+
   const handleDeleteCustomer = async (id) => {
+    if (
+      !hasAnyPermission(["sales.customers.manage", "sales.customers.access"])
+    ) {
+      alert("You don't have permission to delete customers");
+      return;
+    }
+
     if (!window.confirm("Delete this customer?")) return;
     try {
       const response = await fetch(
@@ -261,14 +429,20 @@ export default function SalesModule() {
         },
       );
       if (response.ok) {
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         showSuccess("Customer deleted!");
       }
     } catch (err) {
       console.error("Error deleting customer:", err);
     }
   };
+
   const handleSaveInvoice = async (invoiceData) => {
+    if (!hasAnyPermission(["sales.invoices.manage", "sales.invoices.access"])) {
+      alert("You don't have permission to manage invoices");
+      return;
+    }
+
     try {
       // Process lines and create products/units as needed
       const processedLines = await Promise.all(
@@ -364,7 +538,13 @@ export default function SalesModule() {
       alert(`Failed to save invoice: ${err.message}`);
     }
   };
+
   const handleDeleteInvoice = async (id) => {
+    if (!hasAnyPermission(["sales.invoices.manage", "sales.invoices.access"])) {
+      alert("You don't have permission to delete invoices");
+      return;
+    }
+
     if (!window.confirm("Delete this invoice?")) return;
     try {
       const response = await fetch(`${API_BASE_URL}/api/sales/invoices/${id}`, {
@@ -372,14 +552,20 @@ export default function SalesModule() {
         headers: getAuthHeaders(),
       });
       if (response.ok) {
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         showSuccess("Invoice deleted!");
       }
     } catch (err) {
       console.error("Error deleting invoice:", err);
     }
   };
+
   const handlePostInvoice = async (id) => {
+    if (!hasPermission("sales.invoices.manage")) {
+      alert("Only users with manage permission can post invoices");
+      return;
+    }
+
     if (!window.confirm("Post this invoice?")) return;
     try {
       const response = await fetch(
@@ -390,14 +576,20 @@ export default function SalesModule() {
         },
       );
       if (response.ok) {
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         showSuccess("Invoice posted!");
       }
     } catch (err) {
       console.error("Error posting invoice:", err);
     }
   };
+
   const handleCancelInvoice = async (id) => {
+    if (!hasAnyPermission(["sales.invoices.manage", "sales.invoices.access"])) {
+      alert("You don't have permission to cancel invoices");
+      return;
+    }
+
     if (!window.confirm("Cancel this invoice?")) return;
     try {
       const response = await fetch(
@@ -408,13 +600,14 @@ export default function SalesModule() {
         },
       );
       if (response.ok) {
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         showSuccess("Invoice cancelled!");
       }
     } catch (err) {
       console.error("Error cancelling invoice:", err);
     }
   };
+
   const handleViewInvoice = async (id) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/sales/invoices/${id}`, {
@@ -429,7 +622,13 @@ export default function SalesModule() {
       console.error("Error fetching invoice:", err);
     }
   };
+
   const handleSaveDelivery = async (deliveryData) => {
+    if (!hasPermission("sales.deliveries.manage")) {
+      alert("Only users with manage permission can create deliveries");
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/sales/deliveries`, {
         method: "POST",
@@ -437,7 +636,7 @@ export default function SalesModule() {
         body: JSON.stringify(deliveryData),
       });
       if (response.ok) {
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         setShowDeliveryModal(false);
         setSelectedInvoice(null);
         showSuccess("Delivery created!");
@@ -447,20 +646,26 @@ export default function SalesModule() {
       alert("Failed to save delivery");
     }
   };
+
   const handleSaveReceipt = async (receiptData) => {
+    if (!hasAnyPermission(["sales.receipts.manage", "sales.receipts.access"])) {
+      alert("You don't have permission to create receipts");
+      return;
+    }
+
     try {
       console.log("Sending receipt:", JSON.stringify(receiptData, null, 2));
 
       const response = await fetch(`${API_BASE_URL}/api/sales/receipts`, {
         method: "POST",
         headers: getAuthHeaders(),
-        body: JSON.stringify(receiptData), // receiptData now includes branchId
+        body: JSON.stringify(receiptData),
       });
 
       if (response.ok) {
         const createdReceipt = await response.json();
         console.log("Receipt created successfully:", createdReceipt);
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         setShowReceiptModal(false);
         setSelectedInvoice(null);
         showSuccess(
@@ -501,7 +706,13 @@ export default function SalesModule() {
       alert(`Network error:\n${err.message}`);
     }
   };
+
   const handleSaveReturn = async (returnData) => {
+    if (!hasAnyPermission(["sales.returns.manage", "sales.returns.access"])) {
+      alert("You don't have permission to create returns");
+      return;
+    }
+
     try {
       console.log("Sending return:", JSON.stringify(returnData, null, 2));
 
@@ -512,7 +723,7 @@ export default function SalesModule() {
       });
 
       if (response.ok) {
-        await fetchAllData(); // REFETCH ALL DATA
+        await fetchAllData();
         setShowReturnModal(false);
         showSuccess("Return created! (Products auto-created if needed)");
       } else {
@@ -525,6 +736,7 @@ export default function SalesModule() {
       alert(`Failed to save return: ${err.message}`);
     }
   };
+
   const handleCreateProductFromInvoice = async (productData) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/Products`, {
@@ -545,7 +757,7 @@ export default function SalesModule() {
 
       if (response.ok) {
         const createdProduct = await response.json();
-        await fetchInventoryData(); // Refresh products list
+        await fetchInventoryData();
         return createdProduct;
       } else {
         const error = await response.text();
@@ -556,6 +768,27 @@ export default function SalesModule() {
       throw err;
     }
   };
+
+  // Show access denied if user has no sales permissions
+  if (!hasSalesAccess) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh] bg-slate-50 p-6">
+        <div className="bg-white rounded-xl p-8 shadow-lg max-w-md text-center">
+          <Lock className="w-14 h-14 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Access Denied
+          </h2>
+          <p className="text-gray-600 mb-4">
+            You don't have permission to access the Sales module.
+          </p>
+          <p className="text-sm text-gray-500">
+            Contact your administrator to request access.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -581,6 +814,44 @@ export default function SalesModule() {
     );
   }
 
+  // Determine available tabs based on permissions
+  const availableTabs = [
+    { key: "overview", label: "Overview", permission: null },
+    {
+      key: "invoices",
+      label: "Invoices",
+      permission: "sales.invoices.read",
+    },
+    {
+      key: "customers",
+      label: "Customers",
+      permission: "sales.customers.read",
+    },
+    ...(hasInventoryModule
+      ? [
+          {
+            key: "deliveries",
+            label: "Deliveries",
+            permission: "sales.deliveries.read",
+          },
+        ]
+      : []),
+    {
+      key: "receipts",
+      label: "Receipts",
+      permission: "sales.receipts.read",
+    },
+    ...(hasInventoryModule
+      ? [
+          {
+            key: "returns",
+            label: "Returns",
+            permission: "sales.returns.read",
+          },
+        ]
+      : []),
+  ].filter((tab) => !tab.permission || hasPermission(tab.permission));
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-slate-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -593,7 +864,7 @@ export default function SalesModule() {
 
         {!hasInventoryModule && (
           <div className="mb-6 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg">
-            <AlertCircle className="inline w-5 h-5 text-amber-600 mr-2" />
+            <AlertTriangle className="inline w-5 h-5 text-amber-600 mr-2" />
             <strong>Manual Entry Mode</strong> — Inventory module is disabled.
           </div>
         )}
@@ -611,24 +882,17 @@ export default function SalesModule() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 bg-white p-2 rounded-xl shadow-md overflow-x-auto">
-          {[
-            "overview",
-            "invoices",
-            "customers",
-            ...(hasInventoryModule ? ["deliveries"] : []),
-            "receipts",
-            ...(hasInventoryModule ? ["returns"] : []),
-          ].map((tab) => (
+          {availableTabs.map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
               className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
-                activeTab === tab
+                activeTab === tab.key
                   ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -649,157 +913,180 @@ export default function SalesModule() {
         )}
 
         {activeTab === "invoices" && (
-          <InvoicesTab
-            invoices={invoices.filter((i) =>
-              i.customerName?.toLowerCase().includes(searchQuery.toLowerCase()),
-            )}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            deliveries={deliveries}
-            receipts={receipts}
-            onAdd={() => {
-              setEditingItem(null);
-              setShowInvoiceModal(true);
-            }}
-            onView={(id) => {
-              fetch(`${API_BASE_URL}/api/sales/invoices/${id}`, {
-                headers: getAuthHeaders(),
-              })
-                .then((r) => (r.ok ? r.json() : Promise.reject()))
-                .then(setSelectedInvoice)
-                .then(() => setShowViewModal(true))
-                .catch(() => alert("Cannot load invoice"));
-            }}
-            onEdit={(inv) => {
-              setEditingItem(inv);
-              setShowInvoiceModal(true);
-            }}
-            onDelete={handleDeleteInvoice}
-            onPost={handlePostInvoice}
-            onCancel={handleCancelInvoice}
-            onCreateDelivery={(inv) => {
-              fetch(`${API_BASE_URL}/api/sales/invoices/${inv.id}`, {
-                headers: getAuthHeaders(),
-              })
-                .then((res) => {
-                  if (!res.ok)
-                    throw new Error(`Failed to load invoice: ${res.status}`);
-                  return res.json();
-                })
-                .then((fullInvoice) => {
-                  if (!fullInvoice.lines || fullInvoice.lines.length === 0) {
-                    alert("This invoice has no lines or cannot be delivered.");
-                    return;
-                  }
-                  const hasRemaining = fullInvoice.lines.some(
-                    (line) =>
-                      (line.remainingQuantity || line.quantity || 0) > 0,
-                  );
-                  if (!hasRemaining) {
-                    alert(
-                      "Nothing left to deliver (all quantities already delivered).",
-                    );
-                    return;
-                  }
-                  setSelectedInvoice(fullInvoice);
-                  setShowDeliveryModal(true);
-                })
-                .catch((err) => {
-                  console.error("Cannot open delivery modal:", err);
-                  alert(
-                    "Failed to load invoice details for delivery.\n" +
-                      err.message,
-                  );
-                });
-            }}
-            onCreateReceipt={(inv) => {
-              fetch(`${API_BASE_URL}/api/sales/invoices/${inv.id}`, {
-                headers: getAuthHeaders(),
-              })
-                .then((res) => {
-                  if (!res.ok)
-                    throw new Error(`Cannot load invoice: ${res.status}`);
-                  return res.json();
-                })
-                .then((fullInvoice) => {
-                  if (!fullInvoice.customerId) {
-                    alert(
-                      "Cannot record payment: Customer ID missing from invoice.",
-                    );
-                    return;
-                  }
-                  const balanceDue = parseFloat(
-                    fullInvoice.balanceDue || fullInvoice.grandTotal || 0,
-                  );
-                  if (balanceDue <= 0) {
-                    alert(
-                      "This invoice is already fully paid or has no balance due.",
-                    );
-                    return;
-                  }
-                  setSelectedInvoice(fullInvoice);
-                  setShowReceiptModal(true);
-                })
-                .catch((err) => {
-                  console.error("Failed to load invoice for receipt:", err);
-                  alert("Cannot open payment modal: " + err.message);
-                });
-            }}
-            hasInventoryModule={hasInventoryModule}
-          />
+          <PermissionGuard permission="sales.invoices.read" fullScreen={true}>
+            <InvoicesTab
+              invoices={invoices.filter((i) =>
+                i.customerName
+                  ?.toLowerCase()
+                  .includes(searchQuery.toLowerCase()),
+              )}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              deliveries={deliveries}
+              receipts={receipts}
+              onAdd={handleAddInvoice}
+              onView={handleViewInvoice}
+              onEdit={handleEditInvoice}
+              onDelete={handleDeleteInvoice}
+              onPost={handlePostInvoice}
+              onCancel={handleCancelInvoice}
+              onCreateDelivery={handleCreateDeliveryFromInvoice}
+              onCreateReceipt={handleCreateReceiptFromInvoice}
+              hasInventoryModule={hasInventoryModule}
+              canDraft={hasAnyPermission([
+                "sales.invoices.manage",
+                "sales.invoices.access",
+              ])}
+              canPost={hasPermission("sales.invoices.manage")}
+            />
+          </PermissionGuard>
         )}
 
         {activeTab === "customers" && (
-          <CustomersTab
-            customers={customers.filter((c) =>
-              c.name.toLowerCase().includes(searchQuery.toLowerCase()),
-            )}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            onAdd={() => {
-              setEditingItem(null);
-              setShowCustomerModal(true);
-            }}
-            onEdit={(c) => {
-              setEditingItem(c);
-              setShowCustomerModal(true);
-            }}
-            onDelete={handleDeleteCustomer}
-          />
+          <PermissionGuard permission="sales.customers.read" fullScreen={true}>
+            <CustomersTab
+              customers={customers.filter((c) =>
+                c.name.toLowerCase().includes(searchQuery.toLowerCase()),
+              )}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              onAdd={handleAddCustomer}
+              onEdit={handleEditCustomer}
+              onDelete={handleDeleteCustomer}
+              canManage={hasAnyPermission(["sales.customers.manage"])}
+            />
+          </PermissionGuard>
         )}
 
         {activeTab === "deliveries" && hasInventoryModule && (
-          <DeliveriesTab
-            deliveries={deliveries}
-            invoices={invoices}
-            warehouses={warehouses}
-            hasInventoryModule={hasInventoryModule}
-            onPost={(id) => handleAction("delivery", id, "post")}
-            onCancel={(id) => handleAction("delivery", id, "cancel")}
-            onDelete={(id) => handleAction("delivery", id, "delete")}
-          />
+          <PermissionGuard permission="sales.deliveries.read" fullScreen={true}>
+            <DeliveriesTab
+              deliveries={deliveries}
+              invoices={invoices}
+              warehouses={warehouses}
+              hasInventoryModule={hasInventoryModule}
+              onPost={(id) => {
+                if (hasPermission("sales.deliveries.manage")) {
+                  handleAction("delivery", id, "post");
+                } else {
+                  alert(
+                    "Only users with manage permission can post deliveries",
+                  );
+                }
+              }}
+              onCancel={(id) => {
+                if (hasPermission("sales.deliveries.manage")) {
+                  handleAction("delivery", id, "cancel");
+                } else {
+                  alert(
+                    "Only users with manage permission can cancel deliveries",
+                  );
+                }
+              }}
+              onDelete={(id) => {
+                if (hasPermission("sales.deliveries.manage")) {
+                  handleAction("delivery", id, "delete");
+                } else {
+                  alert(
+                    "Only users with manage permission can delete deliveries",
+                  );
+                }
+              }}
+              canManage={hasPermission("sales.deliveries.manage")}
+            />
+          </PermissionGuard>
         )}
 
         {activeTab === "receipts" && (
-          <ReceiptsTab
-            receipts={receipts}
-            onPost={(id) => handleAction("receipt", id, "post")}
-            onCancel={(id) => handleAction("receipt", id, "cancel")}
-            onDelete={(id) => handleAction("receipt", id, "delete")}
-          />
+          <PermissionGuard permission="sales.receipts.read" fullScreen={true}>
+            <ReceiptsTab
+              receipts={receipts}
+              onPost={(id) => {
+                if (hasPermission("sales.receipts.manage")) {
+                  handleAction("receipt", id, "post");
+                } else {
+                  alert("Only users with manage permission can post receipts");
+                }
+              }}
+              onCancel={(id) => {
+                if (
+                  hasAnyPermission([
+                    "sales.receipts.manage",
+                    "sales.receipts.access",
+                  ])
+                ) {
+                  handleAction("receipt", id, "cancel");
+                } else {
+                  alert("You don't have permission to cancel receipts");
+                }
+              }}
+              onDelete={(id) => {
+                if (
+                  hasAnyPermission([
+                    "sales.receipts.manage",
+                    "sales.receipts.access",
+                  ])
+                ) {
+                  handleAction("receipt", id, "delete");
+                } else {
+                  alert("You don't have permission to delete receipts");
+                }
+              }}
+              canDraft={hasAnyPermission([
+                "sales.receipts.manage",
+                "sales.receipts.access",
+              ])}
+              canPost={hasPermission("sales.receipts.manage")}
+            />
+          </PermissionGuard>
         )}
 
         {activeTab === "returns" && hasInventoryModule && (
-          <ReturnsTab
-            returns={returns}
-            onAdd={() => setShowReturnModal(true)}
-            onPost={(id) => handleAction("return", id, "post")}
-            onCancel={(id) => handleAction("return", id, "cancel")}
-            onDelete={(id) => handleAction("return", id, "delete")}
-          />
+          <PermissionGuard permission="sales.returns.read" fullScreen={true}>
+            <ReturnsTab
+              returns={returns}
+              onAdd={handleAddReturn}
+              onPost={(id) => {
+                if (hasPermission("sales.returns.manage")) {
+                  handleAction("return", id, "post");
+                } else {
+                  alert("Only users with manage permission can post returns");
+                }
+              }}
+              onCancel={(id) => {
+                if (
+                  hasAnyPermission([
+                    "sales.returns.manage",
+                    "sales.returns.access",
+                  ])
+                ) {
+                  handleAction("return", id, "cancel");
+                } else {
+                  alert("You don't have permission to cancel returns");
+                }
+              }}
+              onDelete={(id) => {
+                if (
+                  hasAnyPermission([
+                    "sales.returns.manage",
+                    "sales.returns.access",
+                  ])
+                ) {
+                  handleAction("return", id, "delete");
+                } else {
+                  alert("You don't have permission to delete returns");
+                }
+              }}
+              canDraft={hasAnyPermission([
+                "sales.returns.manage",
+                "sales.returns.access",
+              ])}
+              canPost={hasPermission("sales.returns.manage")}
+            />
+          </PermissionGuard>
         )}
 
-        {/* ─── Modals ─── */}
+        {/* Modals */}
         {showCustomerModal && (
           <CustomerModal
             customer={editingItem}

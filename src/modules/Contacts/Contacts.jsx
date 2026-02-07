@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
+import PermissionGuard from "../../components/PermissionGuard.jsx";
 import Tabs from "./components/Tabs.jsx";
 import StatsCards from "./components/StatsCard.jsx";
 import ChartsSection from "./components/ChartsSection.jsx";
@@ -11,8 +12,8 @@ import { FaAddressBook } from "react-icons/fa";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-export default function Contacts() {
-  const { isAuthenticated } = useContext(AuthContext);
+function ContactsContent() {
+  const { isAuthenticated, hasPermission, user } = useContext(AuthContext);
 
   const [activeTab, setActiveTab] = useState("all");
   const [contacts, setContacts] = useState([]);
@@ -23,6 +24,12 @@ export default function Contacts() {
   const [showContactModal, setShowContactModal] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
   const [selectedType, setSelectedType] = useState("all");
+
+  // Check if user can manage contacts (create, edit, delete) using actual user permissions
+  const canManageContacts =
+    user?.permissions?.includes("contacts.contacts.manage") || false;
+  const canReadContacts =
+    user?.permissions?.includes("contacts.contacts.read") || canManageContacts;
 
   // Helper function to get type string from integer
   const getTypeString = (typeInt) => {
@@ -149,6 +156,12 @@ export default function Contacts() {
 
   // Handle save contact (create or update)
   const handleSave = async (contactObj) => {
+    // Check permission before saving
+    if (!canManageContacts) {
+      alert("You don't have permission to manage contacts.");
+      return;
+    }
+
     try {
       const isEditing = !!editingContact;
 
@@ -217,8 +230,14 @@ export default function Contacts() {
     }
   };
 
-  // Handle delete contact - FIXED to use path parameter
+  // Handle delete contact
   const handleDelete = async (id) => {
+    // Check permission before deleting
+    if (!canManageContacts) {
+      alert("You don't have permission to delete contacts.");
+      return;
+    }
+
     if (deleting) return; // Prevent multiple deletes
 
     if (!window.confirm("Are you sure you want to delete this contact?"))
@@ -234,7 +253,6 @@ export default function Contacts() {
         return;
       }
 
-      // FIXED: Use path parameter instead of query parameter
       const response = await fetch(`${API_BASE_URL}/api/Contact/${id}`, {
         method: "DELETE",
         headers: {
@@ -261,8 +279,14 @@ export default function Contacts() {
     }
   };
 
-  // Handle toggle favorite - with refetch
+  // Handle toggle favorite
   const toggleFavorite = async (id) => {
+    // Check permission before toggling favorite
+    if (!canManageContacts) {
+      alert("You don't have permission to manage contacts.");
+      return;
+    }
+
     const contact = contacts.find((c) => c.id === id);
     if (!contact) {
       console.error("Contact not found for id:", id);
@@ -282,7 +306,7 @@ export default function Contacts() {
         id: contact.id,
         fullName: contact.fullName,
         email: contact.email,
-        phoneNumber: contact.phoneNumber || "",
+        phoneNumber: contact.phoneNumber || null,
         company: contact.company || "",
         position: contact.position || "",
         type: getTypeValue(contact.type),
@@ -371,7 +395,7 @@ export default function Contacts() {
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <FaAddressBook size={40}  className="text-white"/>
+              <FaAddressBook size={40} className="text-white" />
             </div>
             <div>
               <h1 className="text-4xl font-bold text-gray-900">
@@ -398,9 +422,14 @@ export default function Contacts() {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           openModal={() => {
+            if (!canManageContacts) {
+              alert("You don't have permission to create contacts.");
+              return;
+            }
             setEditingContact(null);
             setShowContactModal(true);
           }}
+          canManageContacts={canManageContacts}
         />
 
         {/* Contacts Grid */}
@@ -413,12 +442,17 @@ export default function Contacts() {
               key={contact.id}
               contact={contact}
               onEdit={() => {
+                if (!canManageContacts) {
+                  alert("You don't have permission to edit contacts.");
+                  return;
+                }
                 setEditingContact(contact);
                 setShowContactModal(true);
               }}
               onDelete={() => handleDelete(contact.id)}
               toggleFavorite={() => toggleFavorite(contact.id)}
               getTypeColor={getTypeColor}
+              canManageContacts={canManageContacts}
             />
           ))}
         </div>
@@ -433,7 +467,7 @@ export default function Contacts() {
                 ? "Get started by adding your first contact"
                 : "Try adjusting your search or filters"}
             </p>
-            {contacts.length === 0 && (
+            {contacts.length === 0 && canManageContacts && (
               <button
                 onClick={() => {
                   setEditingContact(null);
@@ -460,4 +494,38 @@ export default function Contacts() {
       </div>
     </div>
   );
+}
+
+// Wrap with Permission Guard
+export default function Contacts() {
+  const { user } = useContext(AuthContext);
+
+  // Check if user has any contacts permissions
+  const hasContactsPermission = user?.permissions?.some((p) =>
+    p.startsWith("contacts."),
+  );
+
+  if (!hasContactsPermission) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-slate-50 p-6">
+        <div className="bg-white rounded-xl p-8 shadow-lg max-w-md text-center">
+          <FaAddressBook size={64} className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Access Denied
+          </h2>
+          <p className="text-gray-600 mb-4">
+            You don't have permission to access the Contacts module.
+          </p>
+          <p className="text-sm text-gray-500">
+            Required permissions: contacts.read or contacts.manage
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Your roles: {user?.roles?.join(", ") || "None"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return <ContactsContent />;
 }

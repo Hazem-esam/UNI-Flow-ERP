@@ -1,306 +1,209 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import Dashboard from "./components/Dashboard";
-import Employees from "./components/Employees";
-import Departments from "./components/Departments";
-import Positions from "./components/Positions";
-import Attendance from "./components/Attendance";
+import {
+  Users,
+  Building2,
+  Briefcase,
+  Calendar,
+  DollarSign,
+  ClipboardCheck,
+  UserPlus,
+} from "lucide-react";
+
+// HR Components
+import EmployeeList from "./components/EmployeeList";
+import EmployeeDetail from "./components/EmployeeDetail";
+import CreateEmployee from "./components/CreateEmployee";
+import DepartmentList from "./components/DepartmentList";
+import PositionList from "./components/PositionList";
 import LeaveManagement from "./components/LeaveManagement";
-import Payroll from "./components/Payroll";
-import CompanyUsers from "./components/CompanyUsers";
+import HRDashboard from "./components/HRDashboard";
 
 const HR = () => {
-  const { user, logout } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { hasPermission, hasAnyPermission } = useContext(AuthContext);
 
+  // Permissions that allow access to any HR section
+  const allowedPermissions = [
+    "hr.dashboard.view",
+    "hr.employees.read",
+    "hr.employees.manage",
+    "hr.departments.read",
+    "hr.departments.manage",
+    "hr.positions.read",
+    "hr.positions.manage",
+    "hr.attendance.read",
+    "hr.attendance.manage",
+    "hr.leaves.read",
+    "hr.leaves.manage",
+    "hr.payroll.read",
+    "hr.payroll.manage",
+  ];
+
+  // Block users with no HR permissions
+  if (!hasAnyPermission(allowedPermissions)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <h1 className="text-xl font-bold mb-2">Access Denied</h1>
+          <p className="text-gray-500">
+            You don’t have permission to access this content.
+          </p>
+          <p className="mt-2 text-sm text-gray-400">
+            Required permission: hr.employees.manage (or another HR permission)
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+
+  // Navigation items with permissions
   const navigationItems = [
     {
       id: "dashboard",
       label: "Dashboard",
-      icon: "📊",
-      roles: ["all"],
+      icon: ClipboardCheck,
+      permission: "hr.dashboard.view",
+      component: HRDashboard,
     },
     {
       id: "employees",
       label: "Employees",
-      icon: "👥",
-      roles: ["CompanyOwner", "HRHead", "HRManager"],
+      icon: Users,
+      permissions: ["hr.employees.read", "hr.employees.manage"],
+      component: EmployeeList,
     },
     {
       id: "departments",
       label: "Departments",
-      icon: "🏢",
-      roles: ["CompanyOwner", "HRHead", "HRManager"],
+      icon: Building2,
+      permissions: ["hr.departments.read", "hr.departments.manage"],
+      component: DepartmentList,
     },
     {
       id: "positions",
       label: "Positions",
-      icon: "💼",
-      roles: ["CompanyOwner", "HRHead", "HRManager"],
+      icon: Briefcase,
+      permissions: ["hr.positions.read", "hr.positions.manage"],
+      component: PositionList,
     },
-    {
-      id: "attendance",
-      label: "Attendance",
-      icon: "⏰",
-      roles: ["all"],
-    },
+
     {
       id: "leaves",
-      label: "Leaves",
-      icon: "🏖️",
-      roles: ["all"],
-    },
-    {
-      id: "payroll",
-      label: "Payroll",
-      icon: "💰",
-      roles: ["CompanyOwner", "HRHead", "HRManager"],
-    },
-    {
-      id: "users",
-      label: "Users",
-      icon: "🔐",
-      roles: ["CompanyOwner", "HRHead"],
+      label: "Leave Requests",
+      icon: Calendar,
+      permissions: ["hr.LeaveRequests.manage", "hr.LeaveRequests.read"],
+      component: LeaveManagement,
     },
   ];
 
-  const hasAccess = (item) => {
-    if (item.roles.includes("all")) return true;
-    return item.roles.some((role) => user?.roles?.includes(role));
+  // Show only tabs the user has permission for
+  const visibleNavItems = navigationItems.filter((item) => {
+    if (item.permission) return hasPermission(item.permission);
+    if (item.permissions) return hasAnyPermission(item.permissions);
+    return false;
+  });
+
+  const activeItem = navigationItems.find((item) => item.id === activeTab);
+  const ActiveComponent = activeItem?.component;
+
+  // Employee handlers
+  const handleEmployeeSelect = (employeeId) => {
+    setSelectedEmployeeId(employeeId);
+    setActiveTab("employee-detail");
   };
 
-  const getUserInitials = () => {
-    const email = user?.email || "";
-    return email.substring(0, 2).toUpperCase();
+  const handleBackToList = () => {
+    setSelectedEmployeeId(null);
+    setActiveTab("employees");
   };
 
-  const getUserRoleDisplay = () => {
-    const roles = user?.roles || [];
-    if (roles.includes("CompanyOwner")) return "Company Owner";
-    if (roles.includes("HRHead")) return "HR Head";
-    if (roles.includes("HRManager")) return "HR Manager";
-    if (roles.includes("Employee")) return "Employee";
-    return "User";
-  };
-
-  const renderContent = () => {
-    const item = navigationItems.find((nav) => nav.id === activeTab);
-
-    if (!item || !hasAccess(item)) {
-      return <AccessDenied />;
-    }
-
-    switch (activeTab) {
-      case "dashboard":
-        return <Dashboard />;
-      case "employees":
-        return <Employees />;
-      case "departments":
-        return <Departments />;
-      case "positions":
-        return <Positions />;
-      case "attendance":
-        return <Attendance />;
-      case "leaves":
-        return <LeaveManagement />;
-      case "payroll":
-        return <Payroll />;
-      case "users":
-        return <CompanyUsers />;
-      default:
-        return <Dashboard />;
-    }
+  const handleCreateEmployee = () => {
+    setActiveTab("create-employee");
   };
 
   return (
-    <div className="flex flex-col   bg-gray-50">
-      {/* Top Navigation Bar */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-6 py-3">
-          <div className="flex items-center justify-between">
-            {/* Navigation Tabs */}
-            <div className="flex items-center gap-1 overflow-x-auto">
-              {navigationItems
-                .filter((item) => hasAccess(item))
-                .map((item) => (
-                  <button
-                    key={item.id}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                      activeTab === item.id
-                        ? "bg-blue-600 text-white shadow-md"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                    }`}
-                    onClick={() => setActiveTab(item.id)}
-                  >
-                    <span className="text-lg">{item.icon}</span>
-                    <span>{item.label}</span>
-                  </button>
-                ))}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div className="flex items-center space-x-3">
+              <Users className="w-8 h-8 text-blue-600" />
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  HR Management
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Manage your workforce efficiently
+                </p>
+              </div>
             </div>
 
-            {/* User Menu */}
-            <div className="relative ml-4">
-              <button
-                className="flex items-center gap-3 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors"
-                onClick={() => setShowUserMenu(!showUserMenu)}
-              >
-                <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-full w-9 h-9 flex items-center justify-center font-semibold text-sm">
-                  {getUserInitials()}
-                </div>
-                <div className="text-left hidden md:block">
-                  <div className="text-sm font-medium text-gray-900 truncate max-w-[150px]">
-                    {user?.email}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {getUserRoleDisplay()}
-                  </div>
-                </div>
-                <svg
-                  className={`w-4 h-4 text-gray-500 transition-transform ${
-                    showUserMenu ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            {/* Quick Actions */}
+            <div className="flex items-center space-x-3">
+              {hasPermission("hr.employees.manage") && (
+                <button
+                  onClick={handleCreateEmployee}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-
-              {/* User Menu Dropdown */}
-              {showUserMenu && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-xl overflow-hidden border border-gray-200 z-50">
-                  <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg">
-                        {getUserInitials()}
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">
-                          {user?.email}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          {getUserRoleDisplay()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="py-2">
-                    <button
-                      className="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        // Add profile navigation if needed
-                      }}
-                    >
-                      <span className="text-xl">👤</span>
-                      <div>
-                        <div className="font-medium">Profile Settings</div>
-                        <div className="text-xs text-gray-500">
-                          Manage your account
-                        </div>
-                      </div>
-                    </button>
-                    <button
-                      className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors"
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        if (logout) logout();
-                      }}
-                    >
-                      <span className="text-xl">🚪</span>
-                      <div>
-                        <div className="font-medium">Logout</div>
-                        <div className="text-xs text-red-400">
-                          Sign out of your account
-                        </div>
-                      </div>
-                    </button>
-                  </div>
-                </div>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Add Employee
+                </button>
               )}
             </div>
           </div>
-        </div>
 
-        {/* Secondary Info Bar */}
-        <div className="px-6 py-2 bg-gray-50 border-t border-gray-200">
-          <div className="flex items-center justify-between text-xs text-gray-600">
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <span className="font-medium">Module:</span>
-                <span className="text-blue-600 font-semibold">
-                  HR Management
-                </span>
-              </span>
-              <span className="text-gray-300">•</span>
-              <span className="flex items-center gap-1">
-                <span className="font-medium">Section:</span>
-                <span>
-                  {navigationItems.find((item) => item.id === activeTab)?.label}
-                </span>
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-medium">
-                {new Date().toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-              <span className="text-gray-300">•</span>
-              <span>
-                {new Date().toLocaleTimeString("en-US", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            </div>
+          {/* Navigation Tabs */}
+          <div className="flex space-x-1 overflow-x-auto">
+            {visibleNavItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`flex items-center space-x-2 px-4 py-3 border-b-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === item.id
+                      ? "border-blue-600 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Content Area */}
-      <main className="flex-1 overflow-y-auto">{renderContent()}</main>
-
-      {/* Close user menu when clicking outside */}
-      {showUserMenu && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setShowUserMenu(false)}
-        />
-      )}
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activeTab === "employee-detail" && selectedEmployeeId ? (
+          <EmployeeDetail
+            employeeId={selectedEmployeeId}
+            onBack={handleBackToList}
+          />
+        ) : activeTab === "create-employee" ? (
+          hasPermission("hr.employees.manage") ? (
+            <CreateEmployee onBack={() => setActiveTab("employees")} />
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              You don’t have permission to create employees.
+            </div>
+          )
+        ) : ActiveComponent ? (
+          <ActiveComponent onEmployeeSelect={handleEmployeeSelect} />
+        ) : (
+          <div className="text-center py-12 text-gray-500">
+            You don't have permission to access this section.
+          </div>
+        )}
+      </div>
     </div>
   );
 };
-
-const AccessDenied = () => (
-  <div className="flex items-center justify-center min-h-screen bg-gray-50">
-    <div className="text-center max-w-md mx-auto p-8">
-      <div className="bg-red-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-        <span className="text-6xl">🚫</span>
-      </div>
-      <h2 className="text-3xl font-bold text-gray-900 mb-3">Access Denied</h2>
-      <p className="text-gray-600 mb-6">
-        You don't have the necessary permissions to access this section. Please
-        contact your administrator if you believe this is an error.
-      </p>
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
-          <strong>Need access?</strong> Contact your HR department or system
-          administrator to request the appropriate permissions.
-        </p>
-      </div>
-    </div>
-  </div>
-);
 
 export default HR;

@@ -1,5 +1,13 @@
-import { AlertCircle,Send ,Ban , Warehouse as WarehouseIcon } from "lucide-react";
-export default function ReceiptsTab({ receipts, onPost, onCancel, onDelete }) {
+import { AlertCircle, Send, Ban } from "lucide-react";
+
+export default function ReceiptsTab({
+ receipts, 
+  onPost, 
+  onCancel, 
+  onDelete, 
+  canDraft = false, // Can create/edit/delete/cancel
+  canPost = false   // Can post
+}) {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden">
       <table className="w-full">
@@ -26,7 +34,7 @@ export default function ReceiptsTab({ receipts, onPost, onCancel, onDelete }) {
         <tbody className="divide-y">
           {receipts.length === 0 ? (
             <tr>
-              <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+              <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
                 No receipts yet
               </td>
             </tr>
@@ -52,10 +60,10 @@ export default function ReceiptsTab({ receipts, onPost, onCancel, onDelete }) {
                         statusLower === "draft"
                           ? "bg-yellow-100 text-yellow-800"
                           : statusLower === "posted"
-                            ? "bg-blue-100 text-blue-800"
-                            : statusLower === "cancelled"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
+                          ? "bg-blue-100 text-blue-800"
+                          : statusLower === "cancelled"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {r.status || "Unknown"}
@@ -63,15 +71,17 @@ export default function ReceiptsTab({ receipts, onPost, onCancel, onDelete }) {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      {statusLower === "draft" && (
+                      {statusLower === "draft" && canDraft && (
                         <>
-                          <button
-                            onClick={() => onPost(r.id)}
-                            className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg"
-                            title="Post Receipt"
-                          >
-                            <Send className="w-5 h-5" />
-                          </button>
+                          {canPost && (
+                            <button
+                              onClick={() => onPost(r.id)}
+                              className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg"
+                              title="Post Receipt"
+                            >
+                              <Send className="w-5 h-5" />
+                            </button>
+                          )}
 
                           <button
                             onClick={() => onCancel(r.id)}

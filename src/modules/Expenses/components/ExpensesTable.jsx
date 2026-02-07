@@ -7,6 +7,7 @@ export default function ExpensesTable({
   setShowExpenseModal,
   setEditingExpense,
   handleDeleteExpense,
+  canManageExpenses,
 }) {
   return (
     <div className="bg-white p-6 rounded-2xl shadow-xl">
@@ -22,13 +23,13 @@ export default function ExpensesTable({
           />
         </div>
 
-        <button
+       {canManageExpenses&& <button
           onClick={() => setShowExpenseModal(true)}
           className="bg-red-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-red-700"
         >
           <Plus className="w-5 h-5" />
           Add Expense
-        </button>
+        </button>}
       </div>
 
       <div className="overflow-x-auto">

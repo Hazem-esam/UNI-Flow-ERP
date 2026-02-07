@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Receipt } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext.jsx";
+import PermissionGuard from "../../components/Permissionguard.jsx";
 
 import ExpensesOverview from "./components/ExpensesOverview";
 import ExpensesTable from "./components/ExpensesTable";
@@ -9,8 +10,9 @@ import ExpenseModal from "./components/ExpenseModal";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-export default function Expenses() {
-  const { isAuthenticated } = useContext(AuthContext);
+function ExpensesContent() {
+  const { isAuthenticated, hasPermission, hasAnyPermission, user } =
+    useContext(AuthContext);
 
   const [activeTab, setActiveTab] = useState("overview");
   const [expenses, setExpenses] = useState([]);
@@ -22,8 +24,27 @@ export default function Expenses() {
   const [editingExpense, setEditingExpense] = useState(null);
   const [stats, setStats] = useState(null);
 
+  // Permission checks using actual user permissions
+  const canReadExpenses =
+    user?.permissions?.some(
+      (p) => p === "expenses.items.read" || p === "expenses.items.manage",
+    ) || false;
+  const canManageExpenses =
+    user?.permissions?.includes("expenses.items.manage") || false;
+  const canReadCategories =
+    user?.permissions?.some(
+      (p) =>
+        p === "expenses.categories.read" || p === "expenses.categories.manage",
+    ) || false;
+  const canManageCategories =
+    user?.permissions?.includes("expenses.categories.manage") || false;
+
   // Fetch categories
   const fetchCategories = async () => {
+    if (!canReadCategories) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) throw new Error("No authentication token found");
@@ -43,12 +64,17 @@ export default function Expenses() {
       setCategories(data);
     } catch (err) {
       console.error("Error fetching categories:", err);
-      // Don't set error state for categories - just log it
     }
   };
 
   // Fetch expenses
   const fetchExpenses = async () => {
+    if (!canReadExpenses) {
+      setLoading(false);
+      setError("You don't have permission to view expenses.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) throw new Error("No authentication token found");
@@ -65,7 +91,7 @@ export default function Expenses() {
       }
 
       const data = await response.json();
-      
+
       // Transform API response to UI format
       const transformedExpenses = data.items.map((expense) => ({
         id: expense.id,
@@ -92,16 +118,23 @@ export default function Expenses() {
 
   // Fetch stats
   const fetchStats = async () => {
+    if (!canReadExpenses) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) return;
 
-      const response = await fetch(`${API_BASE_URL}/api/expenses/stats/summary`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
+      const response = await fetch(
+        `${API_BASE_URL}/api/expenses/stats/summary`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
         },
-      });
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -130,6 +163,11 @@ export default function Expenses() {
 
   // Handle save expense (create or update)
   const handleSaveExpense = async (expenseData) => {
+    if (!canManageExpenses) {
+      alert("You don't have permission to manage expenses.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
@@ -146,7 +184,9 @@ export default function Expenses() {
         categoryId: parseInt(expenseData.categoryId),
         amount: parseFloat(expenseData.amount),
         expenseDate: new Date(expenseData.date).toISOString(),
-        status: expenseData.status.charAt(0).toUpperCase() + expenseData.status.slice(1), // Capitalize first letter
+        status:
+          expenseData.status.charAt(0).toUpperCase() +
+          expenseData.status.slice(1),
         paymentMethod: expenseData.paymentMethod,
         notes: expenseData.notes || "",
         referenceNumber: expenseData.referenceNumber || "",
@@ -169,7 +209,9 @@ export default function Expenses() {
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => "");
-        throw new Error(errorText || `Failed to ${isEditing ? "update" : "create"} expense`);
+        throw new Error(
+          errorText || `Failed to ${isEditing ? "update" : "create"} expense`,
+        );
       }
 
       // Close modal first
@@ -186,7 +228,13 @@ export default function Expenses() {
 
   // Handle delete expense
   const handleDeleteExpense = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this expense?")) return;
+    if (!canManageExpenses) {
+      alert("You don't have permission to delete expenses.");
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to delete this expense?"))
+      return;
 
     try {
       const token = localStorage.getItem("accessToken");
@@ -204,7 +252,9 @@ export default function Expenses() {
       });
 
       if (!response.ok && response.status !== 204) {
-        const errorText = await response.text().catch(() => "Failed to delete expense");
+        const errorText = await response
+          .text()
+          .catch(() => "Failed to delete expense");
         throw new Error(errorText);
       }
 
@@ -221,7 +271,7 @@ export default function Expenses() {
     (e) =>
       e.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.vendor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.category.toLowerCase().includes(searchQuery.toLowerCase())
+      e.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Loading state
@@ -298,7 +348,10 @@ export default function Expenses() {
 
           {/* OVERVIEW */}
           {activeTab === "overview" && (
-            <ExpensesOverview expenses={expenses} stats={stats} />
+            <ExpensesOverview
+              expenses={expenses}
+              stats={stats}
+            />
           )}
 
           {/* EXPENSES TABLE */}
@@ -307,19 +360,47 @@ export default function Expenses() {
               expenses={filteredExpenses}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
-              setShowExpenseModal={setShowExpenseModal}
-              setEditingExpense={setEditingExpense}
+              setShowExpenseModal={() => {
+                if (!canManageExpenses) {
+                  alert("You don't have permission to create expenses.");
+                  return;
+                }
+                setShowExpenseModal(true);
+              }}
+              setEditingExpense={(expense) => {
+                if (!canManageExpenses) {
+                  alert("You don't have permission to edit expenses.");
+                  return;
+                }
+                setEditingExpense(expense);
+                setShowExpenseModal(true);
+              }}
               handleDeleteExpense={handleDeleteExpense}
+              canManageExpenses={canManageExpenses}
             />
           )}
 
           {/* CATEGORIES */}
           {activeTab === "categories" && (
-            <ExpensesCategories 
-              expenses={expenses} 
-              categories={categories}
-              fetchCategories={fetchCategories}
-            />
+            <>
+              {canReadCategories ? (
+                <ExpensesCategories
+                  expenses={expenses}
+                  categories={categories}
+                  fetchCategories={fetchCategories}
+                  canManageCategories={canManageCategories}
+                />
+              ) : (
+                <div className="bg-white rounded-xl p-8 shadow-lg text-center">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Access Denied
+                  </h3>
+                  <p className="text-gray-600">
+                    You don't have permission to view expense categories.
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -339,4 +420,38 @@ export default function Expenses() {
       </div>
     </div>
   );
+}
+
+// Wrap with Permission Guard
+export default function Expenses() {
+  const { user } = useContext(AuthContext);
+
+  // Check if user has any expenses permissions
+  const hasExpensesPermission = user?.permissions?.some((p) =>
+    p.startsWith("expenses."),
+  );
+
+  if (!hasExpensesPermission) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-slate-50 p-6">
+        <div className="bg-white rounded-xl p-8 shadow-lg max-w-md text-center">
+          <Receipt className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Access Denied
+          </h2>
+          <p className="text-gray-600 mb-4">
+            You don't have permission to access the Expenses module.
+          </p>
+          <p className="text-sm text-gray-500">
+            Required: Any expenses.* permission
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Your roles: {user?.roles?.join(", ") || "None"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return <ExpensesContent />;
 }

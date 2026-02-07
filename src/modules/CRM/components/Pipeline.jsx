@@ -24,6 +24,8 @@ export default function Pipeline({
   pipelineDeals = [],
   pipelineData,
   loadPipeline,
+  canManage,
+  canAccess,
 }) {
   // Group deals by stage for visualization
   const [showEditModal, setShowEditModal] = useState(false);
@@ -285,9 +287,11 @@ export default function Pipeline({
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                     Customer ID
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                    Actions
-                  </th>
+                  {(canAccess || canManage) && (
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                      Actions
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -341,26 +345,30 @@ export default function Pipeline({
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {deal.customerId}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEditDeal(deal)}
-                          className="p-2 text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
-                          title="Edit Deal"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleDeleteDeal(deal.id, deal.dealName)
-                          }
-                          className="p-2 text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
-                          title="Delete Deal"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
+                    {canAccess && (
+                      <td className="px-6 py-4">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEditDeal(deal)}
+                            className="p-2 text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
+                            title="Edit Deal"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          {canManage && (
+                            <button
+                              onClick={() =>
+                                handleDeleteDeal(deal.id, deal.dealName)
+                              }
+                              className="p-2 text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
+                              title="Delete Deal"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

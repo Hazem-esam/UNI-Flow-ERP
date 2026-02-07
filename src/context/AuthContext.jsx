@@ -41,15 +41,17 @@ function AuthContextProvider({ children }) {
 
       const data = await response.json();
 
-      // Store token and user data
+      // Store token and expiration
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("expiresAtUtc", data.expiresAtUtc);
 
+      // Store complete user data including permissions and roles
       const userData = {
         userId: data.userId,
         companyId: data.companyId,
         email: data.email,
-        roles: data.roles,
+        roles: data.roles || [],
+        permissions: data.permissions || [],
       };
 
       localStorage.setItem("user", JSON.stringify(userData));
@@ -93,15 +95,17 @@ function AuthContextProvider({ children }) {
 
       const data = await response.json();
 
-      // Store token and user data
+      // Store token and expiration
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("expiresAtUtc", data.expiresAtUtc);
 
+      // Store complete user data including permissions, roles, and company info
       const userData = {
         userId: data.userId,
         companyId: data.companyId,
         email: data.email,
-        roles: data.roles,
+        roles: data.roles || [],
+        permissions: data.permissions || [],
         fullName,
         companyName: company.name,
       };
@@ -113,7 +117,7 @@ function AuthContextProvider({ children }) {
 
       return { success: true, data };
     } catch (error) {
-      // console.error("Signup error:", error);
+      console.error("Signup error:", error);
       return { success: false, error: error.message };
     }
   };
@@ -149,6 +153,42 @@ function AuthContextProvider({ children }) {
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
+  // --------------------------
+  // HELPER FUNCTION: Check if user has permission
+  // --------------------------
+  const hasPermission = (permission) => {
+    if (!user || !user.permissions) return false;
+    return user.permissions.includes(permission);
+  };
+
+  // --------------------------
+  // HELPER FUNCTION: Check if user has role
+  // --------------------------
+  const hasRole = (role) => {
+    if (!user || !user.roles) return false;
+    return user.roles.includes(role);
+  };
+
+  // --------------------------
+  // HELPER FUNCTION: Check if user has any of the specified permissions
+  // --------------------------
+  const hasAnyPermission = (permissions) => {
+    if (!user || !user.permissions) return false;
+    return permissions.some((permission) =>
+      user.permissions.includes(permission)
+    );
+  };
+
+  // --------------------------
+  // HELPER FUNCTION: Check if user has all of the specified permissions
+  // --------------------------
+  const hasAllPermissions = (permissions) => {
+    if (!user || !user.permissions) return false;
+    return permissions.every((permission) =>
+      user.permissions.includes(permission)
+    );
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -158,6 +198,10 @@ function AuthContextProvider({ children }) {
         login,
         signup,
         logout,
+        hasPermission,
+        hasRole,
+        hasAnyPermission,
+        hasAllPermissions,
       }}
     >
       {children}

@@ -1,8 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext"; 
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5225";
 
 const CompanyUsers = () => {
+  const { hasPermission } = useContext(AuthContext);
+  
+  // Define permission keys based on your API structure
+  const PERMISSIONS = {
+    USERS_READ: "core.users.read",
+    USERS_CREATE: "core.users.create",
+    USERS_UPDATE: "core.users.update",
+    USERS_DELETE: "core.users.delete",
+    ROLES_MANAGE: "security.roles.manage",
+  };
+
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
@@ -13,10 +25,11 @@ const CompanyUsers = () => {
   const [showEditRoleModal, setShowEditRoleModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
-  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
-  const [editProfileData, setEditProfileData] = useState({
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
+  const [editUserData, setEditUserData] = useState({
     fullName: "",
     phoneNumber: "",
+    email: "",
   });
   const [formData, setFormData] = useState({
     email: "",
@@ -46,7 +59,11 @@ const CompanyUsers = () => {
 
   const loadData = async () => {
     setLoading(true);
-    await Promise.all([loadUsers(), loadRoles(), loadPermissions()]);
+    await Promise.all([
+      hasPermission(PERMISSIONS.USERS_READ) && loadUsers(),
+      hasPermission(PERMISSIONS.ROLES_MANAGE) && loadRoles(),
+      hasPermission(PERMISSIONS.ROLES_MANAGE) && loadPermissions(),
+    ]);
     setLoading(false);
   };
 
@@ -94,17 +111,30 @@ const CompanyUsers = () => {
       console.error("Error loading permissions:", error);
     }
   };
-  const handleOpenEditProfile = (user) => {
+
+  // Open Edit User Modal - requires UPDATE permission
+  const handleOpenEditUser = (user) => {
+    if (!hasPermission(PERMISSIONS.USERS_UPDATE)) {
+      alert("You don't have permission to edit users.");
+      return;
+    }
     setSelectedUser(user);
-    setEditProfileData({
+    setEditUserData({
       fullName: user.fullName || "",
       phoneNumber: user.phoneNumber || "",
+      email: user.email || "",
     });
-    setShowEditProfileModal(true);
+    setShowEditUserModal(true);
   };
 
-  const handleUpdateProfile = async (e) => {
+  // Update User Profile - requires UPDATE permission
+  const handleUpdateUser = async (e) => {
     e.preventDefault();
+
+    if (!hasPermission(PERMISSIONS.USERS_UPDATE)) {
+      alert("You don't have permission to update users.");
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -112,24 +142,31 @@ const CompanyUsers = () => {
         {
           method: "PUT",
           headers: getAuthHeaders(),
-          body: JSON.stringify(editProfileData),
+          body: JSON.stringify(editUserData),
         },
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update profile");
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to update user");
       }
 
-      alert("Profile updated successfully!");
-      setShowEditProfileModal(false);
+      alert("User updated successfully!");
+      setShowEditUserModal(false);
       setSelectedUser(null);
       loadUsers();
     } catch (error) {
-      alert(error.message || "Error updating profile");
+      alert(error.message || "Error updating user");
     }
   };
-  // Add this function
+
+  // Delete User - requires DELETE permission
   const handleDeleteUser = async (userId, fullName) => {
+    if (!hasPermission(PERMISSIONS.USERS_DELETE)) {
+      alert("You don't have permission to delete users.");
+      return;
+    }
+
     if (
       !confirm(
         `Are you sure you want to delete user "${fullName}"? This action cannot be undone.`,
@@ -153,17 +190,23 @@ const CompanyUsers = () => {
       }
 
       alert("User deleted successfully!");
-      loadUsers(); // refresh list
+      loadUsers();
     } catch (error) {
       alert(error.message || "Error deleting user");
       console.error(error);
     }
   };
+
+  // Create User - requires CREATE permission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!hasPermission(PERMISSIONS.USERS_CREATE)) {
+      alert("You don't have permission to create users.");
+      return;
+    }
+
     try {
-      // Step 1: Create the user without roles
       const createUserResponse = await fetch(
         `${API_BASE_URL}/api/company-users`,
         {
@@ -173,7 +216,8 @@ const CompanyUsers = () => {
             email: formData.email,
             password: formData.password,
             fullName: formData.fullName,
-            roles: formData.roles, // Send roles in creation payload
+            phoneNumber: formData.phoneNumber || "",
+            roles: formData.roles,
           }),
         },
       );
@@ -182,8 +226,6 @@ const CompanyUsers = () => {
         const error = await createUserResponse.text();
         throw new Error(error || "Failed to create user");
       }
-
-      const newUser = await createUserResponse.json();
 
       alert("User created successfully!");
       setShowModal(false);
@@ -194,10 +236,15 @@ const CompanyUsers = () => {
     }
   };
 
+  // Manage User Roles Modal - requires UPDATE permission
   const handleOpenRolesModal = async (user) => {
+    if (!hasPermission(PERMISSIONS.USERS_UPDATE)) {
+      alert("You don't have permission to manage user roles.");
+      return;
+    }
+
     setSelectedUser(user);
 
-    // Fetch current user roles from API
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/access/user-roles/${user.id}`,
@@ -220,11 +267,16 @@ const CompanyUsers = () => {
     setShowRolesModal(true);
   };
 
+  // Update User Roles - requires UPDATE permission
   const handleUpdateRoles = async (e) => {
     e.preventDefault();
 
+    if (!hasPermission(PERMISSIONS.USERS_UPDATE)) {
+      alert("You don't have permission to update user roles.");
+      return;
+    }
+
     try {
-      // Get current roles
       const currentRolesResponse = await fetch(
         `${API_BASE_URL}/api/access/user-roles/${selectedUser.id}`,
         {
@@ -238,7 +290,6 @@ const CompanyUsers = () => {
         currentRoles = data.roles || [];
       }
 
-      // Find roles to add and remove
       const rolesToAdd = rolesFormData.filter(
         (role) => !currentRoles.includes(role),
       );
@@ -246,7 +297,7 @@ const CompanyUsers = () => {
         (role) => !rolesFormData.includes(role),
       );
 
-      // Add new roles using the correct endpoint
+      // Add new roles
       for (const role of rolesToAdd) {
         const response = await fetch(
           `${API_BASE_URL}/api/access/user-roles/assign`,
@@ -266,7 +317,7 @@ const CompanyUsers = () => {
         }
       }
 
-      // Remove old roles using the correct endpoint
+      // Remove old roles
       for (const role of rolesToRemove) {
         const response = await fetch(
           `${API_BASE_URL}/api/access/user-roles/remove`,
@@ -295,7 +346,13 @@ const CompanyUsers = () => {
     }
   };
 
+  // Toggle User Status - requires UPDATE permission
   const handleToggleStatus = async (userId, currentStatus) => {
+    if (!hasPermission(PERMISSIONS.USERS_UPDATE)) {
+      alert("You don't have permission to change user status.");
+      return;
+    }
+
     if (
       !confirm(
         `Are you sure you want to ${currentStatus ? "deactivate" : "activate"} this user?`,
@@ -325,8 +382,14 @@ const CompanyUsers = () => {
     }
   };
 
+  // Create Role - requires ROLES_MANAGE permission
   const handleCreateRole = async (e) => {
     e.preventDefault();
+
+    if (!hasPermission(PERMISSIONS.ROLES_MANAGE)) {
+      alert("You don't have permission to create roles.");
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/access/roles`, {
@@ -349,7 +412,13 @@ const CompanyUsers = () => {
     }
   };
 
+  // Delete Role - requires ROLES_MANAGE permission
   const handleDeleteRole = async (roleName) => {
+    if (!hasPermission(PERMISSIONS.ROLES_MANAGE)) {
+      alert("You don't have permission to delete roles.");
+      return;
+    }
+
     if (!confirm(`Are you sure you want to delete the role "${roleName}"?`)) {
       return;
     }
@@ -375,8 +444,14 @@ const CompanyUsers = () => {
     }
   };
 
+  // Edit Role - requires ROLES_MANAGE permission
   const handleEditRole = async (e) => {
     e.preventDefault();
+
+    if (!hasPermission(PERMISSIONS.ROLES_MANAGE)) {
+      alert("You don't have permission to edit roles.");
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -406,6 +481,10 @@ const CompanyUsers = () => {
   };
 
   const handleOpenEditRole = (role) => {
+    if (!hasPermission(PERMISSIONS.ROLES_MANAGE)) {
+      alert("You don't have permission to edit roles.");
+      return;
+    }
     setSelectedRole(role);
     setEditRoleData({
       name: role.name,
@@ -419,6 +498,7 @@ const CompanyUsers = () => {
       email: "",
       password: "",
       fullName: "",
+      phoneNumber: "",
       roles: [],
     });
   };
@@ -452,20 +532,46 @@ const CompanyUsers = () => {
     );
   };
 
-  const togglePermission = (permissionKey, isEdit = false) => {
+  const togglePermission = (permissionKey, isEdit = false, modulePermissions = []) => {
+    const currentPermissions = isEdit ? editRoleData.permissions : newRoleData.permissions;
+    const isCurrentlySelected = currentPermissions.includes(permissionKey);
+    
+    const permission = modulePermissions.find(p => p.key === permissionKey);
+    const isManagePermission = permission?.action === 'manage';
+    
+    const managePermission = modulePermissions.find(p => p.action === 'manage');
+    const hasManageSelected = managePermission && currentPermissions.includes(managePermission.key);
+    
+    if (isCurrentlySelected && !isManagePermission && hasManageSelected) {
+      alert('Cannot deselect this permission while "manage" permission is active. Please deselect "manage" first.');
+      return;
+    }
+    
+    let newPermissions;
+    
+    if (isManagePermission) {
+      if (isCurrentlySelected) {
+        const moduleKeys = modulePermissions.map(p => p.key);
+        newPermissions = currentPermissions.filter(p => !moduleKeys.includes(p));
+      } else {
+        const moduleKeys = modulePermissions.map(p => p.key);
+        newPermissions = [...new Set([...currentPermissions, ...moduleKeys])];
+      }
+    } else {
+      newPermissions = isCurrentlySelected
+        ? currentPermissions.filter((p) => p !== permissionKey)
+        : [...currentPermissions, permissionKey];
+    }
+    
     if (isEdit) {
       setEditRoleData((prev) => ({
         ...prev,
-        permissions: prev.permissions.includes(permissionKey)
-          ? prev.permissions.filter((p) => p !== permissionKey)
-          : [...prev.permissions, permissionKey],
+        permissions: newPermissions,
       }));
     } else {
       setNewRoleData((prev) => ({
         ...prev,
-        permissions: prev.permissions.includes(permissionKey)
-          ? prev.permissions.filter((p) => p !== permissionKey)
-          : [...prev.permissions, permissionKey],
+        permissions: newPermissions,
       }));
     }
   };
@@ -513,6 +619,7 @@ const CompanyUsers = () => {
       Accountant: "bg-yellow-100 text-yellow-800",
       SalesManager: "bg-indigo-100 text-indigo-800",
       InventoryManager: "bg-orange-100 text-orange-800",
+      Owner: "bg-purple-100 text-purple-800",
     };
     return colors[role] || "bg-gray-100 text-gray-800";
   };
@@ -525,7 +632,6 @@ const CompanyUsers = () => {
       : names[0][0];
   };
 
-  // Get all available roles (system roles + custom roles)
   const getAllAvailableRoles = () => {
     const customRoles = roles.map((r) => ({
       value: r.name,
@@ -535,6 +641,19 @@ const CompanyUsers = () => {
     }));
     return [...customRoles];
   };
+
+  // Check if user has read permission
+  if (!hasPermission(PERMISSIONS.USERS_READ)) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center bg-red-50 border border-red-200 rounded-lg p-8">
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-2xl font-bold text-red-900 mb-2">Access Denied</h2>
+          <p className="text-red-700">You don't have permission to view company users.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -548,6 +667,10 @@ const CompanyUsers = () => {
   }
 
   const availableRoles = getAllAvailableRoles();
+  const canCreateUsers = hasPermission(PERMISSIONS.USERS_CREATE);
+  const canUpdateUsers = hasPermission(PERMISSIONS.USERS_UPDATE);
+  const canDeleteUsers = hasPermission(PERMISSIONS.USERS_DELETE);
+  const canManageRoles = hasPermission(PERMISSIONS.ROLES_MANAGE);
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -560,26 +683,30 @@ const CompanyUsers = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <button
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-            onClick={() => {
-              resetRoleForm();
-              setShowCreateRoleModal(true);
-            }}
-          >
-            <span className="text-xl">🔐</span>
-            Create Role
-          </button>
-          <button
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-            onClick={() => {
-              resetForm();
-              setShowModal(true);
-            }}
-          >
-            <span className="text-xl">➕</span>
-            Add User
-          </button>
+          {canManageRoles && (
+            <button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              onClick={() => {
+                resetRoleForm();
+                setShowCreateRoleModal(true);
+              }}
+            >
+              <span className="text-xl">🔐</span>
+              Create Role
+            </button>
+          )}
+          {canCreateUsers && (
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              onClick={() => {
+                resetForm();
+                setShowModal(true);
+              }}
+            >
+              <span className="text-xl">➕</span>
+              Add User
+            </button>
+          )}
         </div>
       </div>
 
@@ -597,23 +724,25 @@ const CompanyUsers = () => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-green-600 font-medium">Custom Roles</p>
-              <p className="text-3xl font-bold text-green-900">
-                {roles.length}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
-              <span className="text-2xl">🔐</span>
+        {canManageRoles && (
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-green-600 font-medium">Custom Roles</p>
+                <p className="text-3xl font-bold text-green-900">
+                  {roles.length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">🔐</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Custom Roles Section */}
-      {roles.length > 0 && (
+      {canManageRoles && roles.length > 0 && (
         <div className="mb-6 bg-white rounded-lg shadow-md p-6 border border-gray-200">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Custom Roles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -692,6 +821,11 @@ const CompanyUsers = () => {
                     {user.fullName}
                   </h3>
                   <p className="text-sm text-gray-600 truncate">{user.email}</p>
+                  {user.phoneNumber && (
+                    <p className="text-xs text-gray-500 truncate">
+                      📞 {user.phoneNumber}
+                    </p>
+                  )}
                   <div className="flex gap-2 mt-2">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -734,62 +868,97 @@ const CompanyUsers = () => {
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-4 border-t border-gray-200">
-                <button
-                  className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                  onClick={() => handleOpenRolesModal(user)}
-                >
-                  🔐 Manage Roles
-                </button>
-                <button
-                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    user.isActive
-                      ? "bg-red-50 hover:bg-red-100 text-red-600"
-                      : "bg-green-50 hover:bg-green-100 text-green-600"
-                  }`}
-                  onClick={() => handleToggleStatus(user.id, user.isActive)}
-                >
-                  {user.isActive ? "🔴 Deactivate" : "🟢 Activate"}
-                </button>
-                <button
-                  className="px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded text-xs font-medium"
-                  onClick={() => handleOpenEditProfile(user)}
-                >
-                  Edit Profile
-                </button>
-                <button
-                  className="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                  onClick={() => handleDeleteUser(user.id, user.fullName)}
-                >
-                  🗑️ Delete
-                </button>
+              <div className="flex flex-col gap-2 pt-4 border-t border-gray-200">
+                <div className="flex gap-2">
+                  {canUpdateUsers && (
+                    <>
+                      <button
+                        className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                        onClick={() => handleOpenRolesModal(user)}
+                      >
+                        🔐 Roles
+                      </button>
+                      <button
+                        className="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                        onClick={() => handleOpenEditUser(user)}
+                      >
+                        ✏️ Edit
+                      </button>
+                    </>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  {canUpdateUsers && (
+                    <button
+                      className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                        user.isActive
+                          ? "bg-red-50 hover:bg-red-100 text-red-600"
+                          : "bg-green-50 hover:bg-green-100 text-green-600"
+                      }`}
+                      onClick={() => handleToggleStatus(user.id, user.isActive)}
+                    >
+                      {user.isActive ? "🔴 Deactivate" : "🟢 Activate"}
+                    </button>
+                  )}
+                  {canDeleteUsers && (
+                    <button
+                      className="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                      onClick={() => handleDeleteUser(user.id, user.fullName)}
+                    >
+                      🗑️ Delete
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))
         )}
       </div>
-      {showEditProfileModal && selectedUser && (
+
+      {/* Edit User Modal */}
+      {showEditUserModal && selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
             <div className="p-6 border-b flex justify-between items-center">
-              <h2 className="text-xl font-bold">Edit Profile</h2>
-              <button onClick={() => setShowEditProfileModal(false)}>✕</button>
+              <h2 className="text-xl font-bold">Edit User</h2>
+              <button
+                onClick={() => setShowEditUserModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ✕
+              </button>
             </div>
-            <form onSubmit={handleUpdateProfile} className="p-6 space-y-4">
+            <form onSubmit={handleUpdateUser} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Full Name
+                  Full Name *
                 </label>
                 <input
                   type="text"
-                  value={editProfileData.fullName}
+                  required
+                  value={editUserData.fullName}
                   onChange={(e) =>
-                    setEditProfileData({
-                      ...editProfileData,
+                    setEditUserData({
+                      ...editUserData,
                       fullName: e.target.value,
                     })
                   }
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Email *</label>
+                <input
+                  type="email"
+                  required
+                  value={editUserData.email}
+                  onChange={(e) =>
+                    setEditUserData({
+                      ...editUserData,
+                      email: e.target.value,
+                    })
+                  }
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -798,35 +967,36 @@ const CompanyUsers = () => {
                 </label>
                 <input
                   type="tel"
-                  value={editProfileData.phoneNumber}
+                  value={editUserData.phoneNumber}
                   onChange={(e) =>
-                    setEditProfileData({
-                      ...editProfileData,
+                    setEditUserData({
+                      ...editUserData,
                       phoneNumber: e.target.value,
                     })
                   }
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-4">
                 <button
                   type="button"
-                  className="flex-1 bg-gray-200 py-2 rounded"
-                  onClick={() => setShowEditProfileModal(false)}
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md font-medium"
+                  onClick={() => setShowEditUserModal(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 rounded"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium"
                 >
-                  Save
+                  Update User
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
       {/* Create User Modal */}
       {showModal && (
         <div
@@ -900,37 +1070,51 @@ const CompanyUsers = () => {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={formData.phoneNumber}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phoneNumber: e.target.value })
+                  }
+                  placeholder="+1234567890"
+                />
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Roles *
                 </label>
                 <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-md p-3">
-                  {roles.length > 0 && (
-                    <div className="pt-3 border-t border-gray-200">
-                      <p className="text-xs font-semibold text-gray-500 mb-2">
-                        CUSTOM ROLES
-                      </p>
-                      {roles.map((role) => (
-                        <label
-                          key={role.name}
-                          className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer mb-1"
-                        >
-                          <input
-                            type="checkbox"
-                            className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            checked={formData.roles.includes(role.name)}
-                            onChange={() => toggleRole(role.name)}
-                          />
-                          <div className="flex-1">
-                            <div className="font-medium text-gray-900">
-                              {role.name}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {role.permissions?.length || 0} permissions
-                            </div>
+                  {roles.length > 0 ? (
+                    roles.map((role) => (
+                      <label
+                        key={role.name}
+                        className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer mb-1"
+                      >
+                        <input
+                          type="checkbox"
+                          className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          checked={formData.roles.includes(role.name)}
+                          onChange={() => toggleRole(role.name)}
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">
+                            {role.name}
                           </div>
-                        </label>
-                      ))}
-                    </div>
+                          <div className="text-xs text-gray-500">
+                            {role.permissions?.length || 0} permissions
+                          </div>
+                        </div>
+                      </label>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      No roles available. Create a role first.
+                    </p>
                   )}
                 </div>
                 {formData.roles.length === 0 && (
@@ -990,33 +1174,32 @@ const CompanyUsers = () => {
 
             <form onSubmit={handleUpdateRoles} className="p-6">
               <div className="space-y-2 max-h-96 overflow-y-auto border border-gray-200 rounded-md p-3 mb-6">
-                {roles.length > 0 && (
-                  <div className="pt-3 border-t border-gray-200">
-                    <p className="text-xs font-semibold text-gray-500 mb-2">
-                      CUSTOM ROLES
-                    </p>
-                    {roles.map((role) => (
-                      <label
-                        key={role.name}
-                        className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer mb-1"
-                      >
-                        <input
-                          type="checkbox"
-                          className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          checked={rolesFormData.includes(role.name)}
-                          onChange={() => toggleRoleInUpdate(role.name)}
-                        />
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-900">
-                            {role.name}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {role.permissions?.length || 0} permissions
-                          </div>
+                {roles.length > 0 ? (
+                  roles.map((role) => (
+                    <label
+                      key={role.name}
+                      className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer mb-1"
+                    >
+                      <input
+                        type="checkbox"
+                        className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        checked={rolesFormData.includes(role.name)}
+                        onChange={() => toggleRoleInUpdate(role.name)}
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">
+                          {role.name}
                         </div>
-                      </label>
-                    ))}
-                  </div>
+                        <div className="text-xs text-gray-500">
+                          {role.permissions?.length || 0} permissions
+                        </div>
+                      </div>
+                    </label>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    No roles available
+                  </p>
                 )}
               </div>
 
@@ -1115,29 +1298,42 @@ const CompanyUsers = () => {
                         </h4>
                       </div>
                       <div className="space-y-1 pl-4">
-                        {module.permissions.map((perm, permIdx) => (
-                          <label
-                            key={permIdx}
-                            className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              className="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                              checked={newRoleData.permissions.includes(
-                                perm.key,
-                              )}
-                              onChange={() => togglePermission(perm.key, false)}
-                            />
-                            <div className="flex-1">
-                              <div className="text-sm font-medium text-gray-900">
-                                {perm.action}
+                        {module.permissions.map((perm, permIdx) => {
+                          const managePermission = module.permissions.find(p => p.action === 'manage');
+                          const hasManageSelected = managePermission && newRoleData.permissions.includes(managePermission.key);
+                          const isManagePermission = perm.action === 'manage';
+                          const isDisabled = hasManageSelected && !isManagePermission && newRoleData.permissions.includes(perm.key);
+                          
+                          return (
+                            <label
+                              key={permIdx}
+                              className={`flex items-start gap-3 p-2 rounded-md cursor-pointer ${
+                                isDisabled ? 'bg-blue-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                className="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                checked={newRoleData.permissions.includes(perm.key)}
+                                onChange={() => togglePermission(perm.key, false, module.permissions)}
+                              />
+                              <div className="flex-1">
+                                <div className={`text-sm font-medium ${isManagePermission ? 'text-blue-900' : 'text-gray-900'}`}>
+                                  {perm.action}
+                                  {isManagePermission && ' (Auto-selects all)'}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {perm.description}
+                                </div>
+                                {isDisabled && (
+                                  <div className="text-xs text-blue-600 mt-1">
+                                    🔒 Locked by "manage" permission
+                                  </div>
+                                )}
                               </div>
-                              <div className="text-xs text-gray-500">
-                                {perm.description}
-                              </div>
-                            </div>
-                          </label>
-                        ))}
+                            </label>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
@@ -1222,29 +1418,42 @@ const CompanyUsers = () => {
                         </h4>
                       </div>
                       <div className="space-y-1 pl-4">
-                        {module.permissions.map((perm, permIdx) => (
-                          <label
-                            key={permIdx}
-                            className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-md cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              className="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                              checked={editRoleData.permissions.includes(
-                                perm.key,
-                              )}
-                              onChange={() => togglePermission(perm.key, true)}
-                            />
-                            <div className="flex-1">
-                              <div className="text-sm font-medium text-gray-900">
-                                {perm.action}
+                        {module.permissions.map((perm, permIdx) => {
+                          const managePermission = module.permissions.find(p => p.action === 'manage');
+                          const hasManageSelected = managePermission && editRoleData.permissions.includes(managePermission.key);
+                          const isManagePermission = perm.action === 'manage';
+                          const isDisabled = hasManageSelected && !isManagePermission && editRoleData.permissions.includes(perm.key);
+                          
+                          return (
+                            <label
+                              key={permIdx}
+                              className={`flex items-start gap-3 p-2 rounded-md cursor-pointer ${
+                                isDisabled ? 'bg-blue-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                className="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                checked={editRoleData.permissions.includes(perm.key)}
+                                onChange={() => togglePermission(perm.key, true, module.permissions)}
+                              />
+                              <div className="flex-1">
+                                <div className={`text-sm font-medium ${isManagePermission ? 'text-blue-900' : 'text-gray-900'}`}>
+                                  {perm.action}
+                                  {isManagePermission && ' (Auto-selects all)'}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {perm.description}
+                                </div>
+                                {isDisabled && (
+                                  <div className="text-xs text-blue-600 mt-1">
+                                    🔒 Locked by "manage" permission
+                                  </div>
+                                )}
                               </div>
-                              <div className="text-xs text-gray-500">
-                                {perm.description}
-                              </div>
-                            </div>
-                          </label>
-                        ))}
+                            </label>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { dashboardService } from "./services/Dashboardservice";
 import Header from "./components/Header";
 import KPICards from "./components/KpiCards";
@@ -8,7 +8,7 @@ import SalesStatusChart from "./components/StatusCard";
 import DepartmentChart from "./components/DepartmentCard";
 import RecentActivity from "./components/RecentActivity";
 import Alerts from "./components/Alerts";
-
+import { AuthContext } from "../../context/AuthContext";
 export default function Dashboard() {
   const [timeframe, setTimeframe] = useState("monthly");
   const [loading, setLoading] = useState(true);
@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [invoice, setInvoice] = useState([]);
   const [leads, setLeads] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const { user, isAuthenticated } = useContext(AuthContext);
 
   // Fetch all dashboard data
   useEffect(() => {
@@ -64,35 +65,18 @@ export default function Dashboard() {
     );
   }
 
-  if (error) {
+ 
+  if (!isAuthenticated || !user?.roles.includes("Owner")) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-        <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md">
-          <div className="text-red-600 text-center mb-4">
-            <svg
-              className="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
-            Error Loading Dashboard
-          </h2>
-          <p className="text-gray-600 text-center mb-6">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
-          >
-            Retry
-          </button>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+          <p className="text-gray-600 mb-4">
+           Only Company Owner Role  has permission to view this page.
+          </p>
+          <a href="/" className="text-blue-600 hover:underline font-semibold">
+            Go to Home
+          </a>
         </div>
       </div>
     );

@@ -12,7 +12,12 @@ import {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-export default function ExpensesCategories({ expenses, categories, fetchCategories }) {
+export default function ExpensesCategories({
+  expenses,
+  categories,
+  fetchCategories,
+  canManageCategories,
+}) {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
 
@@ -37,17 +42,21 @@ export default function ExpensesCategories({ expenses, categories, fetchCategori
       {/* Category Management Section */}
       <div className="bg-white p-6 rounded-2xl shadow-lg mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Manage Categories</h2>
-          <button
-            onClick={() => {
-              setEditingCategory(null);
-              setShowCategoryModal(true);
-            }}
-            className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:from-red-600 hover:to-red-700 shadow-md transition-all"
-          >
-            <Plus className="w-5 h-5" />
-            Add Category
-          </button>
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Manage Categories
+          </h2>
+          {canManageCategories && (
+            <button
+              onClick={() => {
+                setEditingCategory(null);
+                setShowCategoryModal(true);
+              }}
+              className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:from-red-600 hover:to-red-700 shadow-md transition-all"
+            >
+              <Plus className="w-5 h-5" />
+              Add Category
+            </button>
+          )}
         </div>
 
         {categories.length === 0 ? (
@@ -55,20 +64,25 @@ export default function ExpensesCategories({ expenses, categories, fetchCategori
             <p className="text-gray-600 mb-4">
               No categories available. Create your first expense category.
             </p>
-            <button
-              onClick={() => {
-                setEditingCategory(null);
-                setShowCategoryModal(true);
-              }}
-              className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
-            >
-              Create Category
-            </button>
+            {canManageCategories && (
+              <button
+                onClick={() => {
+                  setEditingCategory(null);
+                  setShowCategoryModal(true);
+                }}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              >
+                Create Category
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {categories.map((category) => {
-              const stats = categoryTotals[category.name] || { amount: 0, count: 0 };
+              const stats = categoryTotals[category.name] || {
+                amount: 0,
+                count: 0,
+              };
               return (
                 <CategoryCard
                   key={category.id}
@@ -78,7 +92,9 @@ export default function ExpensesCategories({ expenses, categories, fetchCategori
                     setEditingCategory(category);
                     setShowCategoryModal(true);
                   }}
-                  onDelete={() => handleDeleteCategory(category.id, fetchCategories)}
+                  onDelete={() =>
+                    handleDeleteCategory(category.id, fetchCategories)
+                  }
                 />
               );
             })}
@@ -89,33 +105,36 @@ export default function ExpensesCategories({ expenses, categories, fetchCategori
       {/* Category Breakdown Chart */}
       {chartData.length > 0 && (
         <div className="bg-white p-6 rounded-2xl shadow-lg mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Category Spending Breakdown</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            Category Spending Breakdown
+          </h2>
           <div className="h-96">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis 
-                  dataKey="category" 
+                <XAxis
+                  dataKey="category"
                   stroke="#6b7280"
                   tick={{ fontSize: 12 }}
                   angle={-45}
                   textAnchor="end"
                   height={100}
                 />
-                <YAxis 
+                <YAxis
                   stroke="#6b7280"
                   tick={{ fontSize: 12 }}
                   tickFormatter={(value) => `$${value}`}
                 />
-                <Tooltip 
+                <Tooltip
                   formatter={(value, name) => {
-                    if (name === 'amount') return [`$${value.toLocaleString()}`, 'Amount'];
-                    return [value, 'Count'];
+                    if (name === "amount")
+                      return [`$${value.toLocaleString()}`, "Amount"];
+                    return [value, "Count"];
                   }}
                   contentStyle={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
+                    backgroundColor: "#fff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
                   }}
                 />
                 <Bar dataKey="amount" fill="#ef4444" radius={[8, 8, 0, 0]} />
@@ -129,7 +148,15 @@ export default function ExpensesCategories({ expenses, categories, fetchCategori
       {showCategoryModal && (
         <CategoryModal
           category={editingCategory}
-          onSave={(data) => handleSaveCategory(data, editingCategory, fetchCategories, setShowCategoryModal, setEditingCategory)}
+          onSave={(data) =>
+            handleSaveCategory(
+              data,
+              editingCategory,
+              fetchCategories,
+              setShowCategoryModal,
+              setEditingCategory,
+            )
+          }
           onClose={() => {
             setShowCategoryModal(false);
             setEditingCategory(null);
@@ -146,7 +173,9 @@ function CategoryCard({ category, stats, onEdit, onDelete }) {
     <div className="bg-gradient-to-br from-gray-50 to-white p-5 rounded-xl shadow hover:shadow-lg transition-all border border-gray-200">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900">{category.name}</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {category.name}
+          </h3>
           {category.description && (
             <p className="text-sm text-gray-600 mt-1">{category.description}</p>
           )}
@@ -169,16 +198,22 @@ function CategoryCard({ category, stats, onEdit, onDelete }) {
 
       <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-gray-200">
         <div>
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Total Spent</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide">
+            Total Spent
+          </p>
           <p className="text-xl font-bold text-red-600 mt-1">
-            ${stats.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            $
+            {stats.amount.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
         </div>
         <div>
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Transactions</p>
-          <p className="text-xl font-bold text-gray-900 mt-1">
-            {stats.count}
+          <p className="text-xs text-gray-500 uppercase tracking-wide">
+            Transactions
           </p>
+          <p className="text-xl font-bold text-gray-900 mt-1">{stats.count}</p>
         </div>
       </div>
     </div>
@@ -191,7 +226,7 @@ function CategoryModal({ category, onSave, onClose }) {
     category || {
       name: "",
       description: "",
-    }
+    },
   );
 
   const handleChange = (e) => {
@@ -268,7 +303,13 @@ function CategoryModal({ category, onSave, onClose }) {
 }
 
 // Handle save category
-async function handleSaveCategory(categoryData, editingCategory, fetchCategories, setShowCategoryModal, setEditingCategory) {
+async function handleSaveCategory(
+  categoryData,
+  editingCategory,
+  fetchCategories,
+  setShowCategoryModal,
+  setEditingCategory,
+) {
   try {
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -294,16 +335,20 @@ async function handleSaveCategory(categoryData, editingCategory, fetchCategories
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => "");
-      
+
       // Handle specific error cases
       if (response.status === 400 || response.status === 409) {
-        alert(`Unable to ${isEditing ? 'update' : 'create'} category: A category with this name may already exist. Please use a different name.`);
+        alert(
+          `Unable to ${isEditing ? "update" : "create"} category: A category with this name may already exist. Please use a different name.`,
+        );
       } else if (response.status === 401) {
         alert("Your session has expired. Please log in again.");
       } else if (response.status === 404 && isEditing) {
         alert("Category not found. It may have been deleted.");
       } else {
-        alert(`Failed to ${isEditing ? 'update' : 'create'} category: ${errorText || 'Unknown error occurred'}`);
+        alert(
+          `Failed to ${isEditing ? "update" : "create"} category: ${errorText || "Unknown error occurred"}`,
+        );
       }
       return;
     }
@@ -313,12 +358,19 @@ async function handleSaveCategory(categoryData, editingCategory, fetchCategories
     await fetchCategories();
   } catch (err) {
     console.error("Error saving category:", err);
-    
+
     // More user-friendly error message
-    if (err.message.includes('duplicate') || err.message.includes('exists')) {
-      alert("This category name already exists. Please choose a different name.");
-    } else if (err.message.includes('network') || err.message.includes('fetch')) {
-      alert("Network error: Unable to save category. Please check your connection and try again.");
+    if (err.message.includes("duplicate") || err.message.includes("exists")) {
+      alert(
+        "This category name already exists. Please choose a different name.",
+      );
+    } else if (
+      err.message.includes("network") ||
+      err.message.includes("fetch")
+    ) {
+      alert(
+        "Network error: Unable to save category. Please check your connection and try again.",
+      );
     } else {
       alert(`Error saving category: ${err.message}`);
     }
@@ -327,7 +379,11 @@ async function handleSaveCategory(categoryData, editingCategory, fetchCategories
 
 // Handle delete category
 async function handleDeleteCategory(id, fetchCategories) {
-  if (!window.confirm("Are you sure you want to delete this category? This may affect existing expenses.")) {
+  if (
+    !window.confirm(
+      "Are you sure you want to delete this category? This may affect existing expenses.",
+    )
+  ) {
     return;
   }
 
@@ -338,28 +394,37 @@ async function handleDeleteCategory(id, fetchCategories) {
       return;
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/expense-categories/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "*/*",
+    const response = await fetch(
+      `${API_BASE_URL}/api/expense-categories/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "*/*",
+        },
       },
-    });
+    );
 
     if (!response.ok && response.status !== 204) {
       const errorText = await response.text().catch(() => "");
-      
+
       // Handle specific error cases
       if (response.status === 400) {
-        alert("Cannot delete this category: It may be in use by existing expenses. Please reassign those expenses first.");
+        alert(
+          "Cannot delete this category: It may be in use by existing expenses. Please reassign those expenses first.",
+        );
       } else if (response.status === 401) {
         alert("Your session has expired. Please log in again.");
       } else if (response.status === 404) {
         alert("Category not found. It may have already been deleted.");
       } else if (response.status === 409) {
-        alert("Cannot delete this category: It is currently in use by one or more expenses.");
+        alert(
+          "Cannot delete this category: It is currently in use by one or more expenses.",
+        );
       } else {
-        alert(`Failed to delete category: ${errorText || 'Unknown error occurred'}`);
+        alert(
+          `Failed to delete category: ${errorText || "Unknown error occurred"}`,
+        );
       }
       return;
     }
@@ -367,12 +432,19 @@ async function handleDeleteCategory(id, fetchCategories) {
     await fetchCategories();
   } catch (err) {
     console.error("Error deleting category:", err);
-    
+
     // More user-friendly error message
-    if (err.message.includes('in use') || err.message.includes('constraint')) {
-      alert("Cannot delete this category: It is currently in use by existing expenses.");
-    } else if (err.message.includes('network') || err.message.includes('fetch')) {
-      alert("Network error: Unable to delete category. Please check your connection and try again.");
+    if (err.message.includes("in use") || err.message.includes("constraint")) {
+      alert(
+        "Cannot delete this category: It is currently in use by existing expenses.",
+      );
+    } else if (
+      err.message.includes("network") ||
+      err.message.includes("fetch")
+    ) {
+      alert(
+        "Network error: Unable to delete category. Please check your connection and try again.",
+      );
     } else {
       alert(`Error deleting category: ${err.message}`);
     }

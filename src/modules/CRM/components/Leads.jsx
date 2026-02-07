@@ -19,6 +19,8 @@ export default function Leads({
   handleDeleteLead,
   handleConvertToCustomer,
   getStageColor,
+  canManage,
+  canAccess,
 }) {
   return (
     <div className="space-y-6">
@@ -37,12 +39,7 @@ export default function Leads({
           </div>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-pink-500 transition-colors">
-            <Filter className="w-4 h-4" />
-            Filter
-          </button>
-      
-          <button
+         {(canAccess||canManage)&& <button
             onClick={() => {
               setEditingLead(null);
               setShowLeadModal(true);
@@ -51,7 +48,7 @@ export default function Leads({
           >
             <Plus className="w-4 h-4" />
             Add Lead
-          </button>
+          </button>}
         </div>
       </div>
 
@@ -79,9 +76,9 @@ export default function Leads({
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                   Source
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+              {(canAccess||canManage)&&  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                   Actions
-                </th>
+                </th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -127,14 +124,14 @@ export default function Leads({
                     {lead.source}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <button
+                {(canAccess)&&   <div className="flex gap-2">
+                   {canManage&&   <button
                         onClick={() => handleConvertToCustomer(lead)}
                         className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                         title="Convert to Customer"
                       >
                         <CheckCircle className="w-4 h-4" />
-                      </button>
+                      </button>}
                       <button
                         onClick={() => {
                           setEditingLead(lead);
@@ -144,13 +141,13 @@ export default function Leads({
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button
+                     {canManage&& <button
                         onClick={() => handleDeleteLead(lead.id)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                      </button>}
+                    </div>}
                   </td>
                 </tr>
               ))}

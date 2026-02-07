@@ -2,14 +2,16 @@ import {
   Search,
   Plus,
   FileText,
-  Send,Edit,Trash2 ,
+  Send,
+  Edit,
+  Trash2,
   Truck,
   CreditCard,
   CheckCircle,
   Ban,
   Eye,
-  Warehouse as WarehouseIcon,
 } from "lucide-react";
+
 export default function InvoicesTab({
   invoices,
   searchQuery,
@@ -25,8 +27,9 @@ export default function InvoicesTab({
   hasInventoryModule,
   deliveries,
   receipts,
+  canDraft = false, // Can create/edit/delete/cancel drafts
+  canPost = false,  // Can post invoices
 }) {
-  // Status color & icon mapping
   const getStatusStyle = (status) => {
     switch (status) {
       case "Draft":
@@ -72,7 +75,7 @@ export default function InvoicesTab({
 
     const hasDelivery = deliveries?.some((d) => d.salesInvoiceId === inv.id);
     const hasReceipt = receipts?.some((r) =>
-      r.allocations?.some((a) => a.salesInvoiceId === inv.id),
+      r.allocations?.some((a) => a.salesInvoiceId === inv.id)
     );
 
     const isFullyDelivered =
@@ -108,13 +111,15 @@ export default function InvoicesTab({
             className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
           />
         </div>
-        <button
-          onClick={onAdd}
-          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          New Invoice
-        </button>
+        {canDraft && (
+          <button
+            onClick={onAdd}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            New Invoice
+          </button>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -151,7 +156,8 @@ export default function InvoicesTab({
                   colSpan="7"
                   className="px-6 py-12 text-center text-gray-500"
                 >
-                  No invoices found. Click "New Invoice" to create one.
+                  No invoices found.
+                  {canDraft && ' Click "New Invoice" to create one.'}
                 </td>
               </tr>
             ) : (
@@ -159,7 +165,7 @@ export default function InvoicesTab({
                 const statusInfo = getStatusInfo(inv.status);
                 const StatusIcon = statusInfo.icon;
                 const balanceDue = parseFloat(
-                  inv.balanceDue || inv.grandTotal || 0,
+                  inv.balanceDue || inv.grandTotal || 0
                 );
 
                 return (
@@ -191,6 +197,7 @@ export default function InvoicesTab({
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex gap-2">
+                        {/* View is always available */}
                         <button
                           onClick={() => onView(inv.id)}
                           className="p-2 hover:bg-gray-100 rounded"
@@ -198,15 +205,19 @@ export default function InvoicesTab({
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        {inv.status === "Draft" && (
+
+                        {/* Draft invoice actions - require canDraft permission */}
+                        {inv.status === "Draft" && canDraft && (
                           <>
-                            <button
-                              onClick={() => onPost(inv.id)}
-                              className="p-2 hover:bg-blue-50 text-blue-600 rounded"
-                              title="Post"
-                            >
-                              <Send className="w-4 h-4" />
-                            </button>
+                            {canPost && (
+                              <button
+                                onClick={() => onPost(inv.id)}
+                                className="p-2 hover:bg-blue-50 text-blue-600 rounded"
+                                title="Post"
+                              >
+                                <Send className="w-4 h-4" />
+                              </button>
+                            )}
                             <button
                               onClick={() => onEdit(inv)}
                               className="p-2 hover:bg-green-50 text-green-600 rounded"
@@ -223,9 +234,11 @@ export default function InvoicesTab({
                             </button>
                           </>
                         )}
+
+                        {/* Posted invoice actions */}
                         {inv.status === "Posted" && (
                           <>
-                            {hasInventoryModule && (
+                            {hasInventoryModule && canDraft && (
                               <button
                                 onClick={() => onCreateDelivery(inv)}
                                 className="p-2 hover:bg-purple-50 text-purple-600 rounded"
@@ -234,7 +247,8 @@ export default function InvoicesTab({
                                 <Truck className="w-4 h-4" />
                               </button>
                             )}
-                            {balanceDue > 0 && (
+                            {/* Only show payment button if there's a balance due (not fully paid) */}
+                            {balanceDue > 0 && canDraft && getDisplayStatus(inv) !== "Paid" && getDisplayStatus(inv) !== "Completed" && (
                               <button
                                 onClick={() => onCreateReceipt(inv)}
                                 className="p-2 hover:bg-indigo-50 text-indigo-600 rounded"
@@ -243,13 +257,15 @@ export default function InvoicesTab({
                                 <CreditCard className="w-4 h-4" />
                               </button>
                             )}
-                            <button
-                              onClick={() => onCancel(inv.id)}
-                              className="p-2 hover:bg-red-50 text-red-600 rounded"
-                              title="Cancel"
-                            >
-                              <Ban className="w-4 h-4" />
-                            </button>
+                            {canDraft && (
+                              <button
+                                onClick={() => onCancel(inv.id)}
+                                className="p-2 hover:bg-red-50 text-red-600 rounded"
+                                title="Cancel"
+                              >
+                                <Ban className="w-4 h-4" />
+                              </button>
+                            )}
                           </>
                         )}
                       </div>

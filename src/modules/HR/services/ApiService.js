@@ -52,7 +52,6 @@ class ApiService {
     }
   }
 
-  // Generic CRUD methods
   async get(endpoint) {
     return this.request(endpoint, { method: "GET" });
   }
@@ -194,6 +193,10 @@ class ApiService {
     return this.get(`/api/LeaveRequest/employee/${employeeId}`);
   }
 
+  async getAllLeaves() {
+    return this.get("/api/LeaveRequest");
+  }
+
   async getPendingLeaves() {
     return this.get("/api/LeaveRequest/pending");
   }
@@ -276,12 +279,51 @@ class ApiService {
     return this.post("/api/company-users", userData);
   }
 
-  async updateUserRoles(userId, roles) {
-    return this.put(`/api/company-users/${userId}/roles`, { roles });
+  async updateUserProfile(userId, userData) {
+    return this.put(`/api/company-users/${userId}/profile`, userData);
+  }
+
+  async deleteUser(userId) {
+    return this.delete(`/api/company-users/${userId}`);
   }
 
   async updateUserStatus(userId, isActive) {
     return this.put(`/api/company-users/${userId}/status`, { isActive });
+  }
+
+  // ============================================
+  // ACCESS CONTROL ENDPOINTS
+  // ============================================
+  async getRoles() {
+    return this.get("/api/access/roles");
+  }
+
+  async createRole(roleData) {
+    return this.post("/api/access/roles", roleData);
+  }
+
+  async updateRole(roleName, roleData) {
+    return this.put(`/api/access/roles/${roleName}`, roleData);
+  }
+
+  async deleteRole(roleName) {
+    return this.delete(`/api/access/roles/${roleName}`);
+  }
+
+  async getPermissions() {
+    return this.get("/api/access/permissions");
+  }
+
+  async getUserRoles(userId) {
+    return this.get(`/api/access/user-roles/${userId}`);
+  }
+
+  async assignUserRole(userId, roleName) {
+    return this.post("/api/access/user-roles/assign", { userId, roleName });
+  }
+
+  async removeUserRole(userId, roleName) {
+    return this.post("/api/access/user-roles/remove", { userId, roleName });
   }
 
   // ============================================

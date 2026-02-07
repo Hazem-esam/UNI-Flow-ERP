@@ -1,12 +1,17 @@
 import {
-  ChevronRight ,
-  Truck ,
-  DollarSign ,Send ,Ban ,
-  ChevronDown ,
-  Calendar ,AlertCircle ,
+  ChevronRight,
+  Truck,
+  DollarSign,
+  Send,
+  Ban,
+  ChevronDown,
+  Calendar,
+  AlertCircle,
   Warehouse as WarehouseIcon,
+  Package,
 } from "lucide-react";
-import { useState,useMemo } from "react";
+import { useState, useMemo } from "react";
+
 export default function DeliveriesTab({
   deliveries,
   invoices,
@@ -15,6 +20,7 @@ export default function DeliveriesTab({
   onPost,
   onCancel,
   onDelete,
+  canManage = false, // Permission prop
 }) {
   const [expandedInvoices, setExpandedInvoices] = useState(new Set());
   const [groupByInvoice, setGroupByInvoice] = useState(true);
@@ -159,12 +165,14 @@ export default function DeliveriesTab({
             onCancel={onCancel}
             onDelete={onDelete}
             showGrouping={groupByInvoice}
+            canManage={canManage}
           />
         ))}
       </div>
     </div>
   );
 }
+
 function DeliveryGroup({
   group,
   expanded,
@@ -174,8 +182,8 @@ function DeliveryGroup({
   onCancel,
   onDelete,
   showGrouping,
+  canManage,
 }) {
-  console.log(group);
   const totalDeliveries = group.deliveries.length;
   const draftCount = group.deliveries.filter(
     (d) => d.status?.toLowerCase() === "draft",
@@ -221,7 +229,6 @@ function DeliveryGroup({
         const totalQty = totalQuantities[pid] || 1;
         const proportion = deliveredQty / totalQty;
 
-        // Assuming proportional split - you may want to adjust this logic
         deliveryTotal += (invoiceAmount * proportion) / postedDeliveries.length;
       });
 
@@ -246,6 +253,7 @@ function DeliveryGroup({
         onDelete={onDelete}
         amount={deliveryAmounts[0]?.amount || 0}
         showInvoiceInfo={true}
+        canManage={canManage}
       />
     );
   }
@@ -259,7 +267,6 @@ function DeliveryGroup({
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
-            {/* Expand/Collapse Icon */}
             <button className="text-gray-400 hover:text-gray-600">
               {expanded ? (
                 <ChevronDown className="w-5 h-5" />
@@ -268,7 +275,6 @@ function DeliveryGroup({
               )}
             </button>
 
-            {/* Invoice Info */}
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-1">
                 <h3 className="font-bold text-lg text-gray-900">
@@ -293,7 +299,6 @@ function DeliveryGroup({
               </div>
             </div>
 
-            {/* Status Badges */}
             <div className="flex items-center gap-2">
               {draftCount > 0 && (
                 <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">
@@ -318,7 +323,7 @@ function DeliveryGroup({
       {/* Expanded Deliveries */}
       {expanded && (
         <div className="divide-y divide-gray-100">
-          {group.deliveries.map((delivery, index) => {
+          {group.deliveries.map((delivery) => {
             const amountInfo = deliveryAmounts.find(
               (a) => a.deliveryId === delivery.id,
             );
@@ -334,6 +339,7 @@ function DeliveryGroup({
                 percentage={amountInfo?.percentage || 0}
                 showInvoiceInfo={false}
                 isGrouped={true}
+                canManage={canManage}
               />
             );
           })}
@@ -353,6 +359,7 @@ function DeliveryRow({
   percentage,
   showInvoiceInfo,
   isGrouped = false,
+  canManage = false,
 }) {
   const statusLower = (delivery.status || "").toLowerCase().trim();
 
@@ -378,7 +385,6 @@ function DeliveryRow({
       <div className="flex items-center justify-between">
         {/* Left: Delivery Info */}
         <div className="flex items-center gap-6 flex-1">
-          {/* Delivery Number & Status */}
           <div className="flex items-center gap-3">
             <div className="flex flex-col">
               <span className="font-semibold text-gray-900">
@@ -394,7 +400,6 @@ function DeliveryRow({
             </div>
           </div>
 
-          {/* Invoice Info (if not grouped) */}
           {showInvoiceInfo && (
             <div className="flex flex-col">
               <span className="text-sm text-gray-500">Invoice</span>
@@ -404,7 +409,6 @@ function DeliveryRow({
             </div>
           )}
 
-          {/* Warehouse */}
           <div className="flex items-center gap-2">
             <WarehouseIcon className="w-4 h-4 text-gray-400" />
             <div className="flex flex-col">
@@ -415,7 +419,6 @@ function DeliveryRow({
             </div>
           </div>
 
-          {/* Delivery Date */}
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-gray-400" />
             <div className="flex flex-col">
@@ -426,7 +429,6 @@ function DeliveryRow({
             </div>
           </div>
 
-          {/* Amount Split (if available) */}
           {amount > 0 && (
             <div className="flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-green-600" />
@@ -446,7 +448,6 @@ function DeliveryRow({
             </div>
           )}
 
-          {/* Items Count */}
           {delivery.lines && delivery.lines.length > 0 && (
             <div className="flex flex-col">
               <span className="text-sm text-gray-500">Items</span>
@@ -460,7 +461,7 @@ function DeliveryRow({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-3">
-          {statusLower === "draft" && (
+          {statusLower === "draft" && canManage && (
             <>
               <button
                 onClick={() => onPost(delivery.id)}
@@ -510,7 +511,6 @@ function DeliveryRow({
         </div>
       </div>
 
-      {/* Delivery Lines (if expanded details needed) */}
       {delivery.lines && delivery.lines.length > 0 && (
         <div className="mt-3 pt-3 border-t border-gray-100">
           <div className="grid grid-cols-4 gap-2 text-xs">

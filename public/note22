@@ -1,365 +1,3 @@
-Select a definition
-
-ERPSyatem.API v1
-ERPSyatem.API
- 1.0 
-OAS 3.0
-http://localhost:39246/swagger/v1/swagger.json
-
-Authorize
-Attendance
-
-
-POST
-/api/Attendance/checkin
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "checkInTime": "2026-02-04T01:16:49.076Z",
-  "notes": "string",
-  "location": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "employeeName": "string",
-  "date": "2026-02-04",
-  "checkInTime": "string",
-  "checkOutTime": "string",
-  "status": "string",
-  "workedHours": 0,
-  "overtimeHours": 0,
-  "notes": "string",
-  "isManualEntry": true
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-POST
-/api/Attendance/checkout
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "checkOutTime": "2026-02-04T01:16:49.087Z",
-  "notes": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "employeeName": "string",
-  "date": "2026-02-04",
-  "checkInTime": "string",
-  "checkOutTime": "string",
-  "status": "string",
-  "workedHours": 0,
-  "overtimeHours": 0,
-  "notes": "string",
-  "isManualEntry": true
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-POST
-/api/Attendance/manual
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "date": "2026-02-04",
-  "checkInTime": "string",
-  "checkOutTime": "string",
-  "status": 1,
-  "notes": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "employeeName": "string",
-  "date": "2026-02-04",
-  "checkInTime": "string",
-  "checkOutTime": "string",
-  "status": "string",
-  "workedHours": 0,
-  "overtimeHours": 0,
-  "notes": "string",
-  "isManualEntry": true
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-PUT
-/api/Attendance/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "checkInTime": "string",
-  "checkOutTime": "string",
-  "status": 1,
-  "notes": "string",
-  "reason": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "employeeName": "string",
-  "date": "2026-02-04",
-  "checkInTime": "string",
-  "checkOutTime": "string",
-  "status": "string",
-  "workedHours": 0,
-  "overtimeHours": 0,
-  "notes": "string",
-  "isManualEntry": true
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/Attendance/summary/{employeeId}/{month}/{year}
-
-
-Parameters
-Try it out
-Name	Description
-employeeId *
-string($uuid)
-(path)
-employeeId
-month *
-integer($int32)
-(path)
-month
-year *
-integer($int32)
-(path)
-year
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeName": "string",
-  "month": 0,
-  "year": 0,
-  "totalWorkingDays": 0,
-  "presentDays": 0,
-  "absentDays": 0,
-  "lateDays": 0,
-  "leaveDays": 0,
-  "totalWorkedHours": 0,
-  "totalOvertimeHours": 0,
-  "attendanceRate": 0
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-Auth
-
 Category
 
 
@@ -368,9 +6,46 @@ GET
 
 
 Parameters
-Try it out
+Cancel
 No parameters
 
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:5225/api/Category' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDYxMjEzNy1iZDlhLTRiZDEtYWVlMC03MzdiOTVkYjUwMGYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIk93bmVyIiwicHJvZHVjdCJdLCJwZXJtaXNzaW9uIjpbImNvbnRhY3RzLmNvbnRhY3RzLm1hbmFnZSIsImNvbnRhY3RzLmNvbnRhY3RzLnJlYWQiLCJjb3JlLmNvbXBhbmllcy5yZWFkIiwiY29yZS5jb21wYW5pZXMudXBkYXRlIiwiY29yZS5tb2R1bGVzLm1hbmFnZSIsImNvcmUubW9kdWxlcy5yZWFkIiwiY29yZS51c2Vycy5jcmVhdGUiLCJjb3JlLnVzZXJzLmRlbGV0ZSIsImNvcmUudXNlcnMucmVhZCIsImNvcmUudXNlcnMudXBkYXRlIiwiY3JtLkN1c3RvbWVycy5hY2Nlc3MiLCJjcm0uQ3VzdG9tZXJzLm1hbmFnZSIsImNybS5DdXN0b21lcnMucmVhZCIsImNybS5sZWFkcy5hY2Nlc3MiLCJjcm0ubGVhZHMubWFuYWdlIiwiY3JtLmxlYWRzLnJlYWQiLCJleHBlbnNlcy5jYXRlZ29yaWVzLm1hbmFnZSIsImV4cGVuc2VzLmNhdGVnb3JpZXMucmVhZCIsImV4cGVuc2VzLml0ZW1zLm1hbmFnZSIsImV4cGVuc2VzLml0ZW1zLnJlYWQiLCJleHBlbnNlcy5TdGF0cy5yZWFkIiwiaHIuZGVwYXJ0bWVudHMuYWNjZXNzIiwiaHIuZGVwYXJ0bWVudHMubWFuYWdlIiwiaHIuZGVwYXJ0bWVudHMucmVhZCIsImhyLmVtcGxveWVlcy5hY2Nlc3MiLCJoci5lbXBsb3llZXMubWFuYWdlIiwiaHIuZW1wbG95ZWVzLnJlYWQiLCJoci5MZWF2ZVJlcXVlc3RzLmFjY2VzcyIsImhyLkxlYXZlUmVxdWVzdHMubWFuYWdlIiwiaHIuTGVhdmVSZXF1ZXN0cy5yZWFkIiwiaHIuUGF5Um9sbHMuYWNjZXNzIiwiaHIuUGF5Um9sbHMubWFuYWdlIiwiaHIuUGF5Um9sbHMucmVhZCIsImhyLnBvc2l0aW9ucy5hY2Nlc3MiLCJoci5wb3NpdGlvbnMubWFuYWdlIiwiaHIucG9zaXRpb25zLnJlYWQiLCJpbnZlbnRvcnkucmVwb3J0cy5yZWFkIiwiaW52ZW50b3J5LnN0b2NrLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLnJlYWQiLCJwcm9kdWN0cy5jYXRlZ29yaWVzLm1hbmFnZSIsInByb2R1Y3RzLmNhdGVnb3JpZXMucmVhZCIsInByb2R1Y3RzLlByb2R1Y3RzLm1hbmFnZSIsInByb2R1Y3RzLlByb2R1Y3RzLnJlYWQiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5tYW5hZ2UiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5SZWFkIiwic2FsZXMuY3VzdG9tZXJzLmFjY2VzcyIsInNhbGVzLmN1c3RvbWVycy5tYW5hZ2UiLCJzYWxlcy5jdXN0b21lcnMucmVhZCIsInNhbGVzLmRlbGl2ZXJpZXMuYWNjZXNzIiwic2FsZXMuZGVsaXZlcmllcy5tYW5hZ2UiLCJzYWxlcy5kZWxpdmVyaWVzLnJlYWQiLCJzYWxlcy5pbnZvaWNlcy5hY2Nlc3MiLCJzYWxlcy5pbnZvaWNlcy5tYW5hZ2UiLCJzYWxlcy5pbnZvaWNlcy5yZWFkIiwic2FsZXMucmVjZWlwdHMuYWNjZXNzIiwic2FsZXMucmVjZWlwdHMubWFuYWdlIiwic2FsZXMucmVjZWlwdHMucmVhZCIsInNhbGVzLnJldHVybnMuYWNjZXNzIiwic2FsZXMucmV0dXJucy5tYW5hZ2UiLCJzYWxlcy5yZXR1cm5zLnJlYWQiLCJzZWN1cml0eS5yb2xlcy5tYW5hZ2UiXSwiZXhwIjoxNzcwNDc1MDgyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.KbwwdBUY-TMdKf3HbLmvp8NnjcHW54H1CHEVl3zbOnQ'
+Request URL
+http://localhost:5225/api/Category
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "id": 2,
+    "name": "string",
+    "description": "string",
+    "parentCategoryId": null,
+    "parentCategoryName": null
+  },
+  {
+    "id": 1,
+    "name": "test",
+    "description": "test",
+    "parentCategoryId": null,
+    "parentCategoryName": null
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Sat,07 Feb 2026 12:41:08 GMT 
+ server: Kestrel 
+ transfer-encoding: chunked 
 Responses
 Code	Description	Links
 200	
@@ -383,19 +58,53 @@ POST
 
 
 Parameters
-Try it out
+Cancel
+Reset
 No parameters
 
 Request body
 
 application/json
-Example Value
-Schema
 {
-  "name": "string",
-  "description": "string",
-  "parentCategoryId": 0
+  "name": "strinsafg",
+  "description": "strinsag"
 }
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'POST' \
+  'http://localhost:5225/api/Category' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDYxMjEzNy1iZDlhLTRiZDEtYWVlMC03MzdiOTVkYjUwMGYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIk93bmVyIiwicHJvZHVjdCJdLCJwZXJtaXNzaW9uIjpbImNvbnRhY3RzLmNvbnRhY3RzLm1hbmFnZSIsImNvbnRhY3RzLmNvbnRhY3RzLnJlYWQiLCJjb3JlLmNvbXBhbmllcy5yZWFkIiwiY29yZS5jb21wYW5pZXMudXBkYXRlIiwiY29yZS5tb2R1bGVzLm1hbmFnZSIsImNvcmUubW9kdWxlcy5yZWFkIiwiY29yZS51c2Vycy5jcmVhdGUiLCJjb3JlLnVzZXJzLmRlbGV0ZSIsImNvcmUudXNlcnMucmVhZCIsImNvcmUudXNlcnMudXBkYXRlIiwiY3JtLkN1c3RvbWVycy5hY2Nlc3MiLCJjcm0uQ3VzdG9tZXJzLm1hbmFnZSIsImNybS5DdXN0b21lcnMucmVhZCIsImNybS5sZWFkcy5hY2Nlc3MiLCJjcm0ubGVhZHMubWFuYWdlIiwiY3JtLmxlYWRzLnJlYWQiLCJleHBlbnNlcy5jYXRlZ29yaWVzLm1hbmFnZSIsImV4cGVuc2VzLmNhdGVnb3JpZXMucmVhZCIsImV4cGVuc2VzLml0ZW1zLm1hbmFnZSIsImV4cGVuc2VzLml0ZW1zLnJlYWQiLCJleHBlbnNlcy5TdGF0cy5yZWFkIiwiaHIuZGVwYXJ0bWVudHMuYWNjZXNzIiwiaHIuZGVwYXJ0bWVudHMubWFuYWdlIiwiaHIuZGVwYXJ0bWVudHMucmVhZCIsImhyLmVtcGxveWVlcy5hY2Nlc3MiLCJoci5lbXBsb3llZXMubWFuYWdlIiwiaHIuZW1wbG95ZWVzLnJlYWQiLCJoci5MZWF2ZVJlcXVlc3RzLmFjY2VzcyIsImhyLkxlYXZlUmVxdWVzdHMubWFuYWdlIiwiaHIuTGVhdmVSZXF1ZXN0cy5yZWFkIiwiaHIuUGF5Um9sbHMuYWNjZXNzIiwiaHIuUGF5Um9sbHMubWFuYWdlIiwiaHIuUGF5Um9sbHMucmVhZCIsImhyLnBvc2l0aW9ucy5hY2Nlc3MiLCJoci5wb3NpdGlvbnMubWFuYWdlIiwiaHIucG9zaXRpb25zLnJlYWQiLCJpbnZlbnRvcnkucmVwb3J0cy5yZWFkIiwiaW52ZW50b3J5LnN0b2NrLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLnJlYWQiLCJwcm9kdWN0cy5jYXRlZ29yaWVzLm1hbmFnZSIsInByb2R1Y3RzLmNhdGVnb3JpZXMucmVhZCIsInByb2R1Y3RzLlByb2R1Y3RzLm1hbmFnZSIsInByb2R1Y3RzLlByb2R1Y3RzLnJlYWQiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5tYW5hZ2UiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5SZWFkIiwic2FsZXMuY3VzdG9tZXJzLmFjY2VzcyIsInNhbGVzLmN1c3RvbWVycy5tYW5hZ2UiLCJzYWxlcy5jdXN0b21lcnMucmVhZCIsInNhbGVzLmRlbGl2ZXJpZXMuYWNjZXNzIiwic2FsZXMuZGVsaXZlcmllcy5tYW5hZ2UiLCJzYWxlcy5kZWxpdmVyaWVzLnJlYWQiLCJzYWxlcy5pbnZvaWNlcy5hY2Nlc3MiLCJzYWxlcy5pbnZvaWNlcy5tYW5hZ2UiLCJzYWxlcy5pbnZvaWNlcy5yZWFkIiwic2FsZXMucmVjZWlwdHMuYWNjZXNzIiwic2FsZXMucmVjZWlwdHMubWFuYWdlIiwic2FsZXMucmVjZWlwdHMucmVhZCIsInNhbGVzLnJldHVybnMuYWNjZXNzIiwic2FsZXMucmV0dXJucy5tYW5hZ2UiLCJzYWxlcy5yZXR1cm5zLnJlYWQiLCJzZWN1cml0eS5yb2xlcy5tYW5hZ2UiXSwiZXhwIjoxNzcwNDc1MDgyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.KbwwdBUY-TMdKf3HbLmvp8NnjcHW54H1CHEVl3zbOnQ' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "strinsafg",
+  "description": "strinsag"
+}'
+Request URL
+http://localhost:5225/api/Category
+Server response
+Code	Details
+201
+Undocumented
+Response body
+Download
+{
+  "id": 3,
+  "name": "strinsafg",
+  "description": "strinsag",
+  "parentCategoryId": null,
+  "parentCategoryName": null
+}
+Response headers
+ access-control-allow-origin: * 
+ content-type: application/json; charset=utf-8 
+ date: Sat,07 Feb 2026 12:42:32 GMT 
+ location: http://localhost:5225/api/Category/3 
+ server: Kestrel 
+ transfer-encoding: chunked 
 Responses
 Code	Description	Links
 200	
@@ -466,11 +175,11 @@ Code	Description	Links
 OK
 
 No links
-Companies
+Permissions
 
 
 GET
-/api/companies/me
+/api/access/permissions
 
 
 Parameters
@@ -483,81 +192,11 @@ Responses
 Curl
 
 curl -X 'GET' \
-  'http://localhost:39246/api/companies/me' \
-  -H 'accept: */*' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNDBlNzczYi1mZmMxLTQzMjktODM1MS0yNjU1YWU3YTg4M2IiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMTc0NjkwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.0KFsGdTcItVO7Ji64rUCLBiSkesi1oij3DEqR4UUKJg'
+  'http://localhost:5225/api/access/permissions' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDYxMjEzNy1iZDlhLTRiZDEtYWVlMC03MzdiOTVkYjUwMGYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIk93bmVyIiwicHJvZHVjdCJdLCJwZXJtaXNzaW9uIjpbImNvbnRhY3RzLmNvbnRhY3RzLm1hbmFnZSIsImNvbnRhY3RzLmNvbnRhY3RzLnJlYWQiLCJjb3JlLmNvbXBhbmllcy5yZWFkIiwiY29yZS5jb21wYW5pZXMudXBkYXRlIiwiY29yZS5tb2R1bGVzLm1hbmFnZSIsImNvcmUubW9kdWxlcy5yZWFkIiwiY29yZS51c2Vycy5jcmVhdGUiLCJjb3JlLnVzZXJzLmRlbGV0ZSIsImNvcmUudXNlcnMucmVhZCIsImNvcmUudXNlcnMudXBkYXRlIiwiY3JtLkN1c3RvbWVycy5hY2Nlc3MiLCJjcm0uQ3VzdG9tZXJzLm1hbmFnZSIsImNybS5DdXN0b21lcnMucmVhZCIsImNybS5sZWFkcy5hY2Nlc3MiLCJjcm0ubGVhZHMubWFuYWdlIiwiY3JtLmxlYWRzLnJlYWQiLCJleHBlbnNlcy5jYXRlZ29yaWVzLm1hbmFnZSIsImV4cGVuc2VzLmNhdGVnb3JpZXMucmVhZCIsImV4cGVuc2VzLml0ZW1zLm1hbmFnZSIsImV4cGVuc2VzLml0ZW1zLnJlYWQiLCJleHBlbnNlcy5TdGF0cy5yZWFkIiwiaHIuZGVwYXJ0bWVudHMuYWNjZXNzIiwiaHIuZGVwYXJ0bWVudHMubWFuYWdlIiwiaHIuZGVwYXJ0bWVudHMucmVhZCIsImhyLmVtcGxveWVlcy5hY2Nlc3MiLCJoci5lbXBsb3llZXMubWFuYWdlIiwiaHIuZW1wbG95ZWVzLnJlYWQiLCJoci5MZWF2ZVJlcXVlc3RzLmFjY2VzcyIsImhyLkxlYXZlUmVxdWVzdHMubWFuYWdlIiwiaHIuTGVhdmVSZXF1ZXN0cy5yZWFkIiwiaHIuUGF5Um9sbHMuYWNjZXNzIiwiaHIuUGF5Um9sbHMubWFuYWdlIiwiaHIuUGF5Um9sbHMucmVhZCIsImhyLnBvc2l0aW9ucy5hY2Nlc3MiLCJoci5wb3NpdGlvbnMubWFuYWdlIiwiaHIucG9zaXRpb25zLnJlYWQiLCJpbnZlbnRvcnkucmVwb3J0cy5yZWFkIiwiaW52ZW50b3J5LnN0b2NrLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLnJlYWQiLCJwcm9kdWN0cy5jYXRlZ29yaWVzLm1hbmFnZSIsInByb2R1Y3RzLmNhdGVnb3JpZXMucmVhZCIsInByb2R1Y3RzLlByb2R1Y3RzLm1hbmFnZSIsInByb2R1Y3RzLlByb2R1Y3RzLnJlYWQiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5tYW5hZ2UiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5SZWFkIiwic2FsZXMuY3VzdG9tZXJzLmFjY2VzcyIsInNhbGVzLmN1c3RvbWVycy5tYW5hZ2UiLCJzYWxlcy5jdXN0b21lcnMucmVhZCIsInNhbGVzLmRlbGl2ZXJpZXMuYWNjZXNzIiwic2FsZXMuZGVsaXZlcmllcy5tYW5hZ2UiLCJzYWxlcy5kZWxpdmVyaWVzLnJlYWQiLCJzYWxlcy5pbnZvaWNlcy5hY2Nlc3MiLCJzYWxlcy5pbnZvaWNlcy5tYW5hZ2UiLCJzYWxlcy5pbnZvaWNlcy5yZWFkIiwic2FsZXMucmVjZWlwdHMuYWNjZXNzIiwic2FsZXMucmVjZWlwdHMubWFuYWdlIiwic2FsZXMucmVjZWlwdHMucmVhZCIsInNhbGVzLnJldHVybnMuYWNjZXNzIiwic2FsZXMucmV0dXJucy5tYW5hZ2UiLCJzYWxlcy5yZXR1cm5zLnJlYWQiLCJzZWN1cml0eS5yb2xlcy5tYW5hZ2UiXSwiZXhwIjoxNzcwNDc1MDgyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.KbwwdBUY-TMdKf3HbLmvp8NnjcHW54H1CHEVl3zbOnQ'
 Request URL
-http://localhost:39246/api/companies/me
-Server response
-Code	Details
-200	
-Response body
-Download
-{
-  "id": 1,
-  "name": "string",
-  "commercialName": null,
-  "address": "string",
-  "isActive": true,
-  "createdAt": "2026-02-03T23:50:45.0047828"
-}
-Response headers
- content-type: application/json; charset=utf-8 
- date: Wed,04 Feb 2026 01:16:17 GMT 
- server: Microsoft-IIS/10.0 
- transfer-encoding: chunked 
- x-powered-by: ASP.NET 
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PUT
-/api/companies/me
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "name": "string",
-  "commercialName": "string",
-  "address": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-CompanyModules
-
-
-GET
-/api/company-modules
-
-
-Parameters
-Try it out
-No parameters
-
-Responses
-Curl
-
-curl -X 'GET' \
-  'http://localhost:39246/api/company-modules' \
-  -H 'accept: */*' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNDBlNzczYi1mZmMxLTQzMjktODM1MS0yNjU1YWU3YTg4M2IiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMTc0NjkwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.0KFsGdTcItVO7Ji64rUCLBiSkesi1oij3DEqR4UUKJg'
-Request URL
-http://localhost:39246/api/company-modules
+http://localhost:5225/api/access/permissions
 Server response
 Code	Details
 200	
@@ -565,482 +204,452 @@ Response body
 Download
 [
   {
-    "moduleId": 3,
-    "moduleKey": "CONTACT",
-    "moduleName": "CONTACT",
-    "isEnabled": true,
-    "enabledAt": "2026-02-03T23:51:11.2054005",
-    "expiresAt": null
+    "module": "contacts",
+    "resource": "contacts",
+    "permissions": [
+      {
+        "key": "contacts.contacts.manage",
+        "action": "manage",
+        "description": "Manage Contacts (Contacts)"
+      },
+      {
+        "key": "contacts.contacts.read",
+        "action": "read",
+        "description": "View Contacts (Contacts)"
+      }
+    ]
   },
   {
-    "moduleId": 6,
-    "moduleKey": "CRM",
-    "moduleName": "CRM",
-    "isEnabled": true,
-    "enabledAt": "2026-02-03T23:51:16.6912832",
-    "expiresAt": null
+    "module": "core",
+    "resource": "companies",
+    "permissions": [
+      {
+        "key": "core.companies.read",
+        "action": "read",
+        "description": "View Companies (Core)"
+      },
+      {
+        "key": "core.companies.update",
+        "action": "update",
+        "description": "Edit existing Companies (Core)"
+      }
+    ]
   },
   {
-    "moduleId": 7,
-    "moduleKey": "DASHBOARD",
-    "moduleName": "Dashboard",
-    "isEnabled": false,
-    "enabledAt": null,
-    "expiresAt": null
+    "module": "core",
+    "resource": "modules",
+    "permissions": [
+      {
+        "key": "core.modules.manage",
+        "action": "manage",
+        "description": "Manage Modules (Core)"
+      },
+      {
+        "key": "core.modules.read",
+        "action": "read",
+        "description": "View Modules (Core)"
+      }
+    ]
   },
   {
-    "moduleId": 4,
-    "moduleKey": "EXPENSES",
-    "moduleName": "Expenses",
-    "isEnabled": true,
-    "enabledAt": "2026-02-03T23:51:12.9602033",
-    "expiresAt": null
+    "module": "core",
+    "resource": "users",
+    "permissions": [
+      {
+        "key": "core.users.read",
+        "action": "read",
+        "description": "View Users (Core)"
+      },
+      {
+        "key": "core.users.create",
+        "action": "create",
+        "description": "Create new Users (Core)"
+      },
+      {
+        "key": "core.users.update",
+        "action": "update",
+        "description": "Edit existing Users (Core)"
+      },
+      {
+        "key": "core.users.delete",
+        "action": "delete",
+        "description": "Remove Users (Core)"
+      }
+    ]
   },
   {
-    "moduleId": 5,
-    "moduleKey": "HR",
-    "moduleName": "HR",
-    "isEnabled": true,
-    "enabledAt": "2026-02-03T23:51:14.9602582",
-    "expiresAt": null
+    "module": "crm",
+    "resource": "Customers",
+    "permissions": [
+      {
+        "key": "crm.Customers.manage",
+        "action": "manage",
+        "description": "Manage Customers (Crm)"
+      },
+      {
+        "key": "crm.Customers.access",
+        "action": "access",
+        "description": "Access Customers (Crm)"
+      },
+      {
+        "key": "crm.Customers.read",
+        "action": "read",
+        "description": "View Customers (Crm)"
+      }
+    ]
   },
   {
-    "moduleId": 2,
-    "moduleKey": "INVENTORY",
-    "moduleName": "Inventory",
-    "isEnabled": true,
-    "enabledAt": "2026-02-03T23:51:09.4146529",
-    "expiresAt": null
+    "module": "crm",
+    "resource": "leads",
+    "permissions": [
+      {
+        "key": "crm.leads.manage",
+        "action": "manage",
+        "description": "Manage Leads (Crm)"
+      },
+      {
+        "key": "crm.leads.access",
+        "action": "access",
+        "description": "Access Leads (Crm)"
+      },
+      {
+        "key": "crm.leads.read",
+        "action": "read",
+        "description": "View Leads (Crm)"
+      }
+    ]
   },
   {
-    "moduleId": 1,
-    "moduleKey": "SALES",
-    "moduleName": "Sales",
-    "isEnabled": true,
-    "enabledAt": "2026-02-03T23:51:06.583887",
-    "expiresAt": null
-  }
-]
-Response headers
- content-type: application/json; charset=utf-8 
- date: Wed,04 Feb 2026 01:12:01 GMT 
- server: Microsoft-IIS/10.0 
- transfer-encoding: chunked 
- x-powered-by: ASP.NET 
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PUT
-/api/company-modules/{moduleId}
-
-
-Parameters
-Try it out
-Name	Description
-moduleId *
-integer($int32)
-(path)
-7
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "isEnabled": true
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-CompanyUsers
-
-
-GET
-/api/company-users
-
-
-Parameters
-Cancel
-No parameters
-
-Execute
-Clear
-Responses
-Curl
-
-curl -X 'GET' \
-  'http://localhost:39246/api/company-users' \
-  -H 'accept: */*' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNDBlNzczYi1mZmMxLTQzMjktODM1MS0yNjU1YWU3YTg4M2IiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQ29tcGFueU93bmVyIiwiZXhwIjoxNzcwMTc0NjkwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.0KFsGdTcItVO7Ji64rUCLBiSkesi1oij3DEqR4UUKJg'
-Request URL
-http://localhost:39246/api/company-users
-Server response
-Code	Details
-200	
-Response body
-Download
-[
+    "module": "expenses",
+    "resource": "categories",
+    "permissions": [
+      {
+        "key": "expenses.categories.manage",
+        "action": "manage",
+        "description": "Manage Categories (Expenses)"
+      },
+      {
+        "key": "expenses.categories.read",
+        "action": "read",
+        "description": "View Categories (Expenses)"
+      }
+    ]
+  },
   {
-    "id": "b40e773b-ffc1-4329-8351-2655ae7a883b",
-    "email": "esamh4049@gmail.com",
-    "fullName": "string",
-    "isActive": true,
-    "isLockedOut": false,
-    "roles": [
-      "CompanyOwner"
+    "module": "expenses",
+    "resource": "items",
+    "permissions": [
+      {
+        "key": "expenses.items.manage",
+        "action": "manage",
+        "description": "Manage Items (Expenses)"
+      },
+      {
+        "key": "expenses.items.read",
+        "action": "read",
+        "description": "View Items (Expenses)"
+      }
+    ]
+  },
+  {
+    "module": "expenses",
+    "resource": "Stats",
+    "permissions": [
+      {
+        "key": "expenses.Stats.read",
+        "action": "read",
+        "description": "View Stats (Expenses)"
+      }
+    ]
+  },
+  {
+    "module": "hr",
+    "resource": "departments",
+    "permissions": [
+      {
+        "key": "hr.departments.manage",
+        "action": "manage",
+        "description": "Manage Departments (Hr)"
+      },
+      {
+        "key": "hr.departments.read",
+        "action": "read",
+        "description": "View Departments (Hr)"
+      }
+    ]
+  },
+  {
+    "module": "hr",
+    "resource": "employees",
+    "permissions": [
+      {
+        "key": "hr.employees.manage",
+        "action": "manage",
+        "description": "Manage Employees (Hr)"
+      },
+      {
+        "key": "hr.employees.read",
+        "action": "read",
+        "description": "View Employees (Hr)"
+      }
+    ]
+  },
+  {
+    "module": "hr",
+    "resource": "LeaveRequests",
+    "permissions": [
+      {
+        "key": "hr.LeaveRequests.manage",
+        "action": "manage",
+        "description": "Manage LeaveRequests (Hr)"
+      },
+      {
+        "key": "hr.LeaveRequests.read",
+        "action": "read",
+        "description": "View LeaveRequests (Hr)"
+      }
+    ]
+  },
+  {
+    "module": "hr",
+    "resource": "PayRolls",
+    "permissions": [
+      {
+        "key": "hr.PayRolls.manage",
+        "action": "manage",
+        "description": "Manage PayRolls (Hr)"
+      },
+      {
+        "key": "hr.PayRolls.read",
+        "action": "read",
+        "description": "View PayRolls (Hr)"
+      }
+    ]
+  },
+  {
+    "module": "hr",
+    "resource": "positions",
+    "permissions": [
+      {
+        "key": "hr.positions.manage",
+        "action": "manage",
+        "description": "Manage Positions (Hr)"
+      },
+      {
+        "key": "hr.positions.read",
+        "action": "read",
+        "description": "View Positions (Hr)"
+      }
+    ]
+  },
+  {
+    "module": "inventory",
+    "resource": "reports",
+    "permissions": [
+      {
+        "key": "inventory.reports.read",
+        "action": "read",
+        "description": "View Reports (Inventory)"
+      }
+    ]
+  },
+  {
+    "module": "inventory",
+    "resource": "stock",
+    "permissions": [
+      {
+        "key": "inventory.stock.manage",
+        "action": "manage",
+        "description": "Manage Stock (Inventory)"
+      }
+    ]
+  },
+  {
+    "module": "inventory",
+    "resource": "warehouses",
+    "permissions": [
+      {
+        "key": "inventory.warehouses.manage",
+        "action": "manage",
+        "description": "Manage Warehouses (Inventory)"
+      },
+      {
+        "key": "inventory.warehouses.read",
+        "action": "read",
+        "description": "View Warehouses (Inventory)"
+      }
+    ]
+  },
+  {
+    "module": "products",
+    "resource": "categories",
+    "permissions": [
+      {
+        "key": "products.categories.manage",
+        "action": "manage",
+        "description": "Manage Categories (Products)"
+      },
+      {
+        "key": "products.categories.read",
+        "action": "read",
+        "description": "View Categories (Products)"
+      }
+    ]
+  },
+  {
+    "module": "products",
+    "resource": "Products",
+    "permissions": [
+      {
+        "key": "products.Products.manage",
+        "action": "manage",
+        "description": "Manage Products (Products)"
+      },
+      {
+        "key": "products.Products.read",
+        "action": "read",
+        "description": "View Products (Products)"
+      }
+    ]
+  },
+  {
+    "module": "Products",
+    "resource": "unitofmeasures",
+    "permissions": [
+      {
+        "key": "Products.unitofmeasures.manage",
+        "action": "manage",
+        "description": "Manage Unitofmeasures (Products)"
+      },
+      {
+        "key": "Products.unitofmeasures.Read",
+        "action": "Read",
+        "description": "View Unitofmeasures (Products)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "customers",
+    "permissions": [
+      {
+        "key": "sales.customers.manage",
+        "action": "manage",
+        "description": "Manage Customers (Sales)"
+      },
+      {
+        "key": "sales.customers.access",
+        "action": "access",
+        "description": "Access Customers (Sales)"
+      },
+      {
+        "key": "sales.customers.read",
+        "action": "read",
+        "description": "View Customers (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "deliveries",
+    "permissions": [
+      {
+        "key": "sales.deliveries.manage",
+        "action": "manage",
+        "description": "Manage Deliveries (Sales)"
+      },
+      {
+        "key": "sales.deliveries.access",
+        "action": "access",
+        "description": "Access Deliveries (Sales)"
+      },
+      {
+        "key": "sales.deliveries.read",
+        "action": "read",
+        "description": "View Deliveries (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "invoices",
+    "permissions": [
+      {
+        "key": "sales.invoices.manage",
+        "action": "manage",
+        "description": "Manage Invoices (Sales)"
+      },
+      {
+        "key": "sales.invoices.access",
+        "action": "access",
+        "description": "Access Invoices (Sales)"
+      },
+      {
+        "key": "sales.invoices.read",
+        "action": "read",
+        "description": "View Invoices (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "receipts",
+    "permissions": [
+      {
+        "key": "sales.receipts.manage",
+        "action": "manage",
+        "description": "Manage Receipts (Sales)"
+      },
+      {
+        "key": "sales.receipts.access",
+        "action": "access",
+        "description": "Access Receipts (Sales)"
+      },
+      {
+        "key": "sales.receipts.read",
+        "action": "read",
+        "description": "View Receipts (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "sales",
+    "resource": "returns",
+    "permissions": [
+      {
+        "key": "sales.returns.manage",
+        "action": "manage",
+        "description": "Manage Returns (Sales)"
+      },
+      {
+        "key": "sales.returns.access",
+        "action": "access",
+        "description": "Access Returns (Sales)"
+      },
+      {
+        "key": "sales.returns.read",
+        "action": "read",
+        "description": "View Returns (Sales)"
+      }
+    ]
+  },
+  {
+    "module": "security",
+    "resource": "roles",
+    "permissions": [
+      {
+        "key": "security.roles.manage",
+        "action": "manage",
+        "description": "Manage Roles (Security)"
+      }
     ]
   }
 ]
 Response headers
  content-type: application/json; charset=utf-8 
- date: Wed,04 Feb 2026 01:16:34 GMT 
- server: Microsoft-IIS/10.0 
+ date: Sat,07 Feb 2026 12:43:16 GMT 
+ server: Kestrel 
  transfer-encoding: chunked 
- x-powered-by: ASP.NET 
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/company-users
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "email": "string",
-  "password": "string",
-  "fullName": "string",
-  "roles": [
-    "string"
-  ]
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PUT
-/api/company-users/{userId}/roles
-
-
-Parameters
-Try it out
-Name	Description
-userId *
-string($uuid)
-(path)
-userId
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "roles": [
-    "string"
-  ]
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PUT
-/api/company-users/{userId}/status
-
-
-Parameters
-Try it out
-Name	Description
-userId *
-string($uuid)
-(path)
-userId
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "isActive": true
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-Contact
-
-
-GET
-/api/Contact
-
-
-Parameters
-Try it out
-No parameters
-
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/Contact
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "fullName": "string",
-  "email": "user@example.com",
-  "phoneNumber": "string",
-  "company": "string",
-  "position": "string",
-  "type": 1,
-  "location": "string",
-  "website": "string",
-  "profileLink": "string",
-  "notes": "string",
-  "favorite": true
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PUT
-/api/Contact
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "id": 0,
-  "fullName": "string",
-  "email": "user@example.com",
-  "phoneNumber": "string",
-  "company": "string",
-  "position": "string",
-  "type": 1,
-  "location": "string",
-  "website": "string",
-  "profileLink": "string",
-  "notes": "string",
-  "favorite": true
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-DELETE
-/api/Contact
-
-
-Parameters
-Try it out
-Name	Description
-id
-integer($int32)
-(query)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/Contact/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-Customers
-
-
-GET
-/api/sales/Customers
-
-
-Parameters
-Try it out
-Name	Description
-isActive
-boolean
-(query)
-
---
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/sales/Customers
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "code": "string",
-  "name": "string",
-  "email": "string",
-  "phone": "string",
-  "address": "string",
-  "taxNumber": "string",
-  "creditLimit": 0
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/sales/Customers/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PUT
-/api/sales/Customers/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "name": "string",
-  "email": "string",
-  "phone": "string",
-  "address": "string",
-  "taxNumber": "string",
-  "creditLimit": 0,
-  "isActive": true
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-DELETE
-/api/sales/Customers/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-Department
-
-
-GET
-/api/Department
-
-
-Parameters
-Try it out
-No parameters
-
 Responses
 Code	Description	Links
 200	
@@ -1054,3055 +663,17 @@ Example Value
 Schema
 [
   {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "code": "string",
-    "name": "string",
-    "description": "string",
-    "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "managerName": "string",
-    "employeeCount": 0,
-    "isActive": true,
-    "createdAt": "2026-02-04T01:16:49.236Z"
+    "module": "string",
+    "resource": "string",
+    "permissions": [
+      {
+        "key": "string",
+        "action": "string",
+        "description": "string"
+      }
+    ]
   }
-]
-No links
-
-POST
-/api/Department
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "code": "string",
-  "name": "string",
-  "description": "string",
-  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "isActive": true
-}
-Responses
-Code	Description	Links
-201	
-Created
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "code": "string",
-  "name": "string",
-  "description": "string",
-  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "managerName": "string",
-  "employeeCount": 0,
-  "isActive": true,
-  "createdAt": "2026-02-04T01:16:49.244Z"
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/Department/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "code": "string",
-  "name": "string",
-  "description": "string",
-  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "managerName": "string",
-  "employeeCount": 0,
-  "isActive": true,
-  "createdAt": "2026-02-04T01:16:49.251Z",
-  "manager": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "employeeCode": "string",
-    "fullName": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "departmentName": "string",
-    "positionTitle": "string",
-    "status": "string",
-    "hireDate": "2026-02-04T01:16:49.251Z",
-    "profileImageUrl": "string"
-  },
-  "employees": [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "employeeCode": "string",
-      "fullName": "string",
-      "email": "string",
-      "phoneNumber": "string",
-      "departmentName": "string",
-      "positionTitle": "string",
-      "status": "string",
-      "hireDate": "2026-02-04T01:16:49.251Z",
-      "profileImageUrl": "string"
-    }
-  ]
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-PUT
-/api/Department/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "name": "string",
-  "description": "string",
-  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "isActive": true
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "code": "string",
-  "name": "string",
-  "description": "string",
-  "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "managerName": "string",
-  "employeeCount": 0,
-  "isActive": true,
-  "createdAt": "2026-02-04T01:16:49.264Z"
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-DELETE
-/api/Department/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Responses
-Code	Description	Links
-204	
-No Content
-
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-Employee
-
-
-GET
-/api/Employee
-
-
-Parameters
-Try it out
-No parameters
-
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-[
-  {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "employeeCode": "string",
-    "fullName": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "departmentName": "string",
-    "positionTitle": "string",
-    "status": "string",
-    "hireDate": "2026-02-04T01:16:49.280Z",
-    "profileImageUrl": "string"
-  }
-]
-No links
-
-POST
-/api/Employee
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "employeeCode": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "user@example.com",
-  "phoneNumber": "string",
-  "dateOfBirth": "2026-02-04T01:16:49.287Z",
-  "gender": 1,
-  "nationality": "string",
-  "nationalId": "string",
-  "maritalStatus": 1,
-  "bankAccountNumber": "string",
-  "bankName": "string",
-  "bankBranch": "string",
-  "hireDate": "2026-02-04T01:16:49.287Z",
-  "probationPeriodMonths": 0,
-  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "positionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "reportsToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "currentAddress": {
-    "city": "string",
-    "country": "string",
-    "postalCode": "string"
-  },
-  "salary": 0,
-  "currency": "string"
-}
-Responses
-Code	Description	Links
-201	
-Created
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "fullName": "string",
-  "email": "string",
-  "phoneNumber": "string",
-  "dateOfBirth": "2026-02-04T01:16:49.297Z",
-  "gender": "string",
-  "nationality": "string",
-  "nationalId": "string",
-  "maritalStatus": "string",
-  "bankAccountNumber": "string",
-  "bankName": "string",
-  "bankBranch": "string",
-  "hireDate": "2026-02-04T01:16:49.297Z",
-  "probationEndDate": "2026-02-04T01:16:49.297Z",
-  "terminationDate": "2026-02-04T01:16:49.297Z",
-  "status": "string",
-  "department": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "code": "string",
-    "name": "string",
-    "description": "string",
-    "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "managerName": "string",
-    "employeeCount": 0,
-    "isActive": true,
-    "createdAt": "2026-02-04T01:16:49.297Z"
-  },
-  "position": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "code": "string",
-    "title": "string",
-    "description": "string",
-    "level": "string",
-    "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "departmentName": "string",
-    "minSalary": 0,
-    "maxSalary": 0,
-    "isActive": true
-  },
-  "reportsTo": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "employeeCode": "string",
-    "fullName": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "departmentName": "string",
-    "positionTitle": "string",
-    "status": "string",
-    "hireDate": "2026-02-04T01:16:49.297Z",
-    "profileImageUrl": "string"
-  },
-  "directReports": [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "employeeCode": "string",
-      "fullName": "string",
-      "email": "string",
-      "phoneNumber": "string",
-      "departmentName": "string",
-      "positionTitle": "string",
-      "status": "string",
-      "hireDate": "2026-02-04T01:16:49.297Z",
-      "profileImageUrl": "string"
-    }
-  ],
-  "currentAddress": {
-    "city": "string",
-    "country": "string",
-    "postalCode": "string"
-  },
-  "salary": 0,
-  "currency": "string",
-  "profileImageUrl": "string",
-  "documents": [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "documentName": "string",
-      "documentType": "string",
-      "filePath": "string",
-      "fileSizeBytes": 0,
-      "fileExtension": "string",
-      "uploadedAt": "2026-02-04T01:16:49.297Z",
-      "uploadedBy": "string"
-    }
-  ],
-  "createdAt": "2026-02-04T01:16:49.297Z",
-  "modifiedAt": "2026-02-04T01:16:49.297Z"
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/Employee/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "fullName": "string",
-  "email": "string",
-  "phoneNumber": "string",
-  "dateOfBirth": "2026-02-04T01:16:49.307Z",
-  "gender": "string",
-  "nationality": "string",
-  "nationalId": "string",
-  "maritalStatus": "string",
-  "bankAccountNumber": "string",
-  "bankName": "string",
-  "bankBranch": "string",
-  "hireDate": "2026-02-04T01:16:49.307Z",
-  "probationEndDate": "2026-02-04T01:16:49.307Z",
-  "terminationDate": "2026-02-04T01:16:49.307Z",
-  "status": "string",
-  "department": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "code": "string",
-    "name": "string",
-    "description": "string",
-    "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "managerName": "string",
-    "employeeCount": 0,
-    "isActive": true,
-    "createdAt": "2026-02-04T01:16:49.307Z"
-  },
-  "position": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "code": "string",
-    "title": "string",
-    "description": "string",
-    "level": "string",
-    "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "departmentName": "string",
-    "minSalary": 0,
-    "maxSalary": 0,
-    "isActive": true
-  },
-  "reportsTo": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "employeeCode": "string",
-    "fullName": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "departmentName": "string",
-    "positionTitle": "string",
-    "status": "string",
-    "hireDate": "2026-02-04T01:16:49.307Z",
-    "profileImageUrl": "string"
-  },
-  "directReports": [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "employeeCode": "string",
-      "fullName": "string",
-      "email": "string",
-      "phoneNumber": "string",
-      "departmentName": "string",
-      "positionTitle": "string",
-      "status": "string",
-      "hireDate": "2026-02-04T01:16:49.307Z",
-      "profileImageUrl": "string"
-    }
-  ],
-  "currentAddress": {
-    "city": "string",
-    "country": "string",
-    "postalCode": "string"
-  },
-  "salary": 0,
-  "currency": "string",
-  "profileImageUrl": "string",
-  "documents": [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "documentName": "string",
-      "documentType": "string",
-      "filePath": "string",
-      "fileSizeBytes": 0,
-      "fileExtension": "string",
-      "uploadedAt": "2026-02-04T01:16:49.307Z",
-      "uploadedBy": "string"
-    }
-  ],
-  "createdAt": "2026-02-04T01:16:49.307Z",
-  "modifiedAt": "2026-02-04T01:16:49.307Z"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-PUT
-/api/Employee/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "firstName": "string",
-  "lastName": "string",
-  "email": "user@example.com",
-  "phoneNumber": "string",
-  "dateOfBirth": "2026-02-04T01:16:49.322Z",
-  "gender": 1,
-  "nationality": "string",
-  "maritalStatus": 1,
-  "bankAccountNumber": "string",
-  "bankName": "string",
-  "bankBranch": "string",
-  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "positionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "reportsToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "currentAddress": {
-    "city": "string",
-    "country": "string",
-    "postalCode": "string"
-  },
-  "salary": 0,
-  "status": 1,
-  "effectiveDate": "2026-02-04T01:16:49.322Z",
-  "reason": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "fullName": "string",
-  "email": "string",
-  "phoneNumber": "string",
-  "dateOfBirth": "2026-02-04T01:16:49.325Z",
-  "gender": "string",
-  "nationality": "string",
-  "nationalId": "string",
-  "maritalStatus": "string",
-  "bankAccountNumber": "string",
-  "bankName": "string",
-  "bankBranch": "string",
-  "hireDate": "2026-02-04T01:16:49.325Z",
-  "probationEndDate": "2026-02-04T01:16:49.325Z",
-  "terminationDate": "2026-02-04T01:16:49.325Z",
-  "status": "string",
-  "department": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "code": "string",
-    "name": "string",
-    "description": "string",
-    "managerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "managerName": "string",
-    "employeeCount": 0,
-    "isActive": true,
-    "createdAt": "2026-02-04T01:16:49.325Z"
-  },
-  "position": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "code": "string",
-    "title": "string",
-    "description": "string",
-    "level": "string",
-    "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "departmentName": "string",
-    "minSalary": 0,
-    "maxSalary": 0,
-    "isActive": true
-  },
-  "reportsTo": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "employeeCode": "string",
-    "fullName": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "departmentName": "string",
-    "positionTitle": "string",
-    "status": "string",
-    "hireDate": "2026-02-04T01:16:49.325Z",
-    "profileImageUrl": "string"
-  },
-  "directReports": [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "employeeCode": "string",
-      "fullName": "string",
-      "email": "string",
-      "phoneNumber": "string",
-      "departmentName": "string",
-      "positionTitle": "string",
-      "status": "string",
-      "hireDate": "2026-02-04T01:16:49.325Z",
-      "profileImageUrl": "string"
-    }
-  ],
-  "currentAddress": {
-    "city": "string",
-    "country": "string",
-    "postalCode": "string"
-  },
-  "salary": 0,
-  "currency": "string",
-  "profileImageUrl": "string",
-  "documents": [
-    {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "documentName": "string",
-      "documentType": "string",
-      "filePath": "string",
-      "fileSizeBytes": 0,
-      "fileExtension": "string",
-      "uploadedAt": "2026-02-04T01:16:49.325Z",
-      "uploadedBy": "string"
-    }
-  ],
-  "createdAt": "2026-02-04T01:16:49.325Z",
-  "modifiedAt": "2026-02-04T01:16:49.325Z"
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-DELETE
-/api/Employee/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Responses
-Code	Description	Links
-204	
-No Content
-
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/Employee/department/{departmentId}
-
-
-Parameters
-Try it out
-Name	Description
-departmentId *
-string($uuid)
-(path)
-departmentId
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-[
-  {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "employeeCode": "string",
-    "fullName": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "departmentName": "string",
-    "positionTitle": "string",
-    "status": "string",
-    "hireDate": "2026-02-04T01:16:49.345Z",
-    "profileImageUrl": "string"
-  }
-]
-No links
-
-GET
-/api/Employee/status/{status}
-
-
-Parameters
-Try it out
-Name	Description
-status *
-integer($int32)
-(path)
-Available values : 1, 2, 3, 4
-
-
-1
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-[
-  {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "employeeCode": "string",
-    "fullName": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "departmentName": "string",
-    "positionTitle": "string",
-    "status": "string",
-    "hireDate": "2026-02-04T01:16:49.350Z",
-    "profileImageUrl": "string"
-  }
-]
-No links
-
-PUT
-/api/Employee/{id}/status
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "firstName": "string",
-  "lastName": "string",
-  "email": "user@example.com",
-  "phoneNumber": "string",
-  "dateOfBirth": "2026-02-04T01:16:49.359Z",
-  "gender": 1,
-  "nationality": "string",
-  "maritalStatus": 1,
-  "bankAccountNumber": "string",
-  "bankName": "string",
-  "bankBranch": "string",
-  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "positionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "reportsToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "currentAddress": {
-    "city": "string",
-    "country": "string",
-    "postalCode": "string"
-  },
-  "salary": 0,
-  "status": 1,
-  "effectiveDate": "2026-02-04T01:16:49.359Z",
-  "reason": "string"
-}
-Responses
-Code	Description	Links
-204	
-No Content
-
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-ExpenseCategories
-
-
-GET
-/api/expense-categories
-
-
-Parameters
-Try it out
-No parameters
-
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/expense-categories
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "name": "string",
-  "description": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/expense-categories/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PUT
-/api/expense-categories/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "name": "string",
-  "description": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-DELETE
-/api/expense-categories/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-Expenses
-
-
-GET
-/api/expenses
-
-
-Parameters
-Try it out
-Name	Description
-Search
-string
-(query)
-Search
-CategoryId
-integer($int32)
-(query)
-CategoryId
-Status
-string
-(query)
-Status
-PaymentMethod
-string
-(query)
-PaymentMethod
-FromDate
-string($date-time)
-(query)
-FromDate
-ToDate
-string($date-time)
-(query)
-ToDate
-MinAmount
-number($double)
-(query)
-MinAmount
-MaxAmount
-number($double)
-(query)
-MaxAmount
-SortBy
-string
-(query)
-SortBy
-SortDir
-string
-(query)
-SortDir
-Page
-integer($int32)
-(query)
-Page
-PageSize
-integer($int32)
-(query)
-PageSize
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/expenses
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "description": "string",
-  "vendor": "string",
-  "categoryId": 0,
-  "amount": 0.01,
-  "expenseDate": "2026-02-04T01:16:49.411Z",
-  "status": "string",
-  "paymentMethod": "string",
-  "notes": "string",
-  "referenceNumber": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/expenses/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PUT
-/api/expenses/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "description": "string",
-  "vendor": "string",
-  "categoryId": 0,
-  "amount": 0.01,
-  "expenseDate": "2026-02-04T01:16:49.423Z",
-  "status": "string",
-  "paymentMethod": "string",
-  "notes": "string",
-  "referenceNumber": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-DELETE
-/api/expenses/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-PATCH
-/api/expenses/{id}/status
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "status": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-ExpenseStats
-
-
-GET
-/api/expenses/stats/summary
-
-
-Parameters
-Try it out
-Name	Description
-FromDate
-string($date-time)
-(query)
-FromDate
-ToDate
-string($date-time)
-(query)
-ToDate
-Grouping
-string
-(query)
-Grouping
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/expenses/stats/over-time
-
-
-Parameters
-Try it out
-Name	Description
-FromDate
-string($date-time)
-(query)
-FromDate
-ToDate
-string($date-time)
-(query)
-ToDate
-Grouping
-string
-(query)
-Grouping
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/expenses/stats/by-category
-
-
-Parameters
-Try it out
-Name	Description
-FromDate
-string($date-time)
-(query)
-FromDate
-ToDate
-string($date-time)
-(query)
-ToDate
-Grouping
-string
-(query)
-Grouping
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-Inventory
-
-
-POST
-/api/Inventory/in
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "branchId": 0,
-  "docDate": "2026-02-04T01:16:49.458Z",
-  "sourceType": "string",
-  "sourceId": 0,
-  "notes": "string",
-  "lines": [
-    {
-      "productId": 0,
-      "warehouseId": 0,
-      "quantity": 0,
-      "minQuantity": 0,
-      "unitId": 0,
-      "unitCost": 0,
-      "notes": "string"
-    }
-  ]
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/Inventory/out
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "branchId": 0,
-  "docDate": "2026-02-04T01:16:49.465Z",
-  "sourceType": "string",
-  "sourceId": 0,
-  "notes": "string",
-  "lines": [
-    {
-      "productId": 0,
-      "warehouseId": 0,
-      "quantity": 0,
-      "unitId": 0,
-      "notes": "string"
-    }
-  ]
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/Inventory/transfer
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "branchId": 0,
-  "docDate": "2026-02-04T01:16:49.471Z",
-  "sourceType": "string",
-  "notes": "string",
-  "lines": [
-    {
-      "productId": 0,
-      "fromWarehouseId": 0,
-      "toWarehouseId": 0,
-      "quantity": 0,
-      "unitId": 0,
-      "notes": "string"
-    }
-  ]
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/Inventory/opening-balance
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "branchId": 0,
-  "docDate": "2026-02-04T01:16:49.478Z",
-  "notes": "string",
-  "lines": [
-    {
-      "productId": 0,
-      "warehouseId": 0,
-      "quantity": 0,
-      "unitId": 0,
-      "minQuantity": 0,
-      "unitCost": 0,
-      "notes": "string"
-    }
-  ]
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-POST
-/api/Inventory/adjustment
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "branchId": 0,
-  "docDate": "2026-02-04T01:16:49.484Z",
-  "notes": "string",
-  "lines": [
-    {
-      "productId": 0,
-      "warehouseId": 0,
-      "actualQuantity": 0,
-      "unitId": 0,
-      "unitCost": 0,
-      "notes": "string"
-    }
-  ]
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-InventoryReports
-
-
-GET
-/api/InventoryReports/stock-balance
-
-
-Parameters
-Try it out
-Name	Description
-productId
-integer($int32)
-(query)
-productId
-warehouseId
-integer($int32)
-(query)
-warehouseId
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/InventoryReports/warehouse/{warehouseId}/stock
-
-
-Parameters
-Try it out
-Name	Description
-warehouseId *
-integer($int32)
-(path)
-warehouseId
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/InventoryReports/product/{productId}/stock
-
-
-Parameters
-Try it out
-Name	Description
-productId *
-integer($int32)
-(path)
-productId
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/InventoryReports/movements
-
-
-Parameters
-Try it out
-Name	Description
-productId
-integer($int32)
-(query)
-productId
-warehouseId
-integer($int32)
-(query)
-warehouseId
-from
-string($date-time)
-(query)
-from
-to
-string($date-time)
-(query)
-to
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/InventoryReports/low-stock
-
-
-Parameters
-Try it out
-Name	Description
-warehouseId
-integer($int32)
-(query)
-warehouseId
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-
-GET
-/api/InventoryReports/valuation
-
-
-Parameters
-Try it out
-Name	Description
-warehouseId
-integer($int32)
-(query)
-warehouseId
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-JobPosition
-
-
-GET
-/api/JobPosition
-
-
-Parameters
-Try it out
-No parameters
-
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-[
-  {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "code": "string",
-    "title": "string",
-    "description": "string",
-    "level": "string",
-    "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "departmentName": "string",
-    "minSalary": 0,
-    "maxSalary": 0,
-    "isActive": true
-  }
-]
-No links
-
-POST
-/api/JobPosition
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "code": "string",
-  "title": "string",
-  "description": "string",
-  "level": 1,
-  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "minSalary": 0,
-  "maxSalary": 0,
-  "isActive": true
-}
-Responses
-Code	Description	Links
-201	
-Created
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "code": "string",
-  "title": "string",
-  "description": "string",
-  "level": "string",
-  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "departmentName": "string",
-  "minSalary": 0,
-  "maxSalary": 0,
-  "isActive": true
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/JobPosition/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "code": "string",
-  "title": "string",
-  "description": "string",
-  "level": "string",
-  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "departmentName": "string",
-  "minSalary": 0,
-  "maxSalary": 0,
-  "isActive": true
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-PUT
-/api/JobPosition/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "title": "string",
-  "description": "string",
-  "level": 1,
-  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "minSalary": 0,
-  "maxSalary": 0,
-  "isActive": true
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "code": "string",
-  "title": "string",
-  "description": "string",
-  "level": "string",
-  "departmentId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "departmentName": "string",
-  "minSalary": 0,
-  "maxSalary": 0,
-  "isActive": true
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-DELETE
-/api/JobPosition/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Responses
-Code	Description	Links
-204	
-No Content
-
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-Lead
-
-
-GET
-/api/Lead
-
-
-Parameters
-Try it out
-No parameters
-
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-[
-  {
-    "id": 0,
-    "companyId": 0,
-    "companyName": "string",
-    "name": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "source": 1,
-    "stage": 1,
-    "dealValue": 0,
-    "lastContactDate": "2026-02-04T01:16:49.564Z",
-    "assignedToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "convertedCustomerId": 0,
-    "convertedDate": "2026-02-04T01:16:49.564Z",
-    "createdDealId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-  }
-]
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-POST
-/api/Lead
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "companyId": 0,
-  "companyName": "string",
-  "name": "string",
-  "email": "string",
-  "phoneNumber": "string",
-  "source": 1,
-  "stage": 1,
-  "dealValue": 0,
-  "lastContactDate": "2026-02-04T01:16:49.573Z",
-  "assignedToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-Responses
-Code	Description	Links
-201	
-Created
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-string
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/Lead/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": 0,
-  "companyId": 0,
-  "companyName": "string",
-  "name": "string",
-  "email": "string",
-  "phoneNumber": "string",
-  "source": 1,
-  "stage": 1,
-  "dealValue": 0,
-  "lastContactDate": "2026-02-04T01:16:49.585Z",
-  "assignedToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "convertedCustomerId": 0,
-  "convertedDate": "2026-02-04T01:16:49.585Z",
-  "createdDealId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-PUT
-/api/Lead/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "companyName": "string",
-  "name": "string",
-  "email": "string",
-  "phoneNumber": "string",
-  "source": 1,
-  "stage": 1,
-  "dealValue": 0,
-  "lastContactDate": "2026-02-04T01:16:49.598Z",
-  "assignedToId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-DELETE
-/api/Lead/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-POST
-/api/Lead/{id}/convert
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "customerId": 0,
-  "createDeal": true,
-  "dealName": "string",
-  "dealAmount": 0,
-  "expectedCloseDate": "2026-02-04",
-  "dealStage": 1,
-  "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-LeaveRequest
-
-
-POST
-/api/LeaveRequest
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "leaveType": 1,
-  "startDate": "2026-02-04",
-  "endDate": "2026-02-04",
-  "reason": "string"
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "employeeName": "string",
-  "leaveType": "string",
-  "startDate": "2026-02-04",
-  "endDate": "2026-02-04",
-  "totalDays": 0,
-  "status": "string",
-  "requestDate": "2026-02-04T01:16:49.641Z",
-  "reason": "string"
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/LeaveRequest/{id}
-
-
-
-DELETE
-/api/LeaveRequest/{id}
-
-
-
-GET
-/api/LeaveRequest/employee/{employeeId}
-
-
-
-GET
-/api/LeaveRequest/pending
-
-
-
-POST
-/api/LeaveRequest/{id}/approve
-
-
-
-POST
-/api/LeaveRequest/{id}/reject
-
-
-
-POST
-/api/LeaveRequest/{id}/cancel
-
-
-
-GET
-/api/LeaveRequest/balance/{employeeId}/{year}
-
-
-Modules
-
-
-GET
-/api/modules
-
-
-Parameters
-Try it out
-No parameters
-
-Responses
-Code	Description	Links
-200	
-OK
-
-No links
-Payroll
-
-
-POST
-/api/Payroll/generate
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "month": 12,
-  "year": 0,
-  "employeeIds": [
-    "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-  ],
-  "departmentIds": [
-    "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-  ],
-  "includeInactive": true
-}
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "month": 0,
-  "year": 0,
-  "totalEmployees": 0,
-  "totalGrossPay": 0,
-  "totalDeductions": 0,
-  "totalNetPay": 0,
-  "generatedCount": 0,
-  "failedCount": 0,
-  "errors": [
-    "string"
-  ]
-}
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/Payroll/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-string($uuid)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "employeeCode": "string",
-  "employeeName": "string",
-  "month": 0,
-  "year": 0,
-  "payPeriodStart": "2026-02-04",
-  "payPeriodEnd": "2026-02-04",
-  "basicSalary": 0,
-  "totalAllowances": 0,
-  "totalDeductions": 0,
-  "netSalary": 0,
-  "status": "string",
-  "processedDate": "2026-02-04T01:16:49.662Z",
-  "paidDate": "2026-02-04T01:16:49.662Z",
-  "employee": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "employeeCode": "string",
-    "fullName": "string",
-    "email": "string",
-    "phoneNumber": "string",
-    "departmentName": "string",
-    "positionTitle": "string",
-    "status": "string",
-    "hireDate": "2026-02-04T01:16:49.662Z",
-    "profileImageUrl": "string"
-  },
-  "workingDays": 0,
-  "presentDays": 0,
-  "absentDays": 0,
-  "unpaidLeaveDays": 0,
-  "overtimeHours": 0,
-  "allowances": [
-    {
-      "description": "string",
-      "amount": 0,
-      "type": "string"
-    }
-  ],
-  "deductions": [
-    {
-      "description": "string",
-      "amount": 0,
-      "type": "string"
-    }
-  ],
-  "paymentMethod": "string",
-  "bankAccountNumber": "string",
-  "transactionReference": "string",
-  "generatedBy": "string",
-  "processedBy": "string",
-  "paidBy": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-PUT
-/api/Payroll/{id}
-
-
-
-DELETE
-/api/Payroll/{id}
-
-
-
-GET
-/api/Payroll/employee/{employeeId}
-
-
-
-GET
-/api/Payroll/period/{month}/{year}
-
-
-
-POST
-/api/Payroll/{id}/process
-
-
-
-POST
-/api/Payroll/{id}/mark-paid
-
-
-
-POST
-/api/Payroll/{id}/revert
-
-
-
-GET
-/api/Payroll/summary/{month}/{year}
-
-
-
-POST
-/api/Payroll/{id}/recalculate
-
-
-Pipeline
-
-
-GET
-/api/Pipeline
-
-
-Parameters
-Try it out
-No parameters
-
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-[
-  {
-    "id": 0,
-    "companyId": 0,
-    "customerId": 0,
-    "dealName": "string",
-    "dealAmount": 0,
-    "leadId": 0,
-    "expectedCloseDate": "2026-02-04",
-    "dealStage": 1,
-    "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-  }
-]
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-POST
-/api/Pipeline
-
-
-Parameters
-Try it out
-No parameters
-
-Request body
-
-application/json
-Example Value
-Schema
-{
-  "companyId": 0,
-  "customerId": 0,
-  "dealName": "string",
-  "dealAmount": 0,
-  "leadId": 0,
-  "expectedCloseDate": "2026-02-04",
-  "dealStage": 1,
-  "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-Responses
-Code	Description	Links
-201	
-Created
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-string
-No links
-400	
-Bad Request
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-GET
-/api/Pipeline/{id}
-
-
-Parameters
-Try it out
-Name	Description
-id *
-integer($int32)
-(path)
-id
-Responses
-Code	Description	Links
-200	
-OK
-
-Media type
-
-text/plain
-Controls Accept header.
-Example Value
-Schema
-{
-  "id": 0,
-  "companyId": 0,
-  "customerId": 0,
-  "dealName": "string",
-  "dealAmount": 0,
-  "leadId": 0,
-  "expectedCloseDate": "2026-02-04",
-  "dealStage": 1,
-  "ownerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-}
-No links
-401	
-Unauthorized
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-404	
-Not Found
-
-Media type
-
-text/plain
-Example Value
-Schema
-{
-  "type": "string",
-  "title": "string",
-  "status": 0,
-  "detail": "string",
-  "instance": "string",
-  "additionalProp1": "string",
-  "additionalProp2": "string",
-  "additionalProp3": "string"
-}
-No links
-
-PUT
-/api/Pipeline/{id}
-
-
-
-DELETE
-/api/Pipeline/{id}
-
-
-
-PATCH
-/api/Pipeline/{id}/move-stage
-
-
-Products
+]Products
 
 
 GET
@@ -4113,6 +684,49 @@ Parameters
 Try it out
 No parameters
 
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:5225/api/Products' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDYxMjEzNy1iZDlhLTRiZDEtYWVlMC03MzdiOTVkYjUwMGYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIk93bmVyIiwicHJvZHVjdCJdLCJwZXJtaXNzaW9uIjpbImNvbnRhY3RzLmNvbnRhY3RzLm1hbmFnZSIsImNvbnRhY3RzLmNvbnRhY3RzLnJlYWQiLCJjb3JlLmNvbXBhbmllcy5yZWFkIiwiY29yZS5jb21wYW5pZXMudXBkYXRlIiwiY29yZS5tb2R1bGVzLm1hbmFnZSIsImNvcmUubW9kdWxlcy5yZWFkIiwiY29yZS51c2Vycy5jcmVhdGUiLCJjb3JlLnVzZXJzLmRlbGV0ZSIsImNvcmUudXNlcnMucmVhZCIsImNvcmUudXNlcnMudXBkYXRlIiwiY3JtLkN1c3RvbWVycy5hY2Nlc3MiLCJjcm0uQ3VzdG9tZXJzLm1hbmFnZSIsImNybS5DdXN0b21lcnMucmVhZCIsImNybS5sZWFkcy5hY2Nlc3MiLCJjcm0ubGVhZHMubWFuYWdlIiwiY3JtLmxlYWRzLnJlYWQiLCJleHBlbnNlcy5jYXRlZ29yaWVzLm1hbmFnZSIsImV4cGVuc2VzLmNhdGVnb3JpZXMucmVhZCIsImV4cGVuc2VzLml0ZW1zLm1hbmFnZSIsImV4cGVuc2VzLml0ZW1zLnJlYWQiLCJleHBlbnNlcy5TdGF0cy5yZWFkIiwiaHIuZGVwYXJ0bWVudHMuYWNjZXNzIiwiaHIuZGVwYXJ0bWVudHMubWFuYWdlIiwiaHIuZGVwYXJ0bWVudHMucmVhZCIsImhyLmVtcGxveWVlcy5hY2Nlc3MiLCJoci5lbXBsb3llZXMubWFuYWdlIiwiaHIuZW1wbG95ZWVzLnJlYWQiLCJoci5MZWF2ZVJlcXVlc3RzLmFjY2VzcyIsImhyLkxlYXZlUmVxdWVzdHMubWFuYWdlIiwiaHIuTGVhdmVSZXF1ZXN0cy5yZWFkIiwiaHIuUGF5Um9sbHMuYWNjZXNzIiwiaHIuUGF5Um9sbHMubWFuYWdlIiwiaHIuUGF5Um9sbHMucmVhZCIsImhyLnBvc2l0aW9ucy5hY2Nlc3MiLCJoci5wb3NpdGlvbnMubWFuYWdlIiwiaHIucG9zaXRpb25zLnJlYWQiLCJpbnZlbnRvcnkucmVwb3J0cy5yZWFkIiwiaW52ZW50b3J5LnN0b2NrLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLnJlYWQiLCJwcm9kdWN0cy5jYXRlZ29yaWVzLm1hbmFnZSIsInByb2R1Y3RzLmNhdGVnb3JpZXMucmVhZCIsInByb2R1Y3RzLlByb2R1Y3RzLm1hbmFnZSIsInByb2R1Y3RzLlByb2R1Y3RzLnJlYWQiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5tYW5hZ2UiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5SZWFkIiwic2FsZXMuY3VzdG9tZXJzLmFjY2VzcyIsInNhbGVzLmN1c3RvbWVycy5tYW5hZ2UiLCJzYWxlcy5jdXN0b21lcnMucmVhZCIsInNhbGVzLmRlbGl2ZXJpZXMuYWNjZXNzIiwic2FsZXMuZGVsaXZlcmllcy5tYW5hZ2UiLCJzYWxlcy5kZWxpdmVyaWVzLnJlYWQiLCJzYWxlcy5pbnZvaWNlcy5hY2Nlc3MiLCJzYWxlcy5pbnZvaWNlcy5tYW5hZ2UiLCJzYWxlcy5pbnZvaWNlcy5yZWFkIiwic2FsZXMucmVjZWlwdHMuYWNjZXNzIiwic2FsZXMucmVjZWlwdHMubWFuYWdlIiwic2FsZXMucmVjZWlwdHMucmVhZCIsInNhbGVzLnJldHVybnMuYWNjZXNzIiwic2FsZXMucmV0dXJucy5tYW5hZ2UiLCJzYWxlcy5yZXR1cm5zLnJlYWQiLCJzZWN1cml0eS5yb2xlcy5tYW5hZ2UiXSwiZXhwIjoxNzcwNDc1MDgyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.KbwwdBUY-TMdKf3HbLmvp8NnjcHW54H1CHEVl3zbOnQ'
+Request URL
+http://localhost:5225/api/Products
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "id": 1,
+    "code": "test",
+    "name": "test",
+    "description": "",
+    "defaultPrice": 546,
+    "minQuantity": 2,
+    "categoryName": "test",
+    "unitOfMeasureName": "test",
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "code": "tsst",
+    "name": "tsst",
+    "description": "",
+    "defaultPrice": 325,
+    "minQuantity": null,
+    "categoryName": "test",
+    "unitOfMeasureName": "string",
+    "isActive": true
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Sat,07 Feb 2026 12:38:12 GMT 
+ server: Kestrel 
+ transfer-encoding: chunked 
 Responses
 Code	Description	Links
 200	
@@ -4154,15 +768,103 @@ GET
 /api/Products/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+1
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:5225/api/Products/1' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDYxMjEzNy1iZDlhLTRiZDEtYWVlMC03MzdiOTVkYjUwMGYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIk93bmVyIiwicHJvZHVjdCJdLCJwZXJtaXNzaW9uIjpbImNvbnRhY3RzLmNvbnRhY3RzLm1hbmFnZSIsImNvbnRhY3RzLmNvbnRhY3RzLnJlYWQiLCJjb3JlLmNvbXBhbmllcy5yZWFkIiwiY29yZS5jb21wYW5pZXMudXBkYXRlIiwiY29yZS5tb2R1bGVzLm1hbmFnZSIsImNvcmUubW9kdWxlcy5yZWFkIiwiY29yZS51c2Vycy5jcmVhdGUiLCJjb3JlLnVzZXJzLmRlbGV0ZSIsImNvcmUudXNlcnMucmVhZCIsImNvcmUudXNlcnMudXBkYXRlIiwiY3JtLkN1c3RvbWVycy5hY2Nlc3MiLCJjcm0uQ3VzdG9tZXJzLm1hbmFnZSIsImNybS5DdXN0b21lcnMucmVhZCIsImNybS5sZWFkcy5hY2Nlc3MiLCJjcm0ubGVhZHMubWFuYWdlIiwiY3JtLmxlYWRzLnJlYWQiLCJleHBlbnNlcy5jYXRlZ29yaWVzLm1hbmFnZSIsImV4cGVuc2VzLmNhdGVnb3JpZXMucmVhZCIsImV4cGVuc2VzLml0ZW1zLm1hbmFnZSIsImV4cGVuc2VzLml0ZW1zLnJlYWQiLCJleHBlbnNlcy5TdGF0cy5yZWFkIiwiaHIuZGVwYXJ0bWVudHMuYWNjZXNzIiwiaHIuZGVwYXJ0bWVudHMubWFuYWdlIiwiaHIuZGVwYXJ0bWVudHMucmVhZCIsImhyLmVtcGxveWVlcy5hY2Nlc3MiLCJoci5lbXBsb3llZXMubWFuYWdlIiwiaHIuZW1wbG95ZWVzLnJlYWQiLCJoci5MZWF2ZVJlcXVlc3RzLmFjY2VzcyIsImhyLkxlYXZlUmVxdWVzdHMubWFuYWdlIiwiaHIuTGVhdmVSZXF1ZXN0cy5yZWFkIiwiaHIuUGF5Um9sbHMuYWNjZXNzIiwiaHIuUGF5Um9sbHMubWFuYWdlIiwiaHIuUGF5Um9sbHMucmVhZCIsImhyLnBvc2l0aW9ucy5hY2Nlc3MiLCJoci5wb3NpdGlvbnMubWFuYWdlIiwiaHIucG9zaXRpb25zLnJlYWQiLCJpbnZlbnRvcnkucmVwb3J0cy5yZWFkIiwiaW52ZW50b3J5LnN0b2NrLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLnJlYWQiLCJwcm9kdWN0cy5jYXRlZ29yaWVzLm1hbmFnZSIsInByb2R1Y3RzLmNhdGVnb3JpZXMucmVhZCIsInByb2R1Y3RzLlByb2R1Y3RzLm1hbmFnZSIsInByb2R1Y3RzLlByb2R1Y3RzLnJlYWQiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5tYW5hZ2UiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5SZWFkIiwic2FsZXMuY3VzdG9tZXJzLmFjY2VzcyIsInNhbGVzLmN1c3RvbWVycy5tYW5hZ2UiLCJzYWxlcy5jdXN0b21lcnMucmVhZCIsInNhbGVzLmRlbGl2ZXJpZXMuYWNjZXNzIiwic2FsZXMuZGVsaXZlcmllcy5tYW5hZ2UiLCJzYWxlcy5kZWxpdmVyaWVzLnJlYWQiLCJzYWxlcy5pbnZvaWNlcy5hY2Nlc3MiLCJzYWxlcy5pbnZvaWNlcy5tYW5hZ2UiLCJzYWxlcy5pbnZvaWNlcy5yZWFkIiwic2FsZXMucmVjZWlwdHMuYWNjZXNzIiwic2FsZXMucmVjZWlwdHMubWFuYWdlIiwic2FsZXMucmVjZWlwdHMucmVhZCIsInNhbGVzLnJldHVybnMuYWNjZXNzIiwic2FsZXMucmV0dXJucy5tYW5hZ2UiLCJzYWxlcy5yZXR1cm5zLnJlYWQiLCJzZWN1cml0eS5yb2xlcy5tYW5hZ2UiXSwiZXhwIjoxNzcwNDc1MDgyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.KbwwdBUY-TMdKf3HbLmvp8NnjcHW54H1CHEVl3zbOnQ'
+Request URL
+http://localhost:5225/api/Products/1
+Server response
+Code	Details
+200	
+Response body
+Download
+{
+  "id": 1,
+  "code": "test",
+  "name": "test",
+  "description": "",
+  "defaultPrice": 546,
+  "minQuantity": 2,
+  "categoryName": "test",
+  "unitOfMeasureName": "test",
+  "isActive": true
+}
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Sat,07 Feb 2026 12:38:29 GMT 
+ server: Kestrel 
+ transfer-encoding: chunked 
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 PUT
 /api/Products/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "id": 0,
+  "code": "string",
+  "name": "string",
+  "description": "string",
+  "categoryId": 0,
+  "unitOfMeasureId": 0,
+  "defaultPrice": 0,
+  "minQuantity": 0,
+  "barcode": "string",
+  "isActive": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 DELETE
 /api/Products/{id}
 
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+Roles
 
 SalesDeliveries
 
@@ -4205,17 +907,15 @@ POST
 
 
 Parameters
-Try it out
+Cancel
+Reset
 No parameters
 
 Request body
 
 application/json
-Example Value
-Schema
 {
-  "branchId": 0,
-  "deliveryDate": "2026-02-04T01:16:49.719Z",
+  "deliveryDate": "2026-02-07T12:39:02.805Z",
   "salesInvoiceId": 0,
   "warehouseId": 0,
   "notes": "string",
@@ -4227,6 +927,7 @@ Schema
     }
   ]
 }
+Execute
 Responses
 Code	Description	Links
 200	
@@ -4238,21 +939,73 @@ GET
 /api/sales/deliveries/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 DELETE
 /api/sales/deliveries/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 POST
 /api/sales/deliveries/{id}/post
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 POST
 /api/sales/deliveries/{id}/cancel
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 SalesInvoices
 
 
@@ -4261,7 +1014,7 @@ GET
 
 
 Parameters
-Try it out
+Cancel
 Name	Description
 customerId
 integer($int32)
@@ -4270,8 +1023,6 @@ customerId
 status
 integer($int32)
 (query)
-Available values : 0, 1, 2, 3, 4
-
 
 --
 fromDate
@@ -4282,6 +1033,7 @@ toDate
 string($date-time)
 (query)
 toDate
+Execute
 Responses
 Code	Description	Links
 200	
@@ -4294,22 +1046,80 @@ POST
 
 
 Parameters
-Try it out
+Cancel
+Reset
 No parameters
 
+Request body
+
+application/json
+{
+  "invoiceDate": "2026-02-07T12:39:28.951Z",
+  "dueDate": "2026-02-07T12:39:28.951Z",
+  "customerId": 0,
+  "notes": "string",
+  "lines": [
+    {
+      "productId": 0,
+      "unitId": 0,
+      "quantity": 0,
+      "unitPrice": 0,
+      "discountPercent": 0,
+      "taxPercent": 0,
+      "notes": "string"
+    }
+  ]
+}
+Execute
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/sales/invoices/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/sales/invoices/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
 Request body
 
 application/json
 Example Value
 Schema
 {
-  "branchId": 0,
-  "invoiceDate": "2026-02-04T01:16:49.736Z",
-  "dueDate": "2026-02-04T01:16:49.736Z",
+  "invoiceDate": "2026-02-07T12:43:28.541Z",
+  "dueDate": "2026-02-07T12:43:28.541Z",
   "customerId": 0,
   "notes": "string",
   "lines": [
     {
+      "id": 0,
       "productId": 0,
       "unitId": 0,
       "quantity": 0,
@@ -4327,30 +1137,59 @@ OK
 
 No links
 
-GET
-/api/sales/invoices/{id}
-
-
-
-PUT
-/api/sales/invoices/{id}
-
-
-
 DELETE
 /api/sales/invoices/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 POST
 /api/sales/invoices/{id}/post
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 POST
 /api/sales/invoices/{id}/cancel
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 SalesReceipts
 
 
@@ -4392,17 +1231,15 @@ POST
 
 
 Parameters
-Try it out
+Cancel
+Reset
 No parameters
 
 Request body
 
 application/json
-Example Value
-Schema
 {
-  "branchId": 0,
-  "receiptDate": "2026-02-04T01:16:49.753Z",
+  "receiptDate": "2026-02-07T12:39:53.446Z",
   "customerId": 0,
   "amount": 0,
   "paymentMethod": "string",
@@ -4415,6 +1252,7 @@ Schema
     }
   ]
 }
+Execute
 Responses
 Code	Description	Links
 200	
@@ -4426,21 +1264,73 @@ GET
 /api/sales/receipts/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 DELETE
 /api/sales/receipts/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 POST
 /api/sales/receipts/{id}/post
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 POST
 /api/sales/receipts/{id}/cancel
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 SalesReturns
 
 
@@ -4482,17 +1372,15 @@ POST
 
 
 Parameters
-Try it out
+Cancel
+Reset
 No parameters
 
 Request body
 
 application/json
-Example Value
-Schema
 {
-  "branchId": 0,
-  "returnDate": "2026-02-04T01:16:49.769Z",
+  "returnDate": "2026-02-07T12:40:13.743Z",
   "salesInvoiceId": 0,
   "customerId": 0,
   "warehouseId": 0,
@@ -4509,6 +1397,7 @@ Schema
     }
   ]
 }
+Execute
 Responses
 Code	Description	Links
 200	
@@ -4520,21 +1409,73 @@ GET
 /api/sales/returns/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 DELETE
 /api/sales/returns/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 POST
 /api/sales/returns/{id}/post
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 POST
 /api/sales/returns/{id}/cancel
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 UnitOfMeasure
 
 
@@ -4543,9 +1484,42 @@ GET
 
 
 Parameters
-Try it out
+Cancel
 No parameters
 
+Execute
+Clear
+Responses
+Curl
+
+curl -X 'GET' \
+  'http://localhost:5225/api/UnitOfMeasure' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDYxMjEzNy1iZDlhLTRiZDEtYWVlMC03MzdiOTVkYjUwMGYiLCJlbWFpbCI6ImVzYW1oNDA0OUBnbWFpbC5jb20iLCJjb21wYW55SWQiOiIxIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIk93bmVyIiwicHJvZHVjdCJdLCJwZXJtaXNzaW9uIjpbImNvbnRhY3RzLmNvbnRhY3RzLm1hbmFnZSIsImNvbnRhY3RzLmNvbnRhY3RzLnJlYWQiLCJjb3JlLmNvbXBhbmllcy5yZWFkIiwiY29yZS5jb21wYW5pZXMudXBkYXRlIiwiY29yZS5tb2R1bGVzLm1hbmFnZSIsImNvcmUubW9kdWxlcy5yZWFkIiwiY29yZS51c2Vycy5jcmVhdGUiLCJjb3JlLnVzZXJzLmRlbGV0ZSIsImNvcmUudXNlcnMucmVhZCIsImNvcmUudXNlcnMudXBkYXRlIiwiY3JtLkN1c3RvbWVycy5hY2Nlc3MiLCJjcm0uQ3VzdG9tZXJzLm1hbmFnZSIsImNybS5DdXN0b21lcnMucmVhZCIsImNybS5sZWFkcy5hY2Nlc3MiLCJjcm0ubGVhZHMubWFuYWdlIiwiY3JtLmxlYWRzLnJlYWQiLCJleHBlbnNlcy5jYXRlZ29yaWVzLm1hbmFnZSIsImV4cGVuc2VzLmNhdGVnb3JpZXMucmVhZCIsImV4cGVuc2VzLml0ZW1zLm1hbmFnZSIsImV4cGVuc2VzLml0ZW1zLnJlYWQiLCJleHBlbnNlcy5TdGF0cy5yZWFkIiwiaHIuZGVwYXJ0bWVudHMuYWNjZXNzIiwiaHIuZGVwYXJ0bWVudHMubWFuYWdlIiwiaHIuZGVwYXJ0bWVudHMucmVhZCIsImhyLmVtcGxveWVlcy5hY2Nlc3MiLCJoci5lbXBsb3llZXMubWFuYWdlIiwiaHIuZW1wbG95ZWVzLnJlYWQiLCJoci5MZWF2ZVJlcXVlc3RzLmFjY2VzcyIsImhyLkxlYXZlUmVxdWVzdHMubWFuYWdlIiwiaHIuTGVhdmVSZXF1ZXN0cy5yZWFkIiwiaHIuUGF5Um9sbHMuYWNjZXNzIiwiaHIuUGF5Um9sbHMubWFuYWdlIiwiaHIuUGF5Um9sbHMucmVhZCIsImhyLnBvc2l0aW9ucy5hY2Nlc3MiLCJoci5wb3NpdGlvbnMubWFuYWdlIiwiaHIucG9zaXRpb25zLnJlYWQiLCJpbnZlbnRvcnkucmVwb3J0cy5yZWFkIiwiaW52ZW50b3J5LnN0b2NrLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLm1hbmFnZSIsImludmVudG9yeS53YXJlaG91c2VzLnJlYWQiLCJwcm9kdWN0cy5jYXRlZ29yaWVzLm1hbmFnZSIsInByb2R1Y3RzLmNhdGVnb3JpZXMucmVhZCIsInByb2R1Y3RzLlByb2R1Y3RzLm1hbmFnZSIsInByb2R1Y3RzLlByb2R1Y3RzLnJlYWQiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5tYW5hZ2UiLCJQcm9kdWN0cy51bml0b2ZtZWFzdXJlcy5SZWFkIiwic2FsZXMuY3VzdG9tZXJzLmFjY2VzcyIsInNhbGVzLmN1c3RvbWVycy5tYW5hZ2UiLCJzYWxlcy5jdXN0b21lcnMucmVhZCIsInNhbGVzLmRlbGl2ZXJpZXMuYWNjZXNzIiwic2FsZXMuZGVsaXZlcmllcy5tYW5hZ2UiLCJzYWxlcy5kZWxpdmVyaWVzLnJlYWQiLCJzYWxlcy5pbnZvaWNlcy5hY2Nlc3MiLCJzYWxlcy5pbnZvaWNlcy5tYW5hZ2UiLCJzYWxlcy5pbnZvaWNlcy5yZWFkIiwic2FsZXMucmVjZWlwdHMuYWNjZXNzIiwic2FsZXMucmVjZWlwdHMubWFuYWdlIiwic2FsZXMucmVjZWlwdHMucmVhZCIsInNhbGVzLnJldHVybnMuYWNjZXNzIiwic2FsZXMucmV0dXJucy5tYW5hZ2UiLCJzYWxlcy5yZXR1cm5zLnJlYWQiLCJzZWN1cml0eS5yb2xlcy5tYW5hZ2UiXSwiZXhwIjoxNzcwNDc1MDgyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUyMjUiLCJhdWQiOiJFUlBTeXN0ZW0uQ2xpZW50cyJ9.KbwwdBUY-TMdKf3HbLmvp8NnjcHW54H1CHEVl3zbOnQ'
+Request URL
+http://localhost:5225/api/UnitOfMeasure
+Server response
+Code	Details
+200	
+Response body
+Download
+[
+  {
+    "id": 2,
+    "name": "string",
+    "symbol": "string"
+  },
+  {
+    "id": 1,
+    "name": "test",
+    "symbol": "test"
+  }
+]
+Response headers
+ content-type: application/json; charset=utf-8 
+ date: Sat,07 Feb 2026 12:40:28 GMT 
+ server: Kestrel 
+ transfer-encoding: chunked 
 Responses
 Code	Description	Links
 200	
@@ -4558,9 +1532,53 @@ POST
 
 
 Parameters
-Try it out
+Cancel
 No parameters
 
+Request body
+
+application/json
+{
+  "name": "string",
+  "symbol": "string"
+}
+Execute
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+GET
+/api/UnitOfMeasure/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+
+PUT
+/api/UnitOfMeasure/{id}
+
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
 Request body
 
 application/json
@@ -4577,19 +1595,24 @@ OK
 
 No links
 
-GET
-/api/UnitOfMeasure/{id}
-
-
-
-PUT
-/api/UnitOfMeasure/{id}
-
-
-
 DELETE
 /api/UnitOfMeasure/{id}
 
+
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
+UserRoles
 
 Warehouses
 
@@ -4642,123 +1665,58 @@ GET
 /api/Warehouses/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 PUT
 /api/Warehouses/{id}
 
 
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "code": "string",
+  "name": "string",
+  "address": "string",
+  "isActive": true
+}
+Responses
+Code	Description	Links
+200	
+OK
+
+No links
 
 DELETE
 /api/Warehouses/{id}
 
 
-
-Schemas
-AddressDto
-ApproveLeaveDto
-AttendanceDto
-AttendanceStatus
-AttendanceSummaryDto
-AuthResponse
-CancelLeaveDto
-CheckInDto
-CheckOutDto
-CompanyOnboardingRequest
-ContactPersonType
-ConvertLeadDto
-CreateCategoryRequest
-CreateCompanyUserDto
-CreateContactRequest
-CreateCustomerRequest
-CreateDepartmentDto
-CreateEmployeeDto
-CreateExpenseCategoryDto
-CreateExpenseDto
-CreateLeadDto
-CreateLeaveRequestDto
-CreatePipelineDto
-CreatePositionDto
-CreateProductDto
-CreateReceiptAllocationRequest
-CreateSalesDeliveryLineRequest
-CreateSalesDeliveryRequest
-CreateSalesInvoiceLineRequest
-CreateSalesInvoiceRequest
-CreateSalesReceiptRequest
-CreateSalesReturnLineRequest
-CreateSalesReturnRequest
-CreateUnitOfMeasureRequest
-CreateWarehouseDto
-DealStatus
-DepartmentDetailDto
-DepartmentDto
-DocumentDto
-EmployeeDetailDto
-EmployeeListDto
-EmployeeStatus
-Gender
-GeneratePayrollDto
-LeadDto
-LeadSource
-LeadStatus
-LeaveBalanceDto
-LeaveRequestDetailDto
-LeaveRequestDto
-LeaveType
-LeaveTypeBalance
-LoginRequest
-ManualAttendanceDto
-MaritalStatus
-MarkPaidDto
-MovePiplineStageDto
-OpeningBalanceLineRequest
-OpeningBalanceRequest
-PaymentMethod
-PayrollBatchDto
-PayrollDetailDto
-PayrollDto
-PayrollItemDto
-PayrollSummaryDto
-PipelineDto
-PositionDto
-PositionLevel
-ProblemDetails
-RegisterOwnerRequest
-RejectLeaveDto
-SalesDeliveryStatus
-SalesInvoiceStatus
-SalesReceiptStatus
-SalesReturnStatus
-StockAdjustmentLineRequest
-StockAdjustmentRequest
-StockInLineRequest
-StockInRequest
-StockOutLineRequest
-StockOutRequest
-StockTransferLineRequest
-StockTransferRequest
-ToggleCompanyModuleDto
-UpdateAttendanceDto
-UpdateCategoryRequest
-UpdateCompanyMeDto
-UpdateContactDto
-UpdateCustomerRequest
-UpdateDepartmentDto
-UpdateEmployeeDto
-UpdateExpenseCategoryDto
-UpdateExpenseDto
-UpdateExpenseStatusDto
-UpdateLeadDto
-UpdatePayrollDto
-UpdatePipelineDto
-UpdatePositionDto
-UpdateProductDto
-UpdateSalesInvoiceLineRequest
-UpdateSalesInvoiceRequest
-UpdateUnitOfMeasureRequest
-UpdateUserRolesDto
-UpdateUserStatusDto
-UpdateWarehouseDto
-
-
-now u have all the endpoints available use what will help u get the data iam using in dashboard givee me to full fully working and well structrured
+Parameters
+Try it out
+Name	Description
+id *
+integer($int32)
+(path)
+id
+Responses

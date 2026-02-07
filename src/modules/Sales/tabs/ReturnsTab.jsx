@@ -1,27 +1,27 @@
-import {
-  Plus ,
-Send ,Ban ,
-  AlertCircle ,
-  Warehouse as WarehouseIcon,
-} from "lucide-react";
+import { Plus, Send, Ban, AlertCircle } from "lucide-react";
+
 export default function ReturnsTab({
   returns,
   onAdd,
   onPost,
   onCancel,
   onDelete,
+  canDraft = false, // Can create/edit/delete/cancel
+  canPost = false,  // Can post
 }) {
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <button
-          onClick={onAdd}
-          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          New Return
-        </button>
-      </div>
+      {canDraft && (
+        <div className="flex justify-end">
+          <button
+            onClick={onAdd}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            New Return
+          </button>
+        </div>
+      )}
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
         <table className="w-full">
@@ -71,15 +71,17 @@ export default function ReturnsTab({
                   <td className="px-6 py-4">{r.reason || "—"}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      {r.status?.toLowerCase() === "draft" && (
+                      {r.status?.toLowerCase() === "draft" && canDraft && (
                         <>
-                          <button
-                            onClick={() => onPost(r.id)}
-                            className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg"
-                            title="Post Return"
-                          >
-                            <Send className="w-5 h-5" />
-                          </button>
+                          {canPost && (
+                            <button
+                              onClick={() => onPost(r.id)}
+                              className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg"
+                              title="Post Return"
+                            >
+                              <Send className="w-5 h-5" />
+                            </button>
+                          )}
 
                           <button
                             onClick={() => onCancel(r.id)}
@@ -110,14 +112,6 @@ export default function ReturnsTab({
                         <span className="text-xs text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full flex items-center gap-1.5">
                           <Ban className="w-4 h-4" />
                           Cancelled – cannot delete
-                        </span>
-                      )}
-
-                      {!["draft", "posted", "cancelled"].includes(
-                        r.status?.toLowerCase() || "",
-                      ) && (
-                        <span className="text-xs text-red-600">
-                          Invalid status: {r.status}
                         </span>
                       )}
                     </div>

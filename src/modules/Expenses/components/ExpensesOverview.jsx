@@ -15,11 +15,18 @@ import {
 
 export default function ExpensesOverview({ expenses, stats }) {
   // Use stats from API if available, otherwise calculate from expenses
-  const totalSpent = stats?.totalSpending || expenses.reduce((sum, e) => sum + e.amount, 0);
-  const highestExpense = stats?.highestExpense || (expenses.length > 0 ? Math.max(...expenses.map((e) => e.amount)) : 0);
-  const lowestExpense = stats?.lowestExpense || (expenses.length > 0 ? Math.min(...expenses.map((e) => e.amount)) : 0);
+  const totalSpent =
+    stats?.totalSpending || expenses.reduce((sum, e) => sum + e.amount, 0);
+  const highestExpense =
+    stats?.highestExpense ||
+    (expenses.length > 0 ? Math.max(...expenses.map((e) => e.amount)) : 0);
+  const lowestExpense =
+    stats?.lowestExpense ||
+    (expenses.length > 0 ? Math.min(...expenses.map((e) => e.amount)) : 0);
   const expenseCount = stats?.expenseCount || expenses.length;
-  const averageExpense = stats?.averageExpense || (expenses.length > 0 ? totalSpent / expenses.length : 0);
+  const averageExpense =
+    stats?.averageExpense ||
+    (expenses.length > 0 ? totalSpent / expenses.length : 0);
 
   // Prepare time series data for line chart
   const monthlyData = expenses
@@ -60,9 +67,15 @@ export default function ExpensesOverview({ expenses, stats }) {
             <DollarSign className="w-10 h-10 text-red-600" />
             <span className="text-sm font-medium text-gray-500">Total</span>
           </div>
-          <h2 className="text-lg font-semibold text-gray-700">Total Spending</h2>
+          <h2 className="text-lg font-semibold text-gray-700">
+            Total Spending
+          </h2>
           <p className="text-3xl font-bold text-red-600 mt-2">
-            ${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            $
+            {totalSpent.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
         </div>
 
@@ -71,7 +84,9 @@ export default function ExpensesOverview({ expenses, stats }) {
             <Receipt className="w-10 h-10 text-blue-600" />
             <span className="text-sm font-medium text-gray-500">Count</span>
           </div>
-          <h2 className="text-lg font-semibold text-gray-700">Total Expenses</h2>
+          <h2 className="text-lg font-semibold text-gray-700">
+            Total Expenses
+          </h2>
           <p className="text-3xl font-bold text-blue-600 mt-2">
             {expenseCount.toLocaleString()}
           </p>
@@ -82,9 +97,15 @@ export default function ExpensesOverview({ expenses, stats }) {
             <TrendingUp className="w-10 h-10 text-green-600" />
             <span className="text-sm font-medium text-gray-500">Highest</span>
           </div>
-          <h2 className="text-lg font-semibold text-gray-700">Highest Expense</h2>
+          <h2 className="text-lg font-semibold text-gray-700">
+            Highest Expense
+          </h2>
           <p className="text-3xl font-bold text-green-600 mt-2">
-            ${highestExpense.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            $
+            {highestExpense.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
         </div>
 
@@ -93,9 +114,15 @@ export default function ExpensesOverview({ expenses, stats }) {
             <TrendingDown className="w-10 h-10 text-orange-600" />
             <span className="text-sm font-medium text-gray-500">Average</span>
           </div>
-          <h2 className="text-lg font-semibold text-gray-700">Average Expense</h2>
+          <h2 className="text-lg font-semibold text-gray-700">
+            Average Expense
+          </h2>
           <p className="text-3xl font-bold text-orange-600 mt-2">
-            ${averageExpense.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            $
+            {averageExpense.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
         </div>
       </div>
@@ -114,27 +141,32 @@ export default function ExpensesOverview({ expenses, stats }) {
         <>
           {/* LINE CHART */}
           <div className="bg-white p-6 rounded-2xl shadow-lg mb-8">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Spending Over Time</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">
+              Spending Over Time
+            </h2>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis 
-                    dataKey="date" 
+                  <XAxis
+                    dataKey="date"
                     stroke="#6b7280"
                     tick={{ fontSize: 12 }}
                   />
-                  <YAxis 
+                  <YAxis
                     stroke="#6b7280"
                     tick={{ fontSize: 12 }}
                     tickFormatter={(value) => `$${value}`}
                   />
-                  <Tooltip 
-                    formatter={(value) => [`$${value.toLocaleString()}`, 'Amount']}
+                  <Tooltip
+                    formatter={(value) => [
+                      `$${value.toLocaleString()}`,
+                      "Amount",
+                    ]}
                     contentStyle={{
-                      backgroundColor: '#fff',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
+                      backgroundColor: "#fff",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
                     }}
                   />
                   <Line
@@ -142,7 +174,7 @@ export default function ExpensesOverview({ expenses, stats }) {
                     dataKey="amount"
                     stroke="#ef4444"
                     strokeWidth={3}
-                    dot={{ fill: '#ef4444', r: 4 }}
+                    dot={{ fill: "#ef4444", r: 4 }}
                     activeDot={{ r: 6 }}
                   />
                 </LineChart>
@@ -153,7 +185,9 @@ export default function ExpensesOverview({ expenses, stats }) {
           {/* PIE CHART */}
           {categoryData.length > 0 && (
             <div className="bg-white p-6 rounded-2xl shadow-lg mb-8">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">Expenses by Category</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                Expenses by Category
+              </h2>
               <div className="h-96">
                 <ResponsiveContainer>
                   <PieChart>
@@ -164,30 +198,27 @@ export default function ExpensesOverview({ expenses, stats }) {
                       cx="50%"
                       cy="50%"
                       outerRadius={120}
-                      label={({ name, percent }) => 
+                      label={({ name, percent }) =>
                         `${name}: ${(percent * 100).toFixed(1)}%`
                       }
-                      labelLine={{ stroke: '#6b7280' }}
+                      labelLine={{ stroke: "#6b7280" }}
                     >
                       {categoryData.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={COLORS[index % COLORS.length]} 
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
                         />
                       ))}
                     </Pie>
-                    <Tooltip 
+                    <Tooltip
                       formatter={(value) => `$${value.toLocaleString()}`}
                       contentStyle={{
-                        backgroundColor: '#fff',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '8px',
+                        backgroundColor: "#fff",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
                       }}
                     />
-                    <Legend 
-                      verticalAlign="bottom"
-                      height={36}
-                    />
+                    <Legend verticalAlign="bottom" height={36} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -203,14 +234,20 @@ export default function ExpensesOverview({ expenses, stats }) {
                     >
                       <div
                         className="w-4 h-4 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                        style={{
+                          backgroundColor: COLORS[index % COLORS.length],
+                        }}
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-700 truncate">
                           {item.name}
                         </p>
                         <p className="text-lg font-bold text-gray-900">
-                          ${item.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          $
+                          {item.value.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                         </p>
                       </div>
                     </div>

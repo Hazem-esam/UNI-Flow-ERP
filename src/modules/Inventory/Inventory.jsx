@@ -5,6 +5,7 @@ import {
   Loader,
   AlertTriangle,
   CheckCircle,
+  Lock,
 } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -34,7 +35,75 @@ import {
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5225";
 
 export default function InventoryModule() {
-  const { user } = useContext(AuthContext);
+  const { user, hasPermission, hasAnyPermission } = useContext(AuthContext);
+
+  // ═══════════════════════════════════════════════════════════
+  // PERMISSION CHECKS
+  // ═══════════════════════════════════════════════════════════
+  
+  // Product Permissions (products.products.*)
+  // Product Permissions (products.Products.*)
+const canViewProducts = hasAnyPermission([
+  "products.Products.read",
+  "products.Products.manage",
+]);
+
+const canManageProducts = hasPermission("products.Products.manage");
+
+
+// Category Permissions (products.categories.*)
+const canViewCategories = hasAnyPermission([
+  "products.categories.read",
+  "products.categories.manage",
+]);
+
+const canManageCategories = hasPermission("products.categories.manage");
+
+
+// Unit of Measure Permissions (Products.unitofmeasures.*)
+// NOTE: Module name is capital "Products" and Read is capital "Read"
+const canViewUnits = hasAnyPermission([
+  "Products.unitofmeasures.Read",
+  "Products.unitofmeasures.manage",
+]);
+
+const canManageUnits = hasPermission("Products.unitofmeasures.manage");
+
+
+// Warehouse Permissions (inventory.warehouses.*)
+const canViewWarehouses = hasAnyPermission([
+  "inventory.warehouses.read",
+  "inventory.warehouses.manage",
+]);
+
+const canManageWarehouses = hasPermission("inventory.warehouses.manage");
+
+
+// Stock Permissions (inventory.stock.*)
+const canManageStock = hasPermission("inventory.stock.manage");
+
+
+// Inventory Reports Permission
+const canViewReports = hasPermission("inventory.reports.read");
+
+
+// Check if user has ANY inventory-related access
+const hasAnyInventoryAccess = hasAnyPermission([
+  "products.Products.read",
+  "products.Products.manage",
+  "products.categories.read",
+  "products.categories.manage",
+  "Products.unitofmeasures.Read",
+  "Products.unitofmeasures.manage",
+  "inventory.warehouses.read",
+  "inventory.warehouses.manage",
+  "inventory.stock.manage",
+  "inventory.reports.read",
+]);
+
+  // ═══════════════════════════════════════════════════════════
+  // STATE MANAGEMENT
+  // ═══════════════════════════════════════════════════════════
 
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -68,9 +137,9 @@ export default function InventoryModule() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [detailProduct, setDetailProduct] = useState(null);
 
-  // ────────────────────────────────────────────────
-  //  Fetching
-  // ────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // DATA FETCHING
+  // ═══════════════════════════════════════════════════════════
 
   useEffect(() => {
     fetchAllData();
@@ -80,13 +149,15 @@ export default function InventoryModule() {
     setLoading(true);
     setError(null);
     try {
-      await Promise.all([
-        fetchProducts(),
-        fetchCategories(),
-        fetchWarehouses(),
-        fetchUnitsOfMeasure(),
-        fetchStockBalance(),
-      ]);
+      const fetchPromises = [];
+      
+      if (canViewProducts) fetchPromises.push(fetchProducts());
+      if (canViewCategories) fetchPromises.push(fetchCategories());
+      if (canViewWarehouses) fetchPromises.push(fetchWarehouses());
+      if (canViewUnits) fetchPromises.push(fetchUnitsOfMeasure());
+      if (canViewReports || canManageStock) fetchPromises.push(fetchStockBalance());
+      
+      await Promise.all(fetchPromises);
     } catch (err) {
       console.error(err);
       setError("Failed to load inventory data. Please try again.");
@@ -96,6 +167,7 @@ export default function InventoryModule() {
   };
 
   const fetchProducts = async () => {
+    if (!canViewProducts) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/Products`, {
         headers: getAuthHeaders(),
@@ -108,6 +180,7 @@ export default function InventoryModule() {
   };
 
   const fetchCategories = async () => {
+    if (!canViewCategories) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/Category`, {
         headers: getAuthHeaders(),
@@ -120,6 +193,7 @@ export default function InventoryModule() {
   };
 
   const fetchWarehouses = async () => {
+    if (!canViewWarehouses) return;
     try {
       const companyId = user?.companyId;
       const url = companyId
@@ -134,6 +208,7 @@ export default function InventoryModule() {
   };
 
   const fetchUnitsOfMeasure = async () => {
+    if (!canViewUnits) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/UnitOfMeasure`, {
         headers: getAuthHeaders(),
@@ -146,6 +221,7 @@ export default function InventoryModule() {
   };
 
   const fetchStockBalance = async () => {
+    if (!canViewReports && !canManageStock) return;
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/InventoryReports/stock-balance`,
@@ -160,65 +236,84 @@ export default function InventoryModule() {
     }
   };
 
-  // ────────────────────────────────────────────────
-  //  Statistics (computed)
-  // ────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // STATISTICS
+  // ═══════════════════════════════════════════════════════════
 
-  const totalProducts = products.length;
-  const totalValue = products.reduce(
-    (sum, p) =>
-      sum + getProductStock(stockBalances, p.id) * (p.defaultPrice || 0),
-    0,
-  );
-
-  const lowStockItems = products.filter((p) => {
-    const stock = getProductStock(stockBalances, p.id);
-    const threshold = p.minQuantity || 5;
-    return stock > 0 && stock <= threshold;
-  }).length;
-
-  const outOfStock = products.filter(
-    (p) => getProductStock(stockBalances, p.id) === 0,
-  ).length;
-
-  const categoryData = categories
-    .map((cat) => {
-      const catProducts = products.filter(
-        (p) => p.categoryId === cat.id || p.categoryName === cat.name,
-      );
-      const qty = catProducts.reduce(
-        (sum, p) => sum + getProductStock(stockBalances, p.id),
+  const totalProducts = canViewProducts ? products.length : 0;
+  const totalValue = canViewProducts && (canViewReports || canManageStock)
+    ? products.reduce(
+        (sum, p) =>
+          sum + getProductStock(stockBalances, p.id) * (p.defaultPrice || 0),
         0,
-      );
-      return { name: cat.name, value: qty };
-    })
-    .filter((item) => item.value > 0);
+      )
+    : 0;
 
-  const stockLevelsData = products.slice(0, 5).map((p) => ({
-    name: p.name,
-    current: getProductStock(stockBalances, p.id),
-    reorder: p.minQuantity || 5,
-  }));
+  const lowStockItems = canViewProducts && (canViewReports || canManageStock)
+    ? products.filter((p) => {
+        const stock = getProductStock(stockBalances, p.id);
+        const threshold = p.minQuantity || 5;
+        return stock > 0 && stock <= threshold;
+      }).length
+    : 0;
+
+  const outOfStock = canViewProducts && (canViewReports || canManageStock)
+    ? products.filter((p) => getProductStock(stockBalances, p.id) === 0).length
+    : 0;
+
+  const categoryData = canViewCategories && canViewProducts && (canViewReports || canManageStock)
+    ? categories
+        .map((cat) => {
+          const catProducts = products.filter(
+            (p) => p.categoryId === cat.id || p.categoryName === cat.name,
+          );
+          const qty = catProducts.reduce(
+            (sum, p) => sum + getProductStock(stockBalances, p.id),
+            0,
+          );
+          return { name: cat.name, value: qty };
+        })
+        .filter((item) => item.value > 0)
+    : [];
+
+  const stockLevelsData = canViewProducts && (canViewReports || canManageStock)
+    ? products.slice(0, 5).map((p) => ({
+        name: p.name,
+        current: getProductStock(stockBalances, p.id),
+        reorder: p.minQuantity || 5,
+      }))
+    : [];
 
   const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
-  const filteredProducts = products.filter(
-    (p) =>
-      p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.code?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.barcode?.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredProducts = canViewProducts
+    ? products.filter(
+        (p) =>
+          p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.code?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.barcode?.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : [];
 
-  // ────────────────────────────────────────────────
-  //  CRUD & Stock operations
-  // ────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════
+  // HELPER FUNCTIONS
+  // ═══════════════════════════════════════════════════════════
 
   const showSuccess = (msg) => {
     setSuccessMessage(msg);
     setTimeout(() => setSuccessMessage(""), 3000);
   };
 
+  // ═══════════════════════════════════════════════════════════
+  // PRODUCT CRUD
+  // ═══════════════════════════════════════════════════════════
+
   const handleSaveProduct = async (data) => {
+    if (!canManageProducts) {
+      alert("You don't have permission to manage products");
+      return;
+    }
+
     try {
       const method = editingProduct ? "PUT" : "POST";
       const url = editingProduct
@@ -249,6 +344,11 @@ export default function InventoryModule() {
   };
 
   const handleDeleteProduct = async (id) => {
+    if (!canManageProducts) {
+      alert("You don't have permission to delete products");
+      return;
+    }
+
     if (!window.confirm("Delete this product?")) return;
     try {
       await fetch(`${API_BASE_URL}/api/Products/${id}`, {
@@ -264,10 +364,16 @@ export default function InventoryModule() {
     }
   };
 
-  // Similar handlers for category, warehouse, unit...
-  // (kept short here – same pattern as original)
+  // ═══════════════════════════════════════════════════════════
+  // CATEGORY CRUD
+  // ═══════════════════════════════════════════════════════════
 
   const handleSaveCategory = async (categoryData) => {
+    if (!canManageCategories) {
+      alert("You don't have permission to manage categories");
+      return;
+    }
+
     try {
       let response;
       if (editingCategory) {
@@ -303,7 +409,13 @@ export default function InventoryModule() {
       showSuccess("Operation completed. Please verify the changes.");
     }
   };
+
   const handleDeleteCategory = async (id) => {
+    if (!canManageCategories) {
+      alert("You don't have permission to delete categories");
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to delete this category?"))
       return;
     try {
@@ -319,7 +431,17 @@ export default function InventoryModule() {
       showSuccess("Operation completed. Please verify the changes.");
     }
   };
+
+  // ═══════════════════════════════════════════════════════════
+  // WAREHOUSE CRUD
+  // ═══════════════════════════════════════════════════════════
+
   const handleSaveWarehouse = async (warehouseData) => {
+    if (!canManageWarehouses) {
+      alert("You don't have permission to manage warehouses");
+      return;
+    }
+
     try {
       let response;
       if (editingWarehouse) {
@@ -357,7 +479,13 @@ export default function InventoryModule() {
       showSuccess("Operation completed. Please verify the changes.");
     }
   };
+
   const handleDeleteWarehouse = async (id) => {
+    if (!canManageWarehouses) {
+      alert("You don't have permission to delete warehouses");
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to delete this warehouse?"))
       return;
     try {
@@ -373,7 +501,17 @@ export default function InventoryModule() {
       showSuccess("Operation completed. Please verify the changes.");
     }
   };
+
+  // ═══════════════════════════════════════════════════════════
+  // UNIT CRUD
+  // ═══════════════════════════════════════════════════════════
+
   const handleSaveUnit = async (unitData) => {
+    if (!canManageUnits) {
+      alert("You don't have permission to manage units");
+      return;
+    }
+
     try {
       let response;
       if (editingUnit) {
@@ -407,7 +545,13 @@ export default function InventoryModule() {
       showSuccess("Operation completed. Please verify the changes.");
     }
   };
+
   const handleDeleteUnit = async (id) => {
+    if (!canManageUnits) {
+      alert("You don't have permission to delete units");
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to delete this unit?")) return;
     try {
       await fetch(`${API_BASE_URL}/api/UnitOfMeasure/${id}`, {
@@ -423,7 +567,16 @@ export default function InventoryModule() {
     }
   };
 
+  // ═══════════════════════════════════════════════════════════
+  // STOCK OPERATIONS
+  // ═══════════════════════════════════════════════════════════
+
   const handleStockIn = async (data) => {
+    if (!canManageStock) {
+      alert("You don't have permission to manage stock");
+      return;
+    }
+
     try {
       const payload = {
         docDate: new Date().toISOString(),
@@ -464,6 +617,11 @@ export default function InventoryModule() {
   };
 
   const handleStockOut = async (stockOutData) => {
+    if (!canManageStock) {
+      alert("You don't have permission to manage stock");
+      return;
+    }
+
     try {
       const payload = {
         docDate: new Date().toISOString(),
@@ -507,12 +665,49 @@ export default function InventoryModule() {
       setSelectedProduct(null);
     }
   };
+
+  // ═══════════════════════════════════════════════════════════
+  // RENDER GUARDS
+  // ═══════════════════════════════════════════════════════════
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-orange-50 to-slate-50">
         <div className="text-center">
           <Loader className="w-16 h-16 text-orange-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600 font-medium">Loading inventory…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasAnyInventoryAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-orange-50 to-slate-50 p-6">
+        <div className="bg-white rounded-xl p-8 shadow-lg max-w-md text-center">
+          <Lock className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Access Denied
+          </h2>
+          <p className="text-gray-600 mb-4">
+            You don't have permission to access the Inventory Module.
+          </p>
+          <div className="text-sm text-gray-500 text-left bg-gray-50 p-4 rounded-lg">
+            <p className="font-semibold mb-2">Required Permissions (any):</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>products.products.read / products.products.manage</li>
+              <li>products.categories.read / products.categories.manage</li>
+              <li>Products.unitofmeasures.Read / Products.unitofmeasures.manage</li>
+              <li>inventory.warehouses.read / inventory.warehouses.manage</li>
+              <li>inventory.stock.manage</li>
+              <li>inventory.reports.read</li>
+            </ul>
+          </div>
+          {user?.roles && (
+            <p className="text-sm text-gray-500 mt-4">
+              Your roles: {user.roles.join(", ")}
+            </p>
+          )}
         </div>
       </div>
     );
@@ -537,6 +732,11 @@ export default function InventoryModule() {
       </div>
     );
   }
+
+  // ═══════════════════════════════════════════════════════════
+  // MAIN RENDER
+  // ═══════════════════════════════════════════════════════════
+
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-slate-50 p-6">
       <div className="flex-1 max-w-7xl mx-auto">
@@ -561,35 +761,80 @@ export default function InventoryModule() {
               <p className="text-gray-600">Multi-warehouse stock management</p>
             </div>
           </div>
-          <button
-            onClick={() => setActiveTab("settings")}
-            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-orange-500"
-          >
-            <Settings className="w-5 h-5" />
-            Master Data
-          </button>
+          {(canManageCategories || canManageWarehouses || canManageUnits) && (
+            <button
+              onClick={() => setActiveTab("settings")}
+              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-orange-500"
+            >
+              <Settings className="w-5 h-5" />
+              Master Data
+            </button>
+          )}
         </div>
 
-        {/* Tabs */}
+        {/* Tabs - Only show tabs user has permission for */}
         <div className="flex gap-2 mb-6 bg-white p-2 rounded-xl shadow-md overflow-x-auto">
-          {["overview", "products", "warehouses", "lowStock", "settings"].map(
-            (tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
-                  activeTab === tab
-                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
-                    : "text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                {tab === "lowStock"
-                  ? "Low Stock"
-                  : tab === "settings"
-                    ? "Master Data"
-                    : tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ),
+          <button
+            onClick={() => setActiveTab("overview")}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+              activeTab === "overview"
+                ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            Overview
+          </button>
+
+          {(canViewProducts||canManageProducts) && (
+            <button
+              onClick={() => setActiveTab("products")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeTab === "products"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              Products
+            </button>
+          )}
+
+          {(canViewWarehouses||canManageWarehouses) && (
+            <button
+              onClick={() => setActiveTab("warehouses")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeTab === "warehouses"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              Warehouses
+            </button>
+          )}
+
+          {canViewProducts && (canViewReports || canManageStock) && (
+            <button
+              onClick={() => setActiveTab("lowStock")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeTab === "lowStock"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              Low Stock
+            </button>
+          )}
+
+          {(canManageCategories || canManageWarehouses || canManageUnits) && (
+            <button
+              onClick={() => setActiveTab("settings")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
+                activeTab === "settings"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              Master Data
+            </button>
           )}
         </div>
 
@@ -603,10 +848,12 @@ export default function InventoryModule() {
             stockLevelsData={stockLevelsData}
             categoryData={categoryData}
             COLORS={COLORS}
+            canViewProducts={canViewProducts}
+            canViewReports={canViewReports || canManageStock}
           />
         )}
 
-        {activeTab === "products" && (
+        {activeTab === "products" && canViewProducts && (
           <ProductsTab
             products={filteredProducts}
             categories={categories}
@@ -619,51 +866,69 @@ export default function InventoryModule() {
             }
             getUnitSymbol={(uid, p) => getUnitSymbol(unitsOfMeasure, uid, p)}
             getUnitId={(p) => getUnitId(unitsOfMeasure, p)}
-            onAddProduct={() => {
-              setEditingProduct(null);
-              setShowProductModal(true);
-            }}
-            onEditProduct={async (p) => {
-              try {
-                const res = await fetch(
-                  `${API_BASE_URL}/api/Products/${p.id}`,
-                  {
-                    headers: getAuthHeaders(),
-                  },
-                );
-                if (res.ok) setEditingProduct(await res.json());
-                else setEditingProduct(p);
-              } catch {
-                setEditingProduct(p);
-              }
-              setShowProductModal(true);
-            }}
-            onDeleteProduct={handleDeleteProduct}
-            onStockIn={(p) => {
-              if (!hasUnit(p)) {
-                alert("Unit of Measure required. Edit product first.");
-                return;
-              }
-              setSelectedProduct(p);
-              setShowStockInModal(true);
-            }}
-            onStockOut={(p) => {
-              if (!hasUnit(p)) {
-                alert("Unit of Measure required. Edit product first.");
-                return;
-              }
-              setSelectedProduct(p);
-              setShowStockOutModal(true);
-            }}
+            onAddProduct={
+              canManageProducts
+                ? () => {
+                    setEditingProduct(null);
+                    setShowProductModal(true);
+                  }
+                : null
+            }
+            onEditProduct={
+              canManageProducts
+                ? async (p) => {
+                    try {
+                      const res = await fetch(
+                        `${API_BASE_URL}/api/Products/${p.id}`,
+                        {
+                          headers: getAuthHeaders(),
+                        },
+                      );
+                      if (res.ok) setEditingProduct(await res.json());
+                      else setEditingProduct(p);
+                    } catch {
+                      setEditingProduct(p);
+                    }
+                    setShowProductModal(true);
+                  }
+                : null
+            }
+            onDeleteProduct={canManageProducts ? handleDeleteProduct : null}
+            onStockIn={
+              canManageStock
+                ? (p) => {
+                    if (!hasUnit(p)) {
+                      alert("Unit of Measure required. Edit product first.");
+                      return;
+                    }
+                    setSelectedProduct(p);
+                    setShowStockInModal(true);
+                  }
+                : null
+            }
+            onStockOut={
+              canManageStock
+                ? (p) => {
+                    if (!hasUnit(p)) {
+                      alert("Unit of Measure required. Edit product first.");
+                      return;
+                    }
+                    setSelectedProduct(p);
+                    setShowStockOutModal(true);
+                  }
+                : null
+            }
             onViewDetails={(p) => {
               setDetailProduct(p);
               setShowProductDetailModal(true);
             }}
             onRefresh={fetchAllData}
+            canManage={canManageProducts}
+            canManageStock={canManageStock}
           />
         )}
 
-        {activeTab === "warehouses" && (
+        {activeTab === "warehouses" && canViewWarehouses && (
           <WarehousesTab
             warehouses={warehouses}
             products={products}
@@ -672,10 +937,12 @@ export default function InventoryModule() {
               getProductStock(stockBalances, id, whId)
             }
             getUnitSymbol={(uid, p) => getUnitSymbol(unitsOfMeasure, uid, p)}
+            canViewProducts={canViewProducts}
+            canViewReports={canViewReports || canManageStock}
           />
         )}
 
-        {activeTab === "lowStock" && (
+        {activeTab === "lowStock" && canViewProducts && (canViewReports || canManageStock) && (
           <LowStockTab
             products={products}
             warehouses={warehouses}
@@ -687,34 +954,52 @@ export default function InventoryModule() {
           />
         )}
 
-        {activeTab === "settings" && (
+        {activeTab === "settings" && (canManageCategories || canManageWarehouses || canManageUnits) && (
           <MasterDataTab
             categories={categories}
             warehouses={warehouses}
             unitsOfMeasure={unitsOfMeasure}
-            onAddCategory={() => setShowCategoryModal(true)}
-            onEditCategory={(c) => {
-              setEditingCategory(c);
-              setShowCategoryModal(true);
-            }}
-            onDeleteCategory={handleDeleteCategory}
-            onAddWarehouse={() => setShowWarehouseModal(true)}
-            onEditWarehouse={(w) => {
-              setEditingWarehouse(w);
-              setShowWarehouseModal(true);
-            }}
-            onDeleteWarehouse={handleDeleteWarehouse}
-            onAddUnit={() => setShowUnitModal(true)}
-            onEditUnit={(u) => {
-              setEditingUnit(u);
-              setShowUnitModal(true);
-            }}
-            onDeleteUnit={handleDeleteUnit}
+            onAddCategory={canManageCategories ? () => setShowCategoryModal(true) : null}
+            onEditCategory={
+              canManageCategories
+                ? (c) => {
+                    setEditingCategory(c);
+                    setShowCategoryModal(true);
+                  }
+                : null
+            }
+            onDeleteCategory={canManageCategories ? handleDeleteCategory : null}
+            onAddWarehouse={canManageWarehouses ? () => setShowWarehouseModal(true) : null}
+            onEditWarehouse={
+              canManageWarehouses
+                ? (w) => {
+                    setEditingWarehouse(w);
+                    setShowWarehouseModal(true);
+                  }
+                : null
+            }
+            onDeleteWarehouse={canManageWarehouses ? handleDeleteWarehouse : null}
+            onAddUnit={canManageUnits ? () => setShowUnitModal(true) : null}
+            onEditUnit={
+              canManageUnits
+                ? (u) => {
+                    setEditingUnit(u);
+                    setShowUnitModal(true);
+                  }
+                : null
+            }
+            onDeleteUnit={canManageUnits ? handleDeleteUnit : null}
+            canManageCategories={canManageCategories}
+            canManageWarehouses={canManageWarehouses}
+            canManageUnits={canManageUnits}
           />
         )}
 
-        {/* ─── Modals ─── */}
-        {showProductModal && (
+        {/* ═══════════════════════════════════════════════════════════
+            MODALS - Only render if user has appropriate permissions
+            ═══════════════════════════════════════════════════════════ */}
+
+        {showProductModal && canManageProducts && (
           <ProductModal
             product={editingProduct}
             categories={categories}
@@ -724,12 +1009,12 @@ export default function InventoryModule() {
               setShowProductModal(false);
               setEditingProduct(null);
             }}
-            onAddCategory={() => setShowCategoryModal(true)}
-            onAddUnit={() => setShowUnitModal(true)}
+            onAddCategory={canManageCategories ? () => setShowCategoryModal(true) : null}
+            onAddUnit={canManageUnits ? () => setShowUnitModal(true) : null}
           />
         )}
 
-        {showCategoryModal && (
+        {showCategoryModal && canManageCategories && (
           <CategoryModal
             category={editingCategory}
             onSave={handleSaveCategory}
@@ -740,9 +1025,7 @@ export default function InventoryModule() {
           />
         )}
 
-        {/* ... other modals the same way ... */}
-
-        {showStockInModal && selectedProduct && (
+        {showStockInModal && selectedProduct && canManageStock && (
           <StockInModal
             product={selectedProduct}
             warehouses={warehouses.filter((w) => w.isActive)}
@@ -757,7 +1040,7 @@ export default function InventoryModule() {
           />
         )}
 
-        {showStockOutModal && selectedProduct && (
+        {showStockOutModal && selectedProduct && canManageStock && (
           <StockOutModal
             product={selectedProduct}
             warehouses={warehouses.filter((w) => w.isActive)}
@@ -779,7 +1062,8 @@ export default function InventoryModule() {
             }}
           />
         )}
-        {showWarehouseModal && (
+
+        {showWarehouseModal && canManageWarehouses && (
           <WarehouseModal
             warehouse={editingWarehouse}
             onSave={handleSaveWarehouse}
@@ -790,7 +1074,7 @@ export default function InventoryModule() {
           />
         )}
 
-        {showUnitModal && (
+        {showUnitModal && canManageUnits && (
           <UnitModal
             unit={editingUnit}
             onSave={handleSaveUnit}
@@ -800,6 +1084,7 @@ export default function InventoryModule() {
             }}
           />
         )}
+
         {showProductDetailModal && detailProduct && (
           <ProductDetailModal
             product={detailProduct}

@@ -1,6 +1,22 @@
-import { Building2, Mail, Phone, DollarSign, Clock, Edit, Trash2, Plus } from "lucide-react";
+import {
+  Building2,
+  Mail,
+  Phone,
+  DollarSign,
+  Clock,
+  Edit,
+  Trash2,
+  Plus,
+} from "lucide-react";
 
-export default function Customers({ customers, onEdit, onDelete, onAdd }) {
+export default function Customers({
+  customers,
+  onEdit,
+  onDelete,
+  onAdd,
+  canManage,
+  canAccess,
+}) {
   return (
     <div className="space-y-6">
       {/* Toolbar */}
@@ -9,13 +25,15 @@ export default function Customers({ customers, onEdit, onDelete, onAdd }) {
           <h2 className="text-2xl font-bold text-gray-900">Customers</h2>
           <p className="text-gray-600">Manage your customer relationships</p>
         </div>
-        <button
-          onClick={() => onAdd && onAdd()}
-          className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all shadow-md"
-        >
-          <Plus className="w-4 h-4" />
-          Add Customer
-        </button>
+        {(canAccess || canManage) && (
+          <button
+            onClick={() => onAdd && onAdd()}
+            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all shadow-md"
+          >
+            <Plus className="w-4 h-4" />
+            Add Customer
+          </button>
+        )}
       </div>
 
       {/* Customers Grid */}
@@ -68,21 +86,26 @@ export default function Customers({ customers, onEdit, onDelete, onAdd }) {
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <button
-                onClick={() => onEdit && onEdit(customer)}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all shadow-md font-medium"
-              >
-                <Edit className="w-4 h-4" />
-                Edit
-              </button>
-              <button
-                onClick={() => onDelete && onDelete(customer.id)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-md font-medium"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
+            {canAccess && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onEdit && onEdit(customer)}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all shadow-md font-medium"
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit
+                </button>
+
+                {canManage && (
+                  <button
+                    onClick={() => onDelete && onDelete(customer.id)}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all shadow-md font-medium"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>

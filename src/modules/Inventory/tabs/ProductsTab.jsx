@@ -27,6 +27,8 @@ export default function ProductsTab({
   onStockOut,
   onViewDetails,
   onRefresh,
+  canManage,
+  canManageStock,
 }) {
   const productsWithoutUnits = products.filter(
     (p) => !p.unitOfMeasureId && !p.unitOfMeasureName,
@@ -92,13 +94,15 @@ export default function ProductsTab({
             <RefreshCw className="w-4 h-4" />
             Refresh
           </button>
-          <button
-            onClick={onAddProduct}
-            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-md"
-          >
-            <Plus className="w-4 h-4" />
-            Add Product
-          </button>
+          {canManage && (
+            <button
+              onClick={onAddProduct}
+              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-md"
+            >
+              <Plus className="w-4 h-4" />
+              Add Product
+            </button>
+          )}
         </div>
       </div>
 
@@ -236,62 +240,67 @@ export default function ProductsTab({
                           >
                             <Eye className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => onStockIn(product)}
-                            disabled={
-                              !product.unitOfMeasureId &&
-                              !product.unitOfMeasureName
-                            }
-                            className={`p-2 rounded-lg transition-colors ${
-                              product.unitOfMeasureId ||
-                              product.unitOfMeasureName
-                                ? "text-green-600 hover:bg-green-50"
-                                : "text-gray-400 cursor-not-allowed"
-                            }`}
-                            title={
-                              product.unitOfMeasureId ||
-                              product.unitOfMeasureName
-                                ? "Add Stock"
-                                : "Unit of measure required"
-                            }
-                          >
-                            <ArrowUpCircle className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => onStockOut(product)}
-                            disabled={
-                              !product.unitOfMeasureId &&
-                              !product.unitOfMeasureName
-                            }
-                            className={`p-2 rounded-lg transition-colors ${
-                              product.unitOfMeasureId ||
-                              product.unitOfMeasureName
-                                ? "text-purple-600 hover:bg-purple-50"
-                                : "text-gray-400 cursor-not-allowed"
-                            }`}
-                            title={
-                              product.unitOfMeasureId ||
-                              product.unitOfMeasureName
-                                ? "Remove Stock"
-                                : "Unit of measure required"
-                            }
-                          >
-                            <ArrowDownCircle className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => onEditProduct(product)}
-                            className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
-                            title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => onDeleteProduct(product.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          {canManage && (
+                            <>
+                              {" "}
+                              <button
+                                onClick={() => onStockIn(product)}
+                                disabled={
+                                  !product.unitOfMeasureId &&
+                                  !product.unitOfMeasureName
+                                }
+                                className={`p-2 rounded-lg transition-colors ${
+                                  product.unitOfMeasureId ||
+                                  product.unitOfMeasureName
+                                    ? "text-green-600 hover:bg-green-50"
+                                    : "text-gray-400 cursor-not-allowed"
+                                }`}
+                                title={
+                                  product.unitOfMeasureId ||
+                                  product.unitOfMeasureName
+                                    ? "Add Stock"
+                                    : "Unit of measure required"
+                                }
+                              >
+                                <ArrowUpCircle className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => onStockOut(product)}
+                                disabled={
+                                  !product.unitOfMeasureId &&
+                                  !product.unitOfMeasureName
+                                }
+                                className={`p-2 rounded-lg transition-colors ${
+                                  product.unitOfMeasureId ||
+                                  product.unitOfMeasureName
+                                    ? "text-purple-600 hover:bg-purple-50"
+                                    : "text-gray-400 cursor-not-allowed"
+                                }`}
+                                title={
+                                  product.unitOfMeasureId ||
+                                  product.unitOfMeasureName
+                                    ? "Remove Stock"
+                                    : "Unit of measure required"
+                                }
+                              >
+                                <ArrowDownCircle className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => onEditProduct(product)}
+                                className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                title="Edit"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => onDeleteProduct(product.id)}
+                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
