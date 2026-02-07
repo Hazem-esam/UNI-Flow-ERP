@@ -11,13 +11,13 @@ import {
 } from "lucide-react";
 
 // HR Components
-import EmployeeList from "./components/EmployeeList";
-import EmployeeDetail from "./components/EmployeeDetail";
-import CreateEmployee from "./components/CreateEmployee";
-import DepartmentList from "./components/DepartmentList";
-import PositionList from "./components/PositionList";
-import LeaveManagement from "./components/LeaveManagement";
-import HRDashboard from "./components/HRDashboard";
+import EmployeeList from "../HR/components/EmployeeList";
+import EmployeeDetail from "../HR/components/EmployeeDetail";
+import CreateEmployee from "../HR/components/CreateEmployee";
+import DepartmentList from "../HR/components/DepartmentList";
+import PositionList from "../HR/components/PositionList";
+import LeaveManagement from "../HR/components/LeaveManagement";
+import HRDashboard from "../HR/components//HRDashboard";
 
 const HR = () => {
   const { hasPermission, hasAnyPermission } = useContext(AuthContext);
