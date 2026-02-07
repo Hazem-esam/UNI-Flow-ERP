@@ -52,7 +52,7 @@ import {
   mapDealStageToEnum,
   mapEnumToDealStage,
   DealStage,
-} from "./services/crmService";
+} from "../CRM/services/Crmservice";
 
 function CRMContent() {
   const { user, hasPermission, hasAnyPermission } = useContext(AuthContext);
@@ -700,7 +700,6 @@ function CRMContent() {
               pipelineDeals={pipelineDeals}
               pipelineData={pipelineData}
               loadPipeline={loadPipeline}
-          
               canManage={canManageCustomers}
               canAccess={canAccessCustomers}
             />
