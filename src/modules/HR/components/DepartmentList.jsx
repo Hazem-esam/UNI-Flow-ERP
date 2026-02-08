@@ -41,7 +41,6 @@ const DepartmentList = () => {
     code: "",
     name: "",
     description: "",
-    managerId: "",
     isActive: true,
   });
 
@@ -70,7 +69,6 @@ const DepartmentList = () => {
       code: "",
       name: "",
       description: "",
-      managerId: "",
       isActive: true,
     });
     setShowModal(true);
@@ -84,7 +82,7 @@ const DepartmentList = () => {
       code: dept.code,
       name: dept.name,
       description: dept.description || "",
-      managerId: dept.managerId || "",
+      ...(dept.managerId && { managerId: dept.managerId }),
       isActive: dept.isActive,
     });
     setShowModal(true);

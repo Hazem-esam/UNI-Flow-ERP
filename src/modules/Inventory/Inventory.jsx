@@ -40,66 +40,60 @@ export default function InventoryModule() {
   // ═══════════════════════════════════════════════════════════
   // PERMISSION CHECKS
   // ═══════════════════════════════════════════════════════════
-  
+
   // Product Permissions (products.products.*)
   // Product Permissions (products.Products.*)
-const canViewProducts = hasAnyPermission([
-  "products.Products.read",
-  "products.Products.manage",
-]);
+  const canViewProducts = hasAnyPermission([
+    "products.Products.read",
+    "products.Products.manage",
+  ]);
 
-const canManageProducts = hasPermission("products.Products.manage");
+  const canManageProducts = hasPermission("products.Products.manage");
 
+  // Category Permissions (products.categories.*)
+  const canViewCategories = hasAnyPermission([
+    "products.categories.read",
+    "products.categories.manage",
+  ]);
 
-// Category Permissions (products.categories.*)
-const canViewCategories = hasAnyPermission([
-  "products.categories.read",
-  "products.categories.manage",
-]);
+  const canManageCategories = hasPermission("products.categories.manage");
 
-const canManageCategories = hasPermission("products.categories.manage");
+  // Unit of Measure Permissions (Products.unitofmeasures.*)
+  // NOTE: Module name is capital "Products" and Read is capital "Read"
+  const canViewUnits = hasAnyPermission([
+    "Products.unitofmeasures.Read",
+    "Products.unitofmeasures.manage",
+  ]);
 
+  const canManageUnits = hasPermission("Products.unitofmeasures.manage");
 
-// Unit of Measure Permissions (Products.unitofmeasures.*)
-// NOTE: Module name is capital "Products" and Read is capital "Read"
-const canViewUnits = hasAnyPermission([
-  "Products.unitofmeasures.Read",
-  "Products.unitofmeasures.manage",
-]);
+  // Warehouse Permissions (inventory.warehouses.*)
+  const canViewWarehouses = hasAnyPermission([
+    "inventory.warehouses.read",
+    "inventory.warehouses.manage",
+  ]);
 
-const canManageUnits = hasPermission("Products.unitofmeasures.manage");
+  const canManageWarehouses = hasPermission("inventory.warehouses.manage");
 
+  // Stock Permissions (inventory.stock.*)
+  const canManageStock = hasPermission("inventory.stock.manage");
 
-// Warehouse Permissions (inventory.warehouses.*)
-const canViewWarehouses = hasAnyPermission([
-  "inventory.warehouses.read",
-  "inventory.warehouses.manage",
-]);
+  // Inventory Reports Permission
+  const canViewReports = hasPermission("inventory.reports.read");
 
-const canManageWarehouses = hasPermission("inventory.warehouses.manage");
-
-
-// Stock Permissions (inventory.stock.*)
-const canManageStock = hasPermission("inventory.stock.manage");
-
-
-// Inventory Reports Permission
-const canViewReports = hasPermission("inventory.reports.read");
-
-
-// Check if user has ANY inventory-related access
-const hasAnyInventoryAccess = hasAnyPermission([
-  "products.Products.read",
-  "products.Products.manage",
-  "products.categories.read",
-  "products.categories.manage",
-  "Products.unitofmeasures.Read",
-  "Products.unitofmeasures.manage",
-  "inventory.warehouses.read",
-  "inventory.warehouses.manage",
-  "inventory.stock.manage",
-  "inventory.reports.read",
-]);
+  // Check if user has ANY inventory-related access
+  const hasAnyInventoryAccess = hasAnyPermission([
+    "products.Products.read",
+    "products.Products.manage",
+    "products.categories.read",
+    "products.categories.manage",
+    "Products.unitofmeasures.Read",
+    "Products.unitofmeasures.manage",
+    "inventory.warehouses.read",
+    "inventory.warehouses.manage",
+    "inventory.stock.manage",
+    "inventory.reports.read",
+  ]);
 
   // ═══════════════════════════════════════════════════════════
   // STATE MANAGEMENT
@@ -150,13 +144,14 @@ const hasAnyInventoryAccess = hasAnyPermission([
     setError(null);
     try {
       const fetchPromises = [];
-      
+
       if (canViewProducts) fetchPromises.push(fetchProducts());
       if (canViewCategories) fetchPromises.push(fetchCategories());
       if (canViewWarehouses) fetchPromises.push(fetchWarehouses());
       if (canViewUnits) fetchPromises.push(fetchUnitsOfMeasure());
-      if (canViewReports || canManageStock) fetchPromises.push(fetchStockBalance());
-      
+      if (canViewReports || canManageStock)
+        fetchPromises.push(fetchStockBalance());
+
       await Promise.all(fetchPromises);
     } catch (err) {
       console.error(err);
@@ -241,48 +236,54 @@ const hasAnyInventoryAccess = hasAnyPermission([
   // ═══════════════════════════════════════════════════════════
 
   const totalProducts = canViewProducts ? products.length : 0;
-  const totalValue = canViewProducts && (canViewReports || canManageStock)
-    ? products.reduce(
-        (sum, p) =>
-          sum + getProductStock(stockBalances, p.id) * (p.defaultPrice || 0),
-        0,
-      )
-    : 0;
+  const totalValue =
+    canViewProducts && (canViewReports || canManageStock)
+      ? products.reduce(
+          (sum, p) =>
+            sum + getProductStock(stockBalances, p.id) * (p.defaultPrice || 0),
+          0,
+        )
+      : 0;
 
-  const lowStockItems = canViewProducts && (canViewReports || canManageStock)
-    ? products.filter((p) => {
-        const stock = getProductStock(stockBalances, p.id);
-        const threshold = p.minQuantity || 5;
-        return stock > 0 && stock <= threshold;
-      }).length
-    : 0;
+  const lowStockItems =
+    canViewProducts && (canViewReports || canManageStock)
+      ? products.filter((p) => {
+          const stock = getProductStock(stockBalances, p.id);
+          const threshold = p.minQuantity || 5;
+          return stock > 0 && stock <= threshold;
+        }).length
+      : 0;
 
-  const outOfStock = canViewProducts && (canViewReports || canManageStock)
-    ? products.filter((p) => getProductStock(stockBalances, p.id) === 0).length
-    : 0;
+  const outOfStock =
+    canViewProducts && (canViewReports || canManageStock)
+      ? products.filter((p) => getProductStock(stockBalances, p.id) === 0)
+          .length
+      : 0;
 
-  const categoryData = canViewCategories && canViewProducts && (canViewReports || canManageStock)
-    ? categories
-        .map((cat) => {
-          const catProducts = products.filter(
-            (p) => p.categoryId === cat.id || p.categoryName === cat.name,
-          );
-          const qty = catProducts.reduce(
-            (sum, p) => sum + getProductStock(stockBalances, p.id),
-            0,
-          );
-          return { name: cat.name, value: qty };
-        })
-        .filter((item) => item.value > 0)
-    : [];
+  const categoryData =
+    canViewCategories && canViewProducts && (canViewReports || canManageStock)
+      ? categories
+          .map((cat) => {
+            const catProducts = products.filter(
+              (p) => p.categoryId === cat.id || p.categoryName === cat.name,
+            );
+            const qty = catProducts.reduce(
+              (sum, p) => sum + getProductStock(stockBalances, p.id),
+              0,
+            );
+            return { name: cat.name, value: qty };
+          })
+          .filter((item) => item.value > 0)
+      : [];
 
-  const stockLevelsData = canViewProducts && (canViewReports || canManageStock)
-    ? products.slice(0, 5).map((p) => ({
-        name: p.name,
-        current: getProductStock(stockBalances, p.id),
-        reorder: p.minQuantity || 5,
-      }))
-    : [];
+  const stockLevelsData =
+    canViewProducts && (canViewReports || canManageStock)
+      ? products.slice(0, 5).map((p) => ({
+          name: p.name,
+          current: getProductStock(stockBalances, p.id),
+          reorder: p.minQuantity || 5,
+        }))
+      : [];
 
   const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
@@ -697,7 +698,9 @@ const hasAnyInventoryAccess = hasAnyPermission([
             <ul className="list-disc list-inside space-y-1">
               <li>products.products.read / products.products.manage</li>
               <li>products.categories.read / products.categories.manage</li>
-              <li>Products.unitofmeasures.Read / Products.unitofmeasures.manage</li>
+              <li>
+                Products.unitofmeasures.Read / Products.unitofmeasures.manage
+              </li>
               <li>inventory.warehouses.read / inventory.warehouses.manage</li>
               <li>inventory.stock.manage</li>
               <li>inventory.reports.read</li>
@@ -785,7 +788,7 @@ const hasAnyInventoryAccess = hasAnyPermission([
             Overview
           </button>
 
-          {(canViewProducts||canManageProducts) && (
+          {(canViewProducts || canManageProducts) && (
             <button
               onClick={() => setActiveTab("products")}
               className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
@@ -798,7 +801,7 @@ const hasAnyInventoryAccess = hasAnyPermission([
             </button>
           )}
 
-          {(canViewWarehouses||canManageWarehouses) && (
+          {(canViewWarehouses || canManageWarehouses) && (
             <button
               onClick={() => setActiveTab("warehouses")}
               className={`px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap ${
@@ -942,58 +945,69 @@ const hasAnyInventoryAccess = hasAnyPermission([
           />
         )}
 
-        {activeTab === "lowStock" && canViewProducts && (canViewReports || canManageStock) && (
-          <LowStockTab
-            products={products}
-            warehouses={warehouses}
-            getProductStock={(id, whId) =>
-              getProductStock(stockBalances, id, whId)
-            }
-            getUnitSymbol={(uid, p) => getUnitSymbol(unitsOfMeasure, uid, p)}
-            getLowStockThreshold={(p) => p.minQuantity || 5}
-          />
-        )}
+        {activeTab === "lowStock" &&
+          canViewProducts &&
+          (canViewReports || canManageStock) && (
+            <LowStockTab
+              products={products}
+              warehouses={warehouses}
+              getProductStock={(id, whId) =>
+                getProductStock(stockBalances, id, whId)
+              }
+              getUnitSymbol={(uid, p) => getUnitSymbol(unitsOfMeasure, uid, p)}
+              getLowStockThreshold={(p) => p.minQuantity || 5}
+            />
+          )}
 
-        {activeTab === "settings" && (canManageCategories || canManageWarehouses || canManageUnits) && (
-          <MasterDataTab
-            categories={categories}
-            warehouses={warehouses}
-            unitsOfMeasure={unitsOfMeasure}
-            onAddCategory={canManageCategories ? () => setShowCategoryModal(true) : null}
-            onEditCategory={
-              canManageCategories
-                ? (c) => {
-                    setEditingCategory(c);
-                    setShowCategoryModal(true);
-                  }
-                : null
-            }
-            onDeleteCategory={canManageCategories ? handleDeleteCategory : null}
-            onAddWarehouse={canManageWarehouses ? () => setShowWarehouseModal(true) : null}
-            onEditWarehouse={
-              canManageWarehouses
-                ? (w) => {
-                    setEditingWarehouse(w);
-                    setShowWarehouseModal(true);
-                  }
-                : null
-            }
-            onDeleteWarehouse={canManageWarehouses ? handleDeleteWarehouse : null}
-            onAddUnit={canManageUnits ? () => setShowUnitModal(true) : null}
-            onEditUnit={
-              canManageUnits
-                ? (u) => {
-                    setEditingUnit(u);
-                    setShowUnitModal(true);
-                  }
-                : null
-            }
-            onDeleteUnit={canManageUnits ? handleDeleteUnit : null}
-            canManageCategories={canManageCategories}
-            canManageWarehouses={canManageWarehouses}
-            canManageUnits={canManageUnits}
-          />
-        )}
+        {activeTab === "settings" &&
+          (canManageCategories || canManageWarehouses || canManageUnits) && (
+            <MasterDataTab
+              categories={categories}
+              warehouses={warehouses}
+              unitsOfMeasure={unitsOfMeasure}
+              onAddCategory={
+                canManageCategories ? () => setShowCategoryModal(true) : null
+              }
+              onEditCategory={
+                canManageCategories
+                  ? (c) => {
+                      setEditingCategory(c);
+                      setShowCategoryModal(true);
+                    }
+                  : null
+              }
+              onDeleteCategory={
+                canManageCategories ? handleDeleteCategory : null
+              }
+              onAddWarehouse={
+                canManageWarehouses ? () => setShowWarehouseModal(true) : null
+              }
+              onEditWarehouse={
+                canManageWarehouses
+                  ? (w) => {
+                      setEditingWarehouse(w);
+                      setShowWarehouseModal(true);
+                    }
+                  : null
+              }
+              onDeleteWarehouse={
+                canManageWarehouses ? handleDeleteWarehouse : null
+              }
+              onAddUnit={canManageUnits ? () => setShowUnitModal(true) : null}
+              onEditUnit={
+                canManageUnits
+                  ? (u) => {
+                      setEditingUnit(u);
+                      setShowUnitModal(true);
+                    }
+                  : null
+              }
+              onDeleteUnit={canManageUnits ? handleDeleteUnit : null}
+              canManageCategories={canManageCategories}
+              canManageWarehouses={canManageWarehouses}
+              canManageUnits={canManageUnits}
+            />
+          )}
 
         {/* ═══════════════════════════════════════════════════════════
             MODALS - Only render if user has appropriate permissions
@@ -1009,7 +1023,9 @@ const hasAnyInventoryAccess = hasAnyPermission([
               setShowProductModal(false);
               setEditingProduct(null);
             }}
-            onAddCategory={canManageCategories ? () => setShowCategoryModal(true) : null}
+            onAddCategory={
+              canManageCategories ? () => setShowCategoryModal(true) : null
+            }
             onAddUnit={canManageUnits ? () => setShowUnitModal(true) : null}
           />
         )}

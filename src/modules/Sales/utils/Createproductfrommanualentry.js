@@ -1,7 +1,7 @@
 /**
  * Automatically creates a product with its required unit and category
  * when the inventory module is disabled (manual entry mode)
- * 
+ *
  * @param {string} productName - Name of the product to create
  * @param {string} unitName - Name/symbol of the unit (e.g., "kg", "pcs", "unit")
  * @param {object} options - Optional parameters
@@ -10,10 +10,10 @@
 export async function createProductFromManualEntry(
   productName,
   unitName = "unit",
-  options = {}
+  options = {},
 ) {
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5225";
-  
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   // Get auth token
   const token = localStorage.getItem("accessToken");
   if (!token) {
@@ -26,28 +26,32 @@ export async function createProductFromManualEntry(
   };
 
   try {
-    console.log(`🔄 Starting auto-creation for product: "${productName}" with unit: "${unitName}"`);
+    console.log(
+      `🔄 Starting auto-creation for product: "${productName}" with unit: "${unitName}"`,
+    );
 
     // Step 1: Create or find Unit of Measure
     let unitId = null;
-    
+
     // First try to find existing unit
     try {
       const unitsResponse = await fetch(`${API_BASE_URL}/api/UnitOfMeasure`, {
         headers,
       });
-      
+
       if (unitsResponse.ok) {
         const existingUnits = await unitsResponse.json();
         const foundUnit = existingUnits.find(
-          (u) => 
+          (u) =>
             u.name?.toLowerCase() === unitName.toLowerCase() ||
-            u.symbol?.toLowerCase() === unitName.toLowerCase()
+            u.symbol?.toLowerCase() === unitName.toLowerCase(),
         );
-        
+
         if (foundUnit) {
           unitId = foundUnit.id;
-          console.log(`✓ Found existing unit: ${foundUnit.name} (ID: ${unitId})`);
+          console.log(
+            `✓ Found existing unit: ${foundUnit.name} (ID: ${unitId})`,
+          );
         }
       }
     } catch (err) {
@@ -57,12 +61,12 @@ export async function createProductFromManualEntry(
     // Create new unit if not found
     if (!unitId) {
       console.log(`📝 Creating new unit: "${unitName}"`);
-      
+
       const unitPayload = {
         name: unitName,
         symbol: unitName.substring(0, 10), // Limit symbol length
       };
-      
+
       console.log("Unit payload:", JSON.stringify(unitPayload, null, 2));
 
       const unitResponse = await fetch(`${API_BASE_URL}/api/UnitOfMeasure`, {
@@ -91,16 +95,18 @@ export async function createProductFromManualEntry(
       const categoriesResponse = await fetch(`${API_BASE_URL}/api/Category`, {
         headers,
       });
-      
+
       if (categoriesResponse.ok) {
         const existingCategories = await categoriesResponse.json();
         const foundCategory = existingCategories.find(
-          (c) => c.name?.toLowerCase() === defaultCategoryName.toLowerCase()
+          (c) => c.name?.toLowerCase() === defaultCategoryName.toLowerCase(),
         );
-        
+
         if (foundCategory) {
           categoryId = foundCategory.id;
-          console.log(`✓ Found existing category: ${foundCategory.name} (ID: ${categoryId})`);
+          console.log(
+            `✓ Found existing category: ${foundCategory.name} (ID: ${categoryId})`,
+          );
         }
       }
     } catch (err) {
@@ -110,13 +116,16 @@ export async function createProductFromManualEntry(
     // Create new category if not found
     if (!categoryId) {
       console.log(`📝 Creating new category: "${defaultCategoryName}"`);
-      
+
       const categoryPayload = {
         name: defaultCategoryName,
         description: "Auto-generated category for manual product entry",
       };
-      
-      console.log("Category payload:", JSON.stringify(categoryPayload, null, 2));
+
+      console.log(
+        "Category payload:",
+        JSON.stringify(categoryPayload, null, 2),
+      );
 
       const categoryResponse = await fetch(`${API_BASE_URL}/api/Category`, {
         method: "POST",
@@ -132,23 +141,26 @@ export async function createProductFromManualEntry(
 
       const createdCategory = await categoryResponse.json();
       categoryId = createdCategory.id;
-      console.log(`✅ Created new category: ${defaultCategoryName} (ID: ${categoryId})`);
+      console.log(
+        `✅ Created new category: ${defaultCategoryName} (ID: ${categoryId})`,
+      );
     }
 
     // Step 3: Create the Product
     console.log(`📝 Creating product: "${productName}"`);
-    
+
     const productPayload = {
       code: options.code || `AUTO-${Date.now()}`,
       name: productName,
-      description: options.description || `Auto-generated product: ${productName}`,
+      description:
+        options.description || `Auto-generated product: ${productName}`,
       categoryId: categoryId,
       unitOfMeasureId: unitId,
       defaultPrice: parseFloat(options.defaultPrice) || 0,
       minQuantity: parseFloat(options.minQuantity) || 0,
       barcode: options.barcode || "",
     };
-    
+
     console.log("Product payload:", JSON.stringify(productPayload, null, 2));
 
     const productResponse = await fetch(`${API_BASE_URL}/api/Products`, {
@@ -164,8 +176,12 @@ export async function createProductFromManualEntry(
     }
 
     const createdProduct = await productResponse.json();
-    console.log(`✅ Created product: ${productName} (ID: ${createdProduct.id})`);
-    console.log(`🎉 Complete! Product ID: ${createdProduct.id}, Unit ID: ${unitId}, Category ID: ${categoryId}`);
+    console.log(
+      `✅ Created product: ${productName} (ID: ${createdProduct.id})`,
+    );
+    console.log(
+      `🎉 Complete! Product ID: ${createdProduct.id}, Unit ID: ${unitId}, Category ID: ${categoryId}`,
+    );
 
     return {
       productId: createdProduct.id,

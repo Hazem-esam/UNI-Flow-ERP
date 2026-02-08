@@ -431,6 +431,7 @@ function CRMContent() {
     }
 
     try {
+      let response;
       if (editingCustomer) {
         const updateData = {
           name: customerData.name,
@@ -441,14 +442,15 @@ function CRMContent() {
           creditLimit: customerData.creditLimit,
           isActive: customerData.isActive,
         };
-        await customersApi.update(editingCustomer.id, updateData);
+        response = await customersApi.update(editingCustomer.id, updateData);
       } else {
-        await customersApi.create(customerData);
+        response = await customersApi.create(customerData);
       }
-
-      await loadCustomers();
-      setShowCustomerModal(false);
-      setEditingCustomer(null);
+      if (response?.success !== false) {
+        await loadCustomers();
+        setShowCustomerModal(false);
+        setEditingCustomer(null);
+      }
     } catch (err) {
       console.error("Error saving customer:", err);
 
@@ -668,7 +670,8 @@ function CRMContent() {
                   onEdit={
                     canManageCustomers || canAccessCustomers
                       ? (customer) => {
-                          setEditingCustomer(customer);
+                          setEditingCustomer(customer); // ✅ This will now receive properly formatted data from Customers.jsx
+
                           setShowCustomerModal(true);
                         }
                       : null

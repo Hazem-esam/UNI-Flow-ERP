@@ -89,7 +89,20 @@ export default function Customers({
             {canAccess && (
               <div className="flex gap-2">
                 <button
-                  onClick={() => onEdit && onEdit(customer)}
+                  onClick={() =>
+                    onEdit &&
+                    onEdit({
+                      id: customer.id,
+                      code: customer.code,
+                      name: customer.name,
+                      email: customer.email,
+                      phone: customer.phone,
+                      address: customer.address,
+                      taxNumber: customer.taxNumber,
+                      creditLimit: customer.lifetimeValue, // ✅ Map lifetimeValue to creditLimit
+                      isActive: customer.status === "active", // ✅ Map status to isActive
+                    })
+                  }
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all shadow-md font-medium"
                 >
                   <Edit className="w-4 h-4" />

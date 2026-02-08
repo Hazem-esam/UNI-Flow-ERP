@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import PermissionGuard from "../../components/Permissionguard.jsx";
+import PermissionGuard from "../../components/Permissionguard";
 import {
   TrendingUp,
   Loader,
@@ -30,7 +30,7 @@ import {
   getStatusStyle,
 } from "./utils/salesHelpers";
 
-import { createProductFromManualEntry } from "./utils/Createproductfrommanualentry ";
+import { createProductFromManualEntry } from "./utils/Createproductfrommanualentry.js";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5225";
 
@@ -816,7 +816,7 @@ export default function SalesModule() {
 
   // Determine available tabs based on permissions
   const availableTabs = [
-    { key: "overview", label: "Overview", permission: null },
+    { key: "overview", label: "Overview", permission: null }, // Overview always visible
     {
       key: "invoices",
       label: "Invoices",
@@ -953,7 +953,10 @@ export default function SalesModule() {
               onAdd={handleAddCustomer}
               onEdit={handleEditCustomer}
               onDelete={handleDeleteCustomer}
-              canManage={hasAnyPermission(["sales.customers.manage"])}
+              canManage={hasAnyPermission([
+                "sales.customers.manage",
+                "sales.customers.access",
+              ])}
             />
           </PermissionGuard>
         )}

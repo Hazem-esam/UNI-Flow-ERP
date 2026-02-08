@@ -4,9 +4,9 @@ export default function CustomersTab({
   customers,
   searchQuery,
   setSearchQuery,
-  handleAddCustomer,
-  handleEditCustomer,
-  handleDeleteCustomer,
+  onAdd,
+  onEdit,
+  onDelete,
   canManage,
 }) {
   return (
@@ -24,7 +24,7 @@ export default function CustomersTab({
         </div>
         {canManage && (
           <button
-            onClick={handleAddCustomer}
+            onClick={onAdd}
             className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
@@ -45,7 +45,7 @@ export default function CustomersTab({
             </p>
             {canManage && (
               <button
-                onClick={handleAddCustomer}
+                onClick={onAdd}
                 className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
               >
                 <Plus className="w-4 h-4 inline mr-2" />
@@ -66,14 +66,14 @@ export default function CustomersTab({
                 {canManage && (
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleEditCustomer(c)}
+                      onClick={() => onEdit(c)}
                       className="p-2 hover:bg-green-50 text-green-600 rounded"
                       title="Edit"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDeleteCustomer(c.id)}
+                      onClick={() => onDelete(c.id)}
                       className="p-2 hover:bg-red-50 text-red-600 rounded"
                       title="Delete"
                     >
@@ -85,6 +85,22 @@ export default function CustomersTab({
               <h3 className="text-lg font-bold mb-2">{c.name}</h3>
               {c.email && <p className="text-sm text-gray-600">📧 {c.email}</p>}
               {c.phone && <p className="text-sm text-gray-600">📞 {c.phone}</p>}
+              {c.creditLimit > 0 && (
+                <p className="text-sm text-gray-600 mt-2">
+                  💳 Credit Limit: ${c.creditLimit.toLocaleString()}
+                </p>
+              )}
+              <div className="mt-3">
+                <span
+                  className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                    c.isActive
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {c.isActive ? "Active" : "Inactive"}
+                </span>
+              </div>
             </div>
           ))
         )}

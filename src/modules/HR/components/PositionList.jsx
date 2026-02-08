@@ -15,7 +15,8 @@ const PositionList = () => {
   const { hasPermission } = useContext(AuthContext);
 
   // Permissions
-  const canRead = hasPermission("hr.positions.read") || hasPermission("hr.positions.manage");
+  const canRead =
+    hasPermission("hr.positions.read") || hasPermission("hr.positions.manage");
   const canManage = hasPermission("hr.positions.manage");
 
   if (!canRead) {
@@ -116,15 +117,32 @@ const PositionList = () => {
     if (!canManage) return;
 
     try {
+      const levelMap = {
+        Junior: 0,
+        Mid: 1,
+        Senior: 2,
+        Lead: 3,
+        Manager: 4,
+        Director: 5,
+      };
+
+      // Prepare payload
+      const payload = {
+        ...formData,
+        level: levelMap[formData.level],
+      };
+
       let response;
       if (editingPosition) {
-        response = await ApiService.updatePosition(editingPosition.id, formData);
+        response = await ApiService.updatePosition(editingPosition.id, payload);
       } else {
-        response = await ApiService.createPosition(formData);
+        response = await ApiService.createPosition(payload); // ✅ Assign the response
       }
 
-      if (response.success) {
-        alert(`Position ${editingPosition ? "updated" : "created"} successfully!`);
+      if (response?.success) {
+        alert(
+          `Position ${editingPosition ? "updated" : "created"} successfully!`,
+        );
         setShowModal(false);
         loadPositions();
       } else {
@@ -132,13 +150,14 @@ const PositionList = () => {
       }
     } catch (error) {
       console.error("Error saving position:", error);
-      alert("An error occurred");
+      alert("An unexpected error occurred");
     }
   };
 
   const handleDelete = async (id) => {
     if (!canManage) return;
-    if (!window.confirm("Are you sure you want to delete this position?")) return;
+    if (!window.confirm("Are you sure you want to delete this position?"))
+      return;
 
     try {
       const response = await ApiService.deletePosition(id);
@@ -156,7 +175,7 @@ const PositionList = () => {
     (pos) =>
       pos.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pos.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pos.departmentName?.toLowerCase().includes(searchTerm.toLowerCase())
+      pos.departmentName?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const levelColors = {
@@ -210,12 +229,26 @@ const PositionList = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Level</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary Range</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                {canManage && <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Position
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Department
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Level
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Salary Range
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                {canManage && (
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -226,32 +259,51 @@ const PositionList = () => {
                       <Briefcase className="w-5 h-5 text-purple-600" />
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{position.title}</div>
-                      <div className="text-sm text-gray-500">{position.code}</div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {position.title}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {position.code}
+                      </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{position.departmentName || "N/A"}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {position.departmentName || "N/A"}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${levelColors[position.level] || levelColors.Entry}`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${levelColors[position.level] || levelColors.Entry}`}
+                    >
                       {position.level}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap flex items-center space-x-1 text-sm text-gray-900">
                     <DollarSign className="w-4 h-4 text-gray-400" />
-                    <span>{position.minSalary?.toLocaleString() || "0"} - {position.maxSalary?.toLocaleString() || "0"}</span>
+                    <span>
+                      {position.minSalary?.toLocaleString() || "0"} -{" "}
+                      {position.maxSalary?.toLocaleString() || "0"}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${position.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${position.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
+                    >
                       {position.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
                   {canManage && (
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
-                        <button onClick={() => handleEdit(position)} className="text-blue-600 hover:text-blue-900">
+                        <button
+                          onClick={() => handleEdit(position)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button onClick={() => handleDelete(position.id)} className="text-red-600 hover:text-red-900">
+                        <button
+                          onClick={() => handleDelete(position.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -273,13 +325,20 @@ const PositionList = () => {
 
       {/* Modal */}
       {showModal && canManage && (
-    <div
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4
                 bg-black/40 backdrop-blur-sm"
-        >          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+        >
+          {" "}
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">{editingPosition ? "Edit Position" : "Create Position"}</h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-xl font-bold text-gray-900">
+                {editingPosition ? "Edit Position" : "Create Position"}
+              </h2>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -287,70 +346,108 @@ const PositionList = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Code</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Code
+                  </label>
                   <input
                     type="text"
                     value={formData.code}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, code: e.target.value })
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Title</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Title
+                  </label>
                   <input
                     type="text"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                     required
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700">Description</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Description
+                  </label>
                   <textarea
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Department</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Department
+                  </label>
                   <select
                     value={formData.departmentId}
-                    onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, departmentId: e.target.value })
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                     required
                   >
                     <option value="">Select Department</option>
                     {departments.map((dept) => (
-                      <option key={dept.id} value={dept.id}>{dept.name}</option>
+                      <option key={dept.id} value={dept.id}>
+                        {dept.name}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Level</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Level
+                  </label>
                   <select
                     value={formData.level}
-                    onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, level: e.target.value })
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                     required
                   >
-                    {["Entry","Junior","Mid","Senior","Lead","Manager","Director","Executive"].map(lvl => (
-                      <option key={lvl} value={lvl}>{lvl}</option>
+                    {[
+                      "Junior",
+                      "Mid",
+                      "Senior",
+                      "Lead",
+                      "Manager",
+                      "Director",
+                    ].map((lvl) => (
+                      <option key={lvl} value={lvl}>
+                        {lvl}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Active</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Active
+                  </label>
                   <select
                     value={formData.isActive}
-                    onChange={(e) => setFormData({ ...formData, isActive: e.target.value === "true" })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        isActive: e.target.value === "true",
+                      })
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                   >
                     <option value="true">Active</option>
@@ -359,21 +456,35 @@ const PositionList = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Min Salary</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Min Salary
+                  </label>
                   <input
                     type="number"
                     value={formData.minSalary}
-                    onChange={(e) => setFormData({ ...formData, minSalary: parseFloat(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        minSalary: parseFloat(e.target.value),
+                      })
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Max Salary</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Max Salary
+                  </label>
                   <input
                     type="number"
                     value={formData.maxSalary}
-                    onChange={(e) => setFormData({ ...formData, maxSalary: parseFloat(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        maxSalary: parseFloat(e.target.value),
+                      })
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                   />
                 </div>
