@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
-import PermissionGuard from "../../components/PermissionGuard.jsx";
+import PermissionGuard from "../../components/Permissionguard.jsx";
 import Tabs from "./components/Tabs.jsx";
 import StatsCards from "./components/StatsCard.jsx";
 import ChartsSection from "./components/ChartsSection.jsx";
