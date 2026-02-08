@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import PermissionGuard from "../../components/PermissionGuard";
+import PermissionGuard from "../../components/Permissionguard.jsx";
 import {
   TrendingUp,
   Loader,
