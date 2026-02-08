@@ -45,7 +45,7 @@ export default function CustomersTab({
             </p>
             {canManage && (
               <button
-                onClick={handleAddCustomer()}
+                onClick={handleAddCustomer}
                 className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
               >
                 <Plus className="w-4 h-4 inline mr-2" />
