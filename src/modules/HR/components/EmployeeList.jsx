@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import PermissionGuard from "../../../components/Permissionguard.jsx";
-import ApiService from "../services/apiService";
+import ApiService from "../services/ApiService.js";
 import {
   Search,
   Eye,

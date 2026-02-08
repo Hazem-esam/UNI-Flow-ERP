@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../../context/AuthContext";
-import ApiService from "../services/apiService";
+import ApiService from "../services/ApiService.js";
 import {
   Users,
   Building2,
