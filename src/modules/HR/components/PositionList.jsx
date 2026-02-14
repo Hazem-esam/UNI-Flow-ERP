@@ -118,12 +118,12 @@ const PositionList = () => {
 
     try {
       const levelMap = {
-        Junior: 0,
-        Mid: 1,
-        Senior: 2,
-        Lead: 3,
-        Manager: 4,
-        Director: 5,
+        Junior: 1,
+        Mid: 2,
+        Senior: 3,
+        Lead: 4,
+        Manager: 5,
+        Director: 6,
       };
 
       // Prepare payload
