@@ -74,8 +74,13 @@ const CreateEmployee = ({ onBack }) => {
     payload.positionId = formData.positionId;
     payload.salary = Number(formData.salary);
 
-    payload.dateOfBirth = new Date(formData.dateOfBirth).toISOString();
-    payload.hireDate = new Date(formData.hireDate).toISOString();
+    if (formData.dateOfBirth) {
+      payload.dateOfBirth = new Date(formData.dateOfBirth).toISOString();
+    }
+
+    if (formData.hireDate) {
+      payload.hireDate = new Date(formData.hireDate).toISOString();
+    }
 
     // -----------------------------
     // REQUIRED ADDRESS (ALL FIELDS)
